@@ -39,13 +39,10 @@
 #include "src/class_filter.h"
 #include "src/class_filter_rule.h"
 #include "src/class_filter_rule_callback.h"
-#include "src/class_i18n.h"
 #include "src/class_table.h"
 #include "src/class_validation.h"
 #include "src/class_validation_rule.h"
 #include "src/class_validation_rule_callback.h"
-#include "src/class_validation_rule_numrange.h"
-#include "src/class_validation_rule_strlenrange.h"
 
 
 /* If you declare any globals in php_entity.h uncomment this:
@@ -121,13 +118,10 @@ PHP_MINIT_FUNCTION(entity)
 	lsentity_filter_class_init();
 	lsentity_filter_rule_class_init();
 	lsentity_filter_rule_callback_class_init();
-	lsentity_i18n_class_init();
 	lsentity_table_class_init();
 	lsentity_validation_class_init();
 	lsentity_validation_rule_class_init();
 	lsentity_validation_rule_callback_class_init();
-	lsentity_validation_rule_numrange_class_init();
-	lsentity_validation_rule_strlenrange_class_init();
 	/* If you have INI entries, uncomment these lines
 	REGISTER_INI_ENTRIES();
 	*/

@@ -15,10 +15,6 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_validation_rule_callback_construct_arginfo, 0, 0
     ZEND_ARG_INFO(0, allow_null)
     ZEND_ARG_ARRAY_INFO(0, param,0)
 ZEND_END_ARG_INFO()
-ZEND_BEGIN_ARG_INFO_EX(lsentity_validation_rule_callback_i18n_arginfo, 0, 0, 0)
-    ZEND_ARG_INFO(0, fun)
-    ZEND_ARG_INFO(0, string)
-ZEND_END_ARG_INFO()
 
 
 ZEND_METHOD(lsentity_validation_rule_callback_class, __construct){
@@ -27,9 +23,6 @@ ZEND_METHOD(lsentity_validation_rule_callback_class, __construct){
     if (zend_parse_method_parameters(ZEND_NUM_ARGS() , getThis(), "|O",table_object,table_class) == FAILURE) {
         RETURN_FALSE;
     }
-}
-ZEND_METHOD(lsentity_validation_rule_callback_class, i18n){
-
 }
 ZEND_METHOD(lsentity_validation_rule_callback_class, allowEmpty){
 
@@ -40,7 +33,6 @@ ZEND_METHOD(lsentity_validation_rule_callback_class, check){
 
 static zend_function_entry lsentity_validation_rule_callback_class_method[] = {
     ZEND_ME(lsentity_validation_rule_callback_class,__construct, lsentity_validation_rule_callback_construct_arginfo, ZEND_ACC_PUBLIC)
-    ZEND_ME(lsentity_validation_rule_callback_class,i18n, lsentity_validation_rule_callback_i18n_arginfo, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     ZEND_ME(lsentity_validation_rule_callback_class,allowEmpty, NULL, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_validation_rule_callback_class,check, lsentity_validation_rule_check_arginfo, ZEND_ACC_PUBLIC)
     ZEND_FE_END

@@ -6,10 +6,6 @@ interface Table {
 	 */
 	public function db();
 	/**
-	 * @return \LSYS\Entity\I18n
-	 */
-	public function i18n();
-	/**
 	 * 得到数据库表字段集合
 	 * @return ColumnSet|Column[]
 	 */

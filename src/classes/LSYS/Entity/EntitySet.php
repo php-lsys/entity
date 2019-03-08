@@ -25,11 +25,11 @@ class EntitySet implements \Countable, \Iterator, \SeekableIterator, \ArrayAcces
     }
     final public function offsetSet($offset, $value)
     {
-        throw new Exception($this->_table->i18n()->__('orm results are read-only'));
+        throw new Exception('orm results are read-only');
     }
      final public function offsetUnset($offset)
      {
-         throw new Exception($this->_table->i18n()->__('orm results are read-only'));
+         throw new Exception('orm results are read-only');
      }
      public function key()
      {

@@ -8,8 +8,6 @@
 #include "class_exception.h"
 #include "utils.h"
 #include "class_table.h"
-#include "class_i18n.h"
-
 
 int lsentity_new_class(zval *class_name,zval *return_value,zval *params,int num_args){
     zend_class_entry *ce;
@@ -73,26 +71,4 @@ int lsentity_new_class(zval *class_name,zval *return_value,zval *params,int num_
         }
     }
     return 1;
-}
-
-
-int lsentity_throw_exception(zval *table,int code,const char *fentityat,zval * values) {
-    zval retval;
-    if (table) {
-        assert(instanceof_function(lsentity_table_ce_ptr, Z_OBJCE_P(table)));
-        zval i18n;
-        zend_call_method_with_0_params(table, Z_OBJCE_P(table), NULL, "i18n", &i18n);
-
-        ZVAL_NULL(&retval);
-        if (zend_object_is_true(&i18n) && instanceof_function(lsentity_i18n_ce_ptr, Z_OBJCE(i18n))) {
-            zval str;
-            ZVAL_STRING(&str, fentityat);
-            zend_call_method_with_2_params(&i18n, Z_OBJCE(i18n), NULL, "__", &retval, &str, values);
-        }
-    }
-    char *txt = zend_is_true(&retval) ? ZSTR_VAL(Z_STR(retval)) : fentityat;
-    zend_object *obj= zend_throw_exception_ex(lsentity_exception_ce_ptr, code, txt);
-    zval_ptr_dtor(&retval);
-    if(values)zval_ptr_dtor(&values);
-    return obj;
 }

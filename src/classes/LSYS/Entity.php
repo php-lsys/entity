@@ -179,7 +179,7 @@ abstract class Entity implements \JsonSerializable{
     public function __set($column,$value){
         $columns=$this->columns(true);
         if (!$columns->offsetExists($column)){
-            $msg=$this->table()->i18n()->__("The :column property does not exist in the :entity entity",array(
+            $msg=strtr("The :column property does not exist in the :entity entity",array(
                 "column"=>$column,"entity"=>get_class($this)
             ));
             throw new Exception($msg);
@@ -225,7 +225,7 @@ abstract class Entity implements \JsonSerializable{
             $columnobj=$columns->offsetGet($column);
             return $columnobj->getDefault();
         }
-        $msg=$this->table()->i18n()->__("The :column property does not exist in the :entity entity",array(
+        $msg=strtr("The :column property does not exist in the :entity entity",array(
             "column"=>$column,"entity"=>get_class($this)
         ));
         throw new Exception($msg);
@@ -262,7 +262,7 @@ abstract class Entity implements \JsonSerializable{
     public function update(Validation $validation=null){
         $table=$this->table();
         if ( ! $this->loaded()){
-            $msg=$table->i18n()->__('Cannot update :object model because it is not loaded.',array("object"=>__CLASS__));
+            $msg=strtr('Cannot update :object model because it is not loaded.',array("object"=>__CLASS__));
             throw new Exception($msg);
         }
         $columns=$this->columns(false);
@@ -315,7 +315,7 @@ abstract class Entity implements \JsonSerializable{
     public function create(Validation $validation=null){
         $table=$this->table();
         if ($this->loaded()){
-            $msg=$table->i18n()->__('Cannot create :object model because it is already loaded.',array("object"=>__CLASS__));
+            $msg=strtr('Cannot create :object model because it is already loaded.',array("object"=>__CLASS__));
             throw new Exception ( $msg);
         }
         
@@ -372,7 +372,7 @@ abstract class Entity implements \JsonSerializable{
      */
     public function delete() {
         if (! $this->loaded ()){
-            $msg=$this->table()->i18n()->__('Cannot delete :object model because it is not loaded.',array("object"=>__CLASS__));
+            $msg=strtr('Cannot delete :object model because it is not loaded.',array("object"=>__CLASS__));
             throw new Exception ($msg);
         }
         $table=$this->table();
@@ -414,7 +414,7 @@ abstract class Entity implements \JsonSerializable{
         if (!$validation)return $this;
         if (($this->_valid = $validation->valid($this->_data+$this->columns(true)->asArray(ColumnSet::TYPE_DEFAULT))) === FALSE)
         {
-            throw (new Exception($this->table()->i18n()->__("validation data fail")))->setValidationError($validation->errors());
+            throw (new Exception(strtr("validation data fail")))->setValidationError($validation->errors());
         }
         return $this;
     }

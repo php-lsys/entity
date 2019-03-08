@@ -10,7 +10,6 @@ ZEND_API zend_class_entry *lsentity_table_ce_ptr;
 
 static zend_function_entry lsentity_table_class_method[] = {
     ZEND_ABSTRACT_ME(lsentity_table_class,db, NULL)
-    ZEND_ABSTRACT_ME(lsentity_table_class,i18n, NULL)
     ZEND_ABSTRACT_ME(lsentity_table_class,tableColumns, NULL)
     ZEND_ABSTRACT_ME(lsentity_table_class,tableName, NULL)
     ZEND_ABSTRACT_ME(lsentity_table_class,primaryKey, NULL)

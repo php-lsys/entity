@@ -2,7 +2,6 @@
 use LSYS\Entity\EntitySet;
 use LSYS\Entity\Database;
 use LSYS\Entity\ColumnSet;
-use LSYS\Entity\I18n;
 use LSYS\Entity\Table;
 use LSYS\Entity\Column;
 use LSYS\Entity\Exception;
@@ -10,9 +9,8 @@ use LSYS\Entity\EntityColumnSet;
 use LSYS\Entity\Filter;
 use LSYS\Entity\FilterRule\Callback;
 use LSYS\Entity\Validation;
-use LSYS\Entity\ValidRule\StrlenRange;
-use LSYS\Entity\ValidRule\NumRange;
 use LSYS\Entity;
+use LSYS\Entity\ValidRule;
 include_once __DIR__."/boot.php";
 //数据库结果集实现
 class pdores implements \LSYS\Entity\Database\Result {
@@ -61,6 +59,43 @@ class pdores implements \LSYS\Entity\Database\Result {
     public function count()
     {
         return $this->_total;
+    }
+}
+class StrlenRange implements ValidRule{
+    protected $_min;
+    protected $_max;
+    protected $_allow_empty;
+    /**
+     * @param int $min 存在时表示不小于此值
+     * @param int $max 存在时表示不大于此值
+     * @param bool $allow_empty 是否不能为空
+     */
+    public function __construct($min,$max,$allow_empty) {
+        $this->_min=intval($min);
+        $this->_max=intval($max);
+        $this->_allow_empty=boolval($allow_empty);
+    }
+    /**
+     * @return bool
+     */
+    public function check(Validation $validation,$field,$value,$label,Entity $entity,array $check_data) {
+        $len=strlen($value);
+        $param=array(
+            ":label"=>$label,
+            ":min"=>$this->_min,
+            ":max"=>$this->_max,
+            ":field"=>$field,
+        );
+        if ($this->_min>0&&$len<$this->_min) {
+            $validation->error($field, strtr(":label [:field] strlen can't be < :min",$param));
+        }
+        if ($this->_max>0&&$len>$this->_max) {
+            $validation->error($field, strtr(":label [:field] strlen can't be > :max",$param));
+        }
+    }
+    public function allowEmpty()
+    {
+        return $this->_allow_empty;
     }
 }
 //数据库实现,一般框架都带有,增加实现即可
@@ -200,33 +235,6 @@ class dbobj extends PDO implements Database{
         return $this->lastInsertId();
     }
 }
-//多语言实现
-class i18nobj implements I18n{
-    protected static $obj;
-    public static function instance() {
-        if(!self::$obj)self::$obj=new self("./i18n","default");
-        return self::$obj;
-    }
-    protected $_domain;
-    protected $_dir;
-    public function __construct($dir,$domain){
-        $this->_dir=$dir;
-        $this->_domain=$domain;
-    }
-    public function __($string, array $values = NULL)
-    {
-        bind_textdomain_codeset($this->_domain, 'UTF-8' );
-        bindtextdomain($this->_domain, $this->_dir);
-        $string=dgettext($this->_domain,$string);
-        if(is_array($values)){
-            foreach ($values as $k=>$v){
-                $values[$k]=(string)$v;
-            }
-            $string=strtr($string, $values);
-        }
-        return $string;
-    }
-}
 //实体
 class entity1 extends Entity{
     public function tableClass()
@@ -247,7 +255,6 @@ class entity1 extends Entity{
     public function validationFactory(){
         return (new Validation($this))
         ->rule(new StrlenRange(1, 15, 0),"enname")
-        ->rule(new NumRange(1, 1000, 0),"code")
         ;
     }
 }
@@ -273,10 +280,6 @@ class model1 implements Table{
     public function db()
     {
         return dbobj::instance();
-    }
-    public function i18n()
-    {
-        return i18nobj::instance();
     }
     public function tableName()
     {

@@ -98,7 +98,7 @@ class Callback implements ValidRule{
             foreach ($bound as $key=>$value) {
                 if(is_scalar($value))$args[$key]=$value;
             }
-            $validation->error($field, $entity->table()->i18n()->__($msg?$msg:":label [:field] valid fail",$args));
+            $validation->error($field,strtr($msg?$msg:":label [:field] valid fail",$args));
         }
     }
     public function allowEmpty()
