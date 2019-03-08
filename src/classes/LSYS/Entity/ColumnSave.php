@@ -1,5 +1,7 @@
 <?php
 namespace LSYS\Entity;
+use LSYS\Entity;
+
 /**
  * 保存时回调字段
  */
