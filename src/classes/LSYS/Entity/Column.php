@@ -38,6 +38,9 @@ class Column{
     public function name(){
         return $this->_name;
     }
+    public function __toString() {
+        return $this->_name;
+    }
     /**
      * 是否使用默认值(创建时)
      * @return mixed

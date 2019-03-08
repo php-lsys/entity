@@ -57,6 +57,7 @@ ZEND_METHOD(lsentity_column_class, setAllowNull){}
 ZEND_METHOD(lsentity_column_class, isAllowNull){}
 ZEND_METHOD(lsentity_column_class, compare){}
 ZEND_METHOD(lsentity_column_class, read){}
+ZEND_METHOD(lsentity_column_class, __toString){}
 ZEND_METHOD(lsentity_column_class, asArray){}
 
 
@@ -73,6 +74,7 @@ static zend_function_entry lsentity_column_class_method[] = {
         ZEND_ME(lsentity_column_class,compare, lsentity_column_compare_arginfo, ZEND_ACC_PUBLIC)
         ZEND_ME(lsentity_column_class,read, lsentity_column_read_arginfo, ZEND_ACC_PUBLIC)
         ZEND_ME(lsentity_column_class,asArray, NULL, ZEND_ACC_PUBLIC)
+        ZEND_ME(lsentity_column_class,__toString, NULL, ZEND_ACC_PUBLIC)
         ZEND_FE_END
 };
 
