@@ -18,29 +18,18 @@ class Column{
      */
     protected $_default;
     /**
-     * @var string
-     */
-    protected $_comment;
-    /**
      * @var bool
      */
     protected $_is_nullable;
     /**
-     * @var bool
-     */
-    protected $_is_primary_key;
-    /**
      * 字段
      * @param string $name
-     * @param string $comment 注释
      */
     public function __construct($name){
         $this->_name=$name;
         $this->_default=NULL;
-        $this->_comment=null;
         $this->_type=NULL;
         $this->_is_nullable=TRUE;
-        $this->_is_primary_key=False;
     }
     /**
      * 获取名
@@ -48,22 +37,6 @@ class Column{
      */
     public function name(){
         return $this->_name;
-    }
-    /**
-     * 设置注释
-     * @param string $val
-     * @return $this
-     */
-    public function setComment($comment){
-        $this->_comment=$comment;
-        return $this;
-    }
-    /**
-     * 获取字段注释
-     * @return string
-     */
-    public function comment(){
-        return $this->_comment;
     }
     /**
      * 是否使用默认值(创建时)
@@ -106,25 +79,10 @@ class Column{
         return $this->_type;
     }
     /**
-     * 设置为主键
-     * @return $this
-     */
-    public function setIsPrimaryKey($set_is_primary_key){
-        $this->_is_primary_key=$set_is_primary_key;
-        return $this;
-    }
-    /**
-     * 得到是否设置为主键
-     * @return boolean
-     */
-    public function getIsPrimaryKey(){
-        return $this->_is_primary_key;
-    }
-    /**
      * 设置是否可为空
      * @return $this
      */
-    public function setAllowNullable($set_allow_nullable){
+    public function setAllowNull($set_allow_nullable){
         $this->_is_nullable=$set_allow_nullable;
         if ($set_allow_nullable) {
             if($this->_default==='')$this->_default=null;
@@ -137,7 +95,7 @@ class Column{
      * 得到是否允许为空
      * @return boolean
      */
-    public function getAllowNullable(){
+    public function isAllowNull(){
         return $this->_is_nullable;
     }
     /**
@@ -168,9 +126,7 @@ class Column{
           'name'=>$this->_name,
           'type'=>$this->_type,
           'default'=>$this->_default,
-          'comment'=>$this->_comment,
-          'allowNullable'=>$this->_is_nullable,
-          'isPrimaryKey'=>$this->_is_primary_key,
+          'allowNull'=>$this->_is_nullable,
         );
     }
 }

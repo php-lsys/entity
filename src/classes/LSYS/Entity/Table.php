@@ -11,7 +11,7 @@ interface Table {
 	public function i18n();
 	/**
 	 * 得到数据库表字段集合
-	 * @return ColumnSet
+	 * @return ColumnSet|Column[]
 	 */
 	public function tableColumns();
 	/**

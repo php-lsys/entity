@@ -272,6 +272,11 @@ abstract class Entity implements \JsonSerializable{
             if ($v instanceof ColumnSave){
                 $v->update($this,$name);
             }
+            if (!$v->isAllowNull()
+                &&array_key_exists($name, $this->_data)
+                &&is_null($this->_data[$name])) {
+                    $this->_data[$name]='';
+            }
             if(array_key_exists($name, $this->_change)){
                 $save_data[$name]=$this->_data[$name];
             }
@@ -322,6 +327,11 @@ abstract class Entity implements \JsonSerializable{
             if(!array_key_exists($name, $this->_data)&&$v->useDefault()){
                 $this->_data[$name]=$v->getDefault();
             }
+            if (!$v->isAllowNull()
+                &&array_key_exists($name, $this->_data)
+                &&is_null($this->_data[$name])) {
+                $this->_data[$name]='';
+            }
             if(array_key_exists($name, $this->_data)){
                 $save_data[$name]=$this->_data[$name];
             }
@@ -349,6 +359,7 @@ abstract class Entity implements \JsonSerializable{
         $this->_change=array();
         $this->_saved=$this->_loaded=true;
         $primary_key=$table->primaryKey();
+        
         if (! array_key_exists ( $primary_key, $data )) {
             $this->_data[$primary_key]=$db->insertId();
         }
