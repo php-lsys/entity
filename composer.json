@@ -1,0 +1,12 @@
+{
+	"name" : "lsys/entity",
+	"type" : "library",
+	"license" : "Apache-2.0",
+	"version" : "2.0.0",
+	"description" : "lsys module entity",
+	"autoload" : {
+		"psr-4" : {
+			"LSYS\\" : "src/classes/LSYS/"
+		}
+	}
+}
