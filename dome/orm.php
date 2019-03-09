@@ -103,11 +103,11 @@ class StrlenRange implements ValidRule{
 //示例表结构
 CREATE TABLE `address` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) NOT NULL,
-  `enname` varchar(64) NOT NULL,
-  `acronym` varchar(12) NOT NULL,
-  `code` varchar(21) NOT NULL,
-  `add_time` int(11) NOT NULL,
+  `name` varchar(32) ,
+  `enname` varchar(64) ,
+  `acronym` varchar(12),
+  `code` varchar(21) ,
+  `add_time` int(11) ,
   PRIMARY KEY (`id`)
 )
 */

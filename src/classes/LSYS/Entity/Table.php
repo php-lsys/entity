@@ -2,6 +2,7 @@
 namespace LSYS\Entity;
 interface Table {
     /**
+     * 数据库操作对象
 	 * @return \LSYS\Entity\Database
 	 */
 	public function db();
@@ -12,10 +13,12 @@ interface Table {
 	public function tableColumns();
 	/**
 	 * 返回表名
+	 * @return string
 	 */
 	public function tableName();
 	/**
-	 * 返回主键字段名
+	 * 返回主键字段名,联合主键返回字段名数组
+	 * @return string|array
 	 */
 	public function primaryKey();
 }

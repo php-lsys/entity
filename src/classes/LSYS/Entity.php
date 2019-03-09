@@ -113,7 +113,14 @@ abstract class Entity implements \JsonSerializable{
             }else unset($data[$column]);
         }
         $this->_data=array_merge($data,$this->_data);
-        $this->_loaded=$loaded&&array_key_exists($this->table()->primaryKey(), $data);
+        $primaryKey=$this->table()->primaryKey();
+        if(is_array($primaryKey)){
+            foreach ($primaryKey as $v){
+                $loaded=$loaded&&array_key_exists($v, $data);
+                if(!$loaded)break;
+            }
+        }else $loaded=$loaded&&array_key_exists($primaryKey, $data);
+        $this->_loaded=$loaded;
         $this->_saved=$this->_valid=$this->_loaded;
         return $this;
     }
@@ -153,6 +160,14 @@ abstract class Entity implements \JsonSerializable{
     public function __isset($column){
         return array_key_exists($column,$this->_data);
     }
+    public function __unset($column){
+        $pkey=$this->table()->primaryKey();
+        if((is_array($pkey)&&in_array($column,$pkey,true))
+          ||$pkey==$column){
+            $this->_loaded=false;
+        }
+        unset($this->_data[$column]);
+    }
     /**
      * 返回当前实体使用字段集合
      * @param boolean $patch
@@ -170,7 +185,9 @@ abstract class Entity implements \JsonSerializable{
         return $this->_columns;
     }
     /**
-     * 设置指定字段数据,会通过过滤规则进行过滤
+     * 设置指定字段数据
+     * 通过过滤规则进行过滤
+     * 更改主键会变为未加载状态
      * @param string $column
      * @param mixed $value
      * @throws Exception
@@ -195,15 +212,39 @@ abstract class Entity implements \JsonSerializable{
         if(!array_key_exists($column, $this->_change)){
             $this->_change[$column]=isset($this->_data[$column])?$this->_data[$column]:null;
         }
-        if($this->loaded()&&$column==$this->table()->primaryKey()){
-            if($columns->offsetGet($column)->compare($this->_change[$column],$value)){//还原主键值或未修改值
-                $this->_loaded=true;
-            }else{
+        
+        if($this->loaded()){
+            $primaryKey=$this->table()->primaryKey();
+            if((is_array($primaryKey)&&in_array($column, $primaryKey,true))
+                ||$primaryKey==$column){
                 //更改主键值
-                foreach ($this->_data as $k=>$v){//保存所有原数据加载数据
-                    if (!array_key_exists($k, $this->_change))$this->_change[$k]=$v;
+                if (is_array($primaryKey)){
+                    $change=!$columns->offsetGet($column)->compare($this->_change[$column],$value);
+                    unset($primaryKey[$column]);
+                    if(!$change)foreach ($primaryKey as $v){
+                        if(isset($this->_change[$v])){
+                            $data=isset($this->_data[$v])?$this->_data[$v]:null;
+                            $change=$change||!$columns->offsetGet($v)->compare($this->_change[$v],$data);
+                            if(!$change)break;
+                        }
+                    }
+                }else{
+                    $change=!$columns->offsetGet($column)->compare($this->_change[$column],$value);
                 }
-                $this->_loaded=false;
+                if($change){//更改主键
+                    foreach ($this->_data as $k=>$v){//保存所有原数据更改值数组
+                        if (!array_key_exists($k, $this->_change))$this->_change[$k]=$v;
+                    }
+                    $this->_loaded=false;
+                }else{
+                    //还原主键值，将更改值与原值相同的删除掉
+                    foreach ($this->_change as $k=>$v){
+                        $nv=isset($this->_data[$k])?$this->_data[$k]:null;
+                        $colobj=$columns->offsetGet($column);
+                        if(is_object($colobj)&&$colobj->compare($v,$nv))unset($this->_change[$k]);
+                    }
+                    $this->_loaded=true;
+                }
             }
         }
         $this->_saved = $this->_valid = FALSE;
@@ -234,9 +275,14 @@ abstract class Entity implements \JsonSerializable{
      * @return mixed
      */
     public function pk(){
+        if(!is_array($this->_data))return NULL;
         $primary_key=$this->table()->primaryKey();
-        if (!isset($this->_data[$primary_key])) return null;
-        return $this->_data[$primary_key];
+        if(is_array($primary_key)){
+            return array_intersect_key($this->_data, array_flip($primary_key));
+        }else {
+            if (!isset($this->_data[$primary_key])) return null;
+            return $this->_data[$primary_key];
+        }
     }
     /**
      * 当前实体是否已加载数据
@@ -290,8 +336,7 @@ abstract class Entity implements \JsonSerializable{
             $this->check($validation);
         }
         $db=$table->db();
-        $primary_key=$table->primaryKey();
-        $where = $db->quoteColumn($primary_key) . '=' . $db->quoteValue($this->pk(),$columns->getType($primary_key));
+        $where=$this->_modify_where();
         $table_name = $db->quoteTable( $table->tableName() );
         $sets = array ();
         foreach ( $save_data as $key => $value ) {
@@ -304,6 +349,24 @@ abstract class Entity implements \JsonSerializable{
         $this->_change=array();
         $this->_saved=true;
         return $this;
+    }
+    private function _modify_where(){
+        $table=$this->table();
+        $columns=$table->tableColumns();
+        $primary_key=$table->primaryKey();
+        $db=$table->db();
+        if (is_array($primary_key)){
+            $where = [];
+            foreach ($primary_key as $v){
+                $pk=isset($this->_data[$v])?$this->_data[$v]:null;
+                $where[] = $db->quoteColumn($v) . '=' . $db->quoteValue($pk,$columns->getType($v));
+            }
+            $where = implode(" and ", $where);
+        }else{
+            $pk=isset($this->_data[$primary_key])?$this->_data[$primary_key]:null;
+            $where = $db->quoteColumn($primary_key) . '=' . $db->quoteValue($pk,$columns->getType($primary_key));
+        }
+        return $where;
     }
     /**
      * 新增数据
@@ -358,9 +421,8 @@ abstract class Entity implements \JsonSerializable{
         $this->_change=array();
         $this->_saved=$this->_loaded=true;
         $primary_key=$table->primaryKey();
-        
-        if (! array_key_exists ( $primary_key, $data )) {
-            $this->_data[$primary_key]=$db->insertId();
+        if (!is_array($primary_key)&&! array_key_exists ( $primary_key, $data )) {
+            if(!is_null($db->insertId())) $this->_data[$primary_key]=$db->insertId();
         }
         return $this;
     }
@@ -377,10 +439,9 @@ abstract class Entity implements \JsonSerializable{
         $table=$this->table();
         $db=$table->db();
         $table_name=$db->quoteTable($table->tableName());
-        $primary_key=$table->primaryKey();
         $id = $this->pk ();
         $table_column=$table->tableColumns();
-        $where = $db->quoteColumn($primary_key) . '=' . $db->quoteValue($id,$table_column->getType($primary_key));
+        $where=$this->_modify_where();
         $sql=" DELETE FROM ".$table_name." where ".$where;
         $db->exec($sql);
         return $this->clear();
@@ -418,7 +479,7 @@ abstract class Entity implements \JsonSerializable{
         return $this;
     }
     /**
-     * 批量__set
+     * 批量__set,注意主键不能被设置
      * @param array $values
      * @param array $expected
      * @return static
@@ -426,7 +487,9 @@ abstract class Entity implements \JsonSerializable{
     public function values(array $values, array $expected = NULL) {
         if ($expected === NULL) {
             $expected = $this->columns(true)->asArray(ColumnSet::TYPE_FIELD);
-            unset ( $values [$this->table()->primaryKey()] );
+            $pkey=$this->table()->primaryKey();
+            if(is_array($pkey))foreach ($pkey as $v)unset ( $values [$v] );
+            else unset ( $values [$pkey] );
         }
         foreach ( $expected as $column ) {
             if (! array_key_exists ( $column, $values )) continue;
