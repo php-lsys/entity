@@ -7,7 +7,7 @@ use LSYS\Entity\Filter;
 use LSYS\Entity\Exception;
 use LSYS\Entity\Validation;
 use LSYS\Entity\ColumnSave;
-abstract class Entity implements \JsonSerializable{
+class Entity implements \JsonSerializable{
     /**
      * @var Table
      */
