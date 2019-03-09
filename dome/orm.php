@@ -237,10 +237,6 @@ class dbobj extends PDO implements Database{
 }
 //实体
 class entity1 extends Entity{
-    public function tableClass()
-    {
-        return model1::class;
-    }
     public function labels(){
         return array(
           "enname"=>"名称"  
@@ -311,13 +307,13 @@ class model1 implements Table{
     }
 }
 
-// $model1=new model1();
+$model1=new model1();
 //  $entit=$model1->findById(3597);
 //  print_r($entit->asArray());
 // $entit->name="sss";
 // $entit->save();
 
-$entity=new entity1();
+$entity=new entity1($model1);
 $entity->values(array(
     'name'=>"fasdfadsf",
     "acronym"=>"11",
@@ -337,7 +333,7 @@ $entity->clear();
 print_r($entity->pk());
 print_r($entity->asArray());
 
-// $entity=new entity1();
+// $entity=new entity1($model1);
 // //$entity->id="1";
 // $entity->name="ddddddddd";
 // $entity->save();

@@ -54,7 +54,7 @@ abstract class Entity implements \JsonSerializable{
      * @param Table $table
      * @param EntityColumnSet $columns
      */
-    public function __construct(Table $table=null) {
+    public function __construct(Table $table) {
         $this->_table = $table;
     }
     /**
@@ -94,7 +94,6 @@ abstract class Entity implements \JsonSerializable{
      * @return Table 
      */
     public function table(){
-        if ($this->_table==null) $this->_table=(new \ReflectionClass($this->tableClass()))->newInstance();
         return $this->_table;
     }
     /**
@@ -525,9 +524,4 @@ abstract class Entity implements \JsonSerializable{
     public function validationFactory(){
         return NULL;
     }
-    /**
-     * 返回ORM名
-     * @return string
-     */
-    abstract public function tableClass();
 }
