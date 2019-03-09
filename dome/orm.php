@@ -235,8 +235,11 @@ class dbobj extends PDO implements Database{
         return $this->lastInsertId();
     }
 }
-//实体
+//实体非必须
 class entity1 extends Entity{
+    public function __construct(model1 $model1){
+        parent::__construct($model1);//非必须
+    }
     public function labels(){
         return array(
           "enname"=>"名称"  
@@ -256,11 +259,11 @@ class entity1 extends Entity{
 }
 //ORM 或者MODEL
 class model1 implements Table{
-    protected $_table_columns;
+    protected static $_table_columns;
     public function tableColumns()
     {
-        if (!$this->_table_columns) {
-            $this->_table_columns=new ColumnSet([
+        if (!self::$_table_columns) {
+            self::$_table_columns=new ColumnSet([
                 new Column("id"),
                 new Column("name"),
                 new Column("enname"),
@@ -268,7 +271,7 @@ class model1 implements Table{
                 new Column("code"),
             ]);
         }
-        return $this->_table_columns;
+        return self::$_table_columns;
     }
     /**
      * @return dbobj
@@ -285,7 +288,8 @@ class model1 implements Table{
     {
         return 'id';
     }
-    protected function columnSetAsStr($columns){
+    //以下非必须，根据你的业务实现方法
+    private function columnSetAsStr($columns){
         if (!count($columns)) return "*";
         return implode(",", $columns->asArray(ColumnSet::TYPE_FIELD));
     }
@@ -312,7 +316,7 @@ $model1=new model1();
 //  print_r($entit->asArray());
 // $entit->name="sss";
 // $entit->save();
-
+//$e=new Entity($model1);//可以直接用Entity类
 $entity=new entity1($model1);
 $entity->values(array(
     'name'=>"fasdfadsf",
