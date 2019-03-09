@@ -98,14 +98,13 @@ abstract class Entity implements \JsonSerializable{
         return $this->_table;
     }
     /**
-     * 装载数据指定数据
+     * 装载数据指定数据,会通过字段规则进行转换,已存在模型加载数据请先调用clear清理
      * @param array $data
      * @param boolean $loaded
      * @param EntityColumnSet $query_column_set
      * @return static
      */
     public function loadData(array $data,EntityColumnSet $query_column_set=null,$loaded=true){
-        $this->clear();
         $this->_query_column_set=$query_column_set;
         $columns=$this->columns(true);//因为设置时候保持一致,所以这里需要解析
         foreach ($data as $column=>$value){
@@ -113,7 +112,7 @@ abstract class Entity implements \JsonSerializable{
                 $data[$column]=$columns->offsetGet($column)->read($value);
             }else unset($data[$column]);
         }
-        $this->_data=$data;
+        $this->_data=array_merge($data,$this->_data);
         $this->_loaded=$loaded&&array_key_exists($this->table()->primaryKey(), $data);
         $this->_saved=$this->_valid=$this->_loaded;
         return $this;
@@ -171,7 +170,7 @@ abstract class Entity implements \JsonSerializable{
         return $this->_columns;
     }
     /**
-     * 设置指定字段数据
+     * 设置指定字段数据,会通过过滤规则进行过滤
      * @param string $column
      * @param mixed $value
      * @throws Exception
