@@ -22,6 +22,10 @@ class Column{
      */
     protected $_is_nullable;
     /**
+     * @var string
+     */
+    protected $_comment;
+    /**
      * 字段
      * @param string $name
      */
@@ -29,6 +33,7 @@ class Column{
         $this->_name=$name;
         $this->_default=NULL;
         $this->_type=NULL;
+        $this->_comment=null;
         $this->_is_nullable=TRUE;
     }
     /**
@@ -40,6 +45,22 @@ class Column{
     }
     public function __toString() {
         return $this->_name;
+    }
+    /**
+     * 设置注释
+     * @param string $val
+     * @return $this
+     */
+    public function setComment($comment){
+        $this->_comment=$comment;
+        return $this;
+    }
+    /**
+     * 获取字段注释
+     * @return string
+     */
+    public function comment(){
+        return $this->_comment;
     }
     /**
      * 是否使用默认值(创建时)
