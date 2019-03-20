@@ -438,8 +438,6 @@ class Entity implements \JsonSerializable{
         $table=$this->table();
         $db=$table->db();
         $table_name=$db->quoteTable($table->tableName());
-        $id = $this->pk ();
-        $table_column=$table->tableColumns();
         $where=$this->_modify_where();
         $sql=" DELETE FROM ".$table_name." where ".$where;
         $db->exec($sql);
