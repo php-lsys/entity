@@ -1,5 +1,5 @@
-#ifndef PHP_LSENTITY_ENTITY_H
-#define PHP_LSENTITY_ENTITY_H
+#ifndef PHP_LSENTITY_H
+#define PHP_LSENTITY_H
 
 #include "php.h"
 
