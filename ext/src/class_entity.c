@@ -38,6 +38,10 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_isset_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_unset_arginfo, 0, 0, 1)
+    ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_construct_arginfo, 0, 0, 0)
     ZEND_ARG_OBJ_INFO_ENTITYNS(0, table, Table, 1)
 ZEND_END_ARG_INFO()
@@ -172,6 +176,12 @@ ZEND_METHOD(lsentity_entity_class, __isset){
         RETURN_TRUE;
     }
     RETURN_FALSE;
+}
+ZEND_METHOD(lsentity_entity_class, __unset){
+    zend_string *column;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_STR(column)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 }
 ZEND_METHOD(lsentity_entity_class, __set){
     zend_string *column;
@@ -316,6 +326,7 @@ ZEND_METHOD(lsentity_entity_class, table){
     zval cls;
     zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "tableclass", &cls);
     if (Z_TYPE(cls)!=IS_STRING){
+    //@todo ~~~~~
         zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "tableClass method not return string");
         RETURN_NULL();
     }
@@ -1112,8 +1123,6 @@ static zend_function_entry lsentity_entity_class_method[] = {
     ZEND_ME(lsentity_entity_class,jsonSerialize, NULL, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,filterFactory, NULL, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,validationFactory, NULL, ZEND_ACC_PUBLIC)
-    ZEND_ABSTRACT_ME(lsentity_entity_class,tableClass, NULL)
-
     ZEND_FE_END
 };
 

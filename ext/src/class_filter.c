@@ -59,5 +59,6 @@ void lsentity_filter_class_init(){
     zend_declare_property_null(lsentity_filter_ce_ptr,ZEND_STRL("_entity"), ZEND_ACC_PROTECTED );
     zend_declare_property_null(lsentity_filter_ce_ptr,ZEND_STRL("_rules"), ZEND_ACC_PROTECTED );
     zend_declare_property_null(lsentity_filter_ce_ptr,ZEND_STRL("_global_rules"), ZEND_ACC_PROTECTED );
+    zend_declare_property_bool(lsentity_filter_ce_ptr,ZEND_STRL("_allow_cache"),0,ZEND_ACC_PROTECTED );
 }
 

@@ -39,6 +39,6 @@ void lsentity_exception_class_init(){
     zend_class_entry ce;
     INIT_NS_CLASS_ENTRY(ce,LSENTITY_NS,"Exception",lsentity_exception_class_method);
     lsentity_exception_ce_ptr = zend_register_internal_class_ex(&ce, zend_ce_exception);
-    zend_declare_property_null(lsentity_exception_ce_ptr,ZEND_STRL("_error_sql"), ZEND_ACC_PROTECTED );
-    zend_declare_property_null(lsentity_exception_ce_ptr,ZEND_STRL("_validation_error"), ZEND_ACC_PROTECTED );
+    zend_declare_property_null(lsentity_exception_ce_ptr,ZEND_STRL("_error_sql"), ZEND_ACC_PRIVATE );
+    zend_declare_property_null(lsentity_exception_ce_ptr,ZEND_STRL("_validation_error"), ZEND_ACC_PRIVATE );
 }
