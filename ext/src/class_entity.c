@@ -1093,6 +1093,7 @@ ZEND_METHOD(lsentity_entity_class, validationFactory){
 static zend_function_entry lsentity_entity_class_method[] = {
     ZEND_ME(lsentity_entity_class,__construct, lsentity_entity_construct_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,__isset, lsentity_entity_isset_arginfo, ZEND_ACC_PUBLIC)
+    ZEND_ME(lsentity_entity_class,__unset, lsentity_entity_unset_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,__set, lsentity_entity_set_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,__get, lsentity_entity_get_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,__toString, NULL, ZEND_ACC_PUBLIC)
