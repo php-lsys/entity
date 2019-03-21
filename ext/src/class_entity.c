@@ -150,15 +150,53 @@ static zval * cache_obj_get(zval *object,const char *attr,const char *method,zen
     return NULL;
 }
 
+static int in_array(zval *array,zval *value){
+    zval *entry;
+    zend_ulong num_idx;
+    zend_string *str_idx;
+    ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_idx, str_idx, entry) {
+        ZVAL_DEREF(entry);
+        if (fast_is_identical_function(value, entry)) {
+            return 1;
+        }
+    } ZEND_HASH_FOREACH_END();
+    return 0;
+}
+static int comp_pkkey(zval *pk,zval *column){
+    if(Z_TYPE_P(pk)==IS_ARRAY){
+        return !in_array(pk,column);
+    }
+    return string_compare_function(column,pk);
+}
+
+static int arr_intersect_key(zval* retval,zval *data,zval *change){
+    zval params[2];
+    ZVAL_ZVAL(&params[0],data,0,0);
+    ZVAL_ZVAL(&params[1],change,0,0);
+    zend_fcall_info fcif;
+    fcif.size = sizeof(fcif);
+    fcif.object = NULL;
+    fcif.retval = &retval;
+    fcif.param_count = 2;
+    fcif.params = params;
+    fcif.no_separation = 1;
+    ZVAL_STRINGL(&fcif.function_name,"array_intersect_key",strlen("array_intersect_key"));
+    if (zend_call_function(&fcif, NULL) == FAILURE||Z_TYPE(retval)!=IS_ARRAY){
+        array_init(&retval);
+        return 0;
+    }
+    zval_ptr_dtor(&fcif.function_name);
+    return 1;
+}
 
 ZEND_METHOD(lsentity_entity_class, __construct){
     zval *table_object,*object;
-    ZEND_PARSE_PARAMETERS_START(0, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 1)
         Z_PARAM_OPTIONAL
         Z_PARAM_OBJECT_OF_CLASS_EX(table_object, lsentity_table_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
-    if(zend_object_is_true(object)) zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),table_object);
+    zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),table_object);
     zval temp_array;
     array_init(&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
@@ -182,6 +220,22 @@ ZEND_METHOD(lsentity_entity_class, __unset){
     ZEND_PARSE_PARAMETERS_START(1, 1)
             Z_PARAM_STR(column)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+
+    zval *object=getThis();
+    zval table,pk;
+    if(!get_table(object,&table)) RETURN_NULL();
+    if(!get_table_pk(&table,&pk))RETURN_NULL();
+    zval zcolumn;
+    ZVAL_STR(&zcolumn,column);
+    if(comp_pkkey(&pk,&zcolumn)==0){
+        zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),0);
+    }
+    zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
+    zend_hash_del(Z_ARR_P(data),column);
+
+    zval_ptr_dtor(&pk);
+    zval_ptr_dtor(&table);
+    zval_ptr_dtor(&zcolumn);
 }
 ZEND_METHOD(lsentity_entity_class, __set){
     zend_string *column;
@@ -241,24 +295,74 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
     zval table,pk;
     if(!get_table(object,&table)) RETURN_NULL();
-    if(!get_table_pk(&table,&pk))RETURN_NULL();
-    if (loaded&&zend_string_equals(Z_STR(pk),column)){
-        zval* oldval=zend_hash_find(change,column);
-        zval nullval;
-        if(!oldval)ZVAL_NULL(&nullval);
-        if (check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,newvalptr)){
-            zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),1);
-        }else{
-            zval *val;
-            zend_string * key;
-            ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(data),key,val) {
-                if(!zend_symtable_exists_ind(Z_ARR_P(change),key)){
-                    zend_hash_update(Z_ARR_P(change),key,val);
+    if(!get_table_pk(&table,&pk)){
+        zval_ptr_dtor(&table);
+        RETURN_NULL();
+    }
+    if(loaded){
+        zval zcolumn;
+        ZVAL_STR(&zcolumn,column);
+        if(comp_pkkey(&pk,&zcolumn)==0){
+
+            zval* oldval=zend_hash_find(change,column);
+            zval nullval;
+            if(!oldval)ZVAL_NULL(&nullval);
+            int is_change=!check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,value);
+            if(Z_TYPE(pk)==IS_ARRAY){
+                zend_hash_del(Z_ARR(pk),column);
+                if(!is_change){
+                    zval *col;
+                    ZEND_HASH_FOREACH_VAL(Z_ARR(pk),col) {
+                        zval* _change=zend_hash_find(change,Z_STR_P(col));
+                        if(_change){
+                            if(!is_change){
+                                zval *_data=zend_hash_find(data,col);
+                                if(!_data){
+                                    zval _sdata;
+                                    ZVAL_NULL(&_sdata);
+                                    _data=&_sdata;
+                                }
+                                is_change=!check_bool_with_2_params(&columnobj,"compare",_change,_data);
+                            }
+                            if(!is_change)break;
+                        }
+                    } ZEND_HASH_FOREACH_END();
                 }
-            } ZEND_HASH_FOREACH_END();
-            zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),0);
+            }
+            if(is_change){
+                zval *val;
+                zend_string * key;
+                ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(data),key,val) {
+                    if(!zend_symtable_exists_ind(Z_ARR_P(change),key)){
+                        zend_hash_update(Z_ARR_P(change),key,val);
+                    }
+                } ZEND_HASH_FOREACH_END();
+                zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),0);
+            }else{
+
+                zval *val;
+                zend_string * key;
+                ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(change),key,val) {
+                    zval *_data=zend_hash_find(data,key);
+                    if(!_data){
+                        zval _sdata;
+                        ZVAL_NULL(&_sdata);
+                        _data=&_sdata;
+                    }
+                    zval obj;
+                    if(get_column(&columns,key,&obj,0)&&Z_TYPE(obj)==IS_OBJECT){
+                        if(check_bool_with_2_params(&obj,"compare",val,_data)){
+                            zend_hash_del(Z_ARR_P(change),key);
+                        }
+                    }
+                    zval_ptr_dtor(&obj);
+                } ZEND_HASH_FOREACH_END();
+
+                zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),1);
+            }
         }
     }
+
     zval_ptr_dtor(&pk);
     zval_ptr_dtor(&table);
     zval_ptr_dtor(&newval);
@@ -322,23 +426,7 @@ ZEND_METHOD(lsentity_entity_class, validation){
 ZEND_METHOD(lsentity_entity_class, table){
     zval *object=getThis();
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),1,NULL);
-    if(!ZVAL_IS_NULL(valid)) RETURN_ZVAL(valid,0,0);
-    zval cls;
-    zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "tableclass", &cls);
-    if (Z_TYPE(cls)!=IS_STRING){
-    //@todo ~~~~~
-        zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "tableClass method not return string");
-        RETURN_NULL();
-    }
-    zval ret;
-    if(!lsentity_new_class(&cls,&ret,NULL,0)){
-        zval_ptr_dtor(&cls);
-        zval_ptr_dtor(&ret);
-        RETURN_NULL();
-    }
-    zval_ptr_dtor(&cls);
-    zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),&ret);
-    RETURN_ZVAL(&ret,1,1);
+    RETURN_ZVAL(valid,0,0);
 }
 ZEND_METHOD(lsentity_entity_class, loadData){
     zval *data, *entity_column_set;
@@ -369,17 +457,29 @@ ZEND_METHOD(lsentity_entity_class, loadData){
         zval_ptr_dtor(&obj);
     } ZEND_HASH_FOREACH_END();
     zval_ptr_dtor(&columns);
+    zval *sdata=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
+
+    php_array_merge(&data, sdata);
+
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),data);
 
     if (loaded){
         zval table,pk;
         if(get_table(object,&table)){
             if(get_table_pk(&table,&pk)){
+                if(Z_TYPE(pk)==IS_ARRAY){
+                    zval *col;
+                    ZEND_HASH_FOREACH_VAL(Z_ARR(pk),col) {
+                        if(!zend_symtable_exists_ind(Z_ARR_P(data), Z_STR_P(col))) loaded=0;
+                        if(!loaded)break;
+                    } ZEND_HASH_FOREACH_END();
+                }else{
+                    if(!zend_symtable_exists_ind(Z_ARR_P(data), Z_STR(pk))) loaded=0;
+                }
                 zval_ptr_dtor(&pk);
-                if(!zend_symtable_exists_ind(Z_ARR_P(data), Z_STR(pk))) loaded=0;
-            }
+            }else loaded=0;
             zval_ptr_dtor(&table);
-        }
+        }else loaded=0;
     }
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),loaded);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),loaded);
@@ -396,23 +496,7 @@ ZEND_METHOD(lsentity_entity_class, changed){
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
     zval retval;
-    zval params[2];
-    ZVAL_ZVAL(&params[0],data,0,0);
-    ZVAL_ZVAL(&params[1],change,0,0);
-    zend_fcall_info fcif;
-    fcif.size = sizeof(fcif);
-    fcif.object = NULL;
-    fcif.retval = &retval;
-    fcif.param_count = 2;
-    fcif.params = params;
-    fcif.no_separation = 1;
-    ZVAL_STRINGL(&fcif.function_name,"array_intersect_key",strlen("array_intersect_key"));
-    if (zend_call_function(&fcif, NULL) == FAILURE||Z_TYPE(retval)!=IS_ARRAY){
-        zval arr;
-        array_init(&arr);
-        RETURN_ZVAL(&arr,1,1);
-    }
-    zval_ptr_dtor(&fcif.function_name);
+    arr_intersect_key(&retval,data,change);
     RETURN_ZVAL(&retval,1,1);
 }
 ZEND_METHOD(lsentity_entity_class, clear){
@@ -430,20 +514,42 @@ ZEND_METHOD(lsentity_entity_class, clear){
     RETURN_ZVAL(object,0,0);
 }
 ZEND_METHOD(lsentity_entity_class, pk){
-    zval *object,table,pk,*ret=NULL;
+    zval *object,table,pk;
     object=getThis();
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
-
+    zval out,*outp=NULL;
+    ZVAL_NULL(&out);
     if(get_table(object,&table)){
         if(get_table_pk(&table,&pk)){
-            if (zend_symtable_exists_ind(Z_ARR_P(data), Z_STR(pk))) {
-                ret=zend_hash_find(Z_ARR_P(data),Z_STR(pk));
+            if(Z_TYPE(pk)==IS_ARRAY){
+                zval retval;
+                zval params[1];
+                ZVAL_ZVAL(&params[0],&pk,0,0);
+                zend_fcall_info fcif;
+                fcif.size = sizeof(fcif);
+                fcif.object = NULL;
+                fcif.retval = &retval;
+                fcif.param_count = 1;
+                fcif.params = params;
+                fcif.no_separation = 1;
+                ZVAL_STRINGL(&fcif.function_name,"array_flip",strlen("array_flip"));
+                if (zend_call_function(&fcif, NULL) == FAILURE||Z_TYPE(retval)!=IS_ARRAY){
+                    array_init(&retval);
+                }
+                zval_ptr_dtor(&fcif.function_name);
+                arr_intersect_key(&out,data,&retval);
+                zval_ptr_dtor(&retval);
+            }else{
+                if (zend_symtable_exists_ind(Z_ARR_P(data), Z_STR(pk))) {
+                    outp=zend_hash_find(Z_ARR_P(data),Z_STR(pk));
+                }
             }
             zval_ptr_dtor(&pk);
         }
         zval_ptr_dtor(&table);
     }
-    if(ret) RETURN_ZVAL(ret,0,1);
+    if(Z_TYPE(out)!=IS_NULL) RETURN_ZVAL(&out,1,1);
+    if(outp) RETURN_ZVAL(outp,0,1);
     RETURN_NULL();
 }
 ZEND_METHOD(lsentity_entity_class, columns){
