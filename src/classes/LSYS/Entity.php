@@ -239,7 +239,7 @@ class Entity implements \JsonSerializable{
                     //还原主键值，将更改值与原值相同的删除掉
                     foreach ($this->_change as $k=>$v){
                         $nv=isset($this->_data[$k])?$this->_data[$k]:null;
-                        $colobj=$columns->offsetGet($column);
+                        $colobj=$columns->offsetGet($k);
                         if(is_object($colobj)&&$colobj->compare($v,$nv))unset($this->_change[$k]);
                     }
                     $this->_loaded=true;
