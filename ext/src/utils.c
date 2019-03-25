@@ -52,8 +52,6 @@ int lsentity_new_class(zval *class_name,zval *return_value,zval *params,int num_
         fci.param_count = num_args;
         fci.params = params;
         fci.no_separation = 1;
-
-        fcc.initialized = 1;
         fcc.function_handler = constructor;
         fcc.calling_scope = zend_get_executed_scope();
         fcc.called_scope = Z_OBJCE_P(return_value);

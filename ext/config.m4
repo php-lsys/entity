@@ -79,7 +79,7 @@ if test "$PHP_ENTITY" != "no"; then
 
   PHP_NEW_EXTENSION(entity, entity.c src/utils.c src/class_column.c src/class_column_save.c src/class_column_set.c \
    src/class_entity.c src/class_entity_column_set.c src/class_entity_set.c src/class_exception.c src/class_filter.c \
-   src/class_filter_rule.c src/class_filter_rule_callback.c src/class_i18n.c src/class_table.c src/class_validation.c \
-   src/class_validation_rule.c src/class_validation_rule_callback.c src/class_validation_rule_numrange.c \
-   src/class_validation_rule_strlenrange.c src/class_db.c src/class_db_result.c, $ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
+   src/class_filter_rule.c src/class_filter_rule_callback.c src/class_table.c src/class_validation.c \
+   src/class_validation_rule.c src/class_validation_rule_callback.c \
+   src/class_db.c src/class_db_result.c, $ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
 fi
