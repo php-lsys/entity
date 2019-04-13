@@ -25,7 +25,7 @@ interface Database{
 	 * @throws Exception
 	 * @return bool
 	 */
-	public function exec($sql);
+	public function exec($sql,array $data=[]);
 	/**
 	 * 返回最后插入的ID
 	 * @return int

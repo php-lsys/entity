@@ -132,9 +132,9 @@ class dbobj extends PDO implements Database{
         }
         return new pdores($res);
     }
-    public function exec($sql)
+    public function exec($sql,array $data=[])
     {
-        $res=parent::exec($sql);
+        $res=$this->prepare($sql)->execute($data);
         if($res===false){
             $msg=$this->errorInfo();
             throw new Exception(array_pop($msg));
