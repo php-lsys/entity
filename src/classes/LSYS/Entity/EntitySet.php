@@ -2,7 +2,7 @@
 namespace LSYS\Entity;
 use LSYS\Entity\Database\Result;
 use LSYS\Entity;
-class EntitySet implements \Countable, \Iterator, \SeekableIterator, \ArrayAccess{
+class EntitySet implements \Iterator{
     protected $_result;
     protected $_columns;
     protected $_table;
@@ -14,23 +14,13 @@ class EntitySet implements \Countable, \Iterator, \SeekableIterator, \ArrayAcces
         $this->_entity=$entity_name;
         $this->_columns=$columns;
     }
-    public function offsetExists($offset)
-    {
-        return $this->seek($offset);
+    public function fetchFree(){
+        $this->_result->fetchFree();
+        return $this;
     }
-    public function offsetGet($offset)
-    {
-         if ( ! $this->seek($offset)) return NULL;
-         return $this->current();
+    public function fetchCount(){
+        return $this->_result->fetchCount();
     }
-    final public function offsetSet($offset, $value)
-    {
-        throw new Exception('entity results are read-only');
-    }
-     final public function offsetUnset($offset)
-     {
-         throw new Exception('entity results are read-only');
-     }
      public function key()
      {
          return $this->_result->key();
@@ -86,10 +76,6 @@ class EntitySet implements \Countable, \Iterator, \SeekableIterator, \ArrayAcces
         $this->rewind();
         return $results;
     }
-    public function seek($position)
-    {
-        return $this->_result->seek($position);
-    }
     /**
      * @return Entity
      */
@@ -98,9 +84,5 @@ class EntitySet implements \Countable, \Iterator, \SeekableIterator, \ArrayAcces
         $row=$this->_result->current();
         if (is_null($row))return null;
         return (new \ReflectionClass($this->_entity))->newInstance($this->_table)->loadData($row,$this->_columns,true);
-    }
-    public function count()
-    {
-        return $this->_result->count();
     }
 }
