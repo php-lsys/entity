@@ -12,6 +12,7 @@ interface Result extends \Iterator{
      * 迭代时,是否对已迭代结果进行释放
      * 调用次函数后,迭代只需要保证一次正常执行
      * 一般当结果集非常大时使用，防止内存不足
+     * @return $this
      */
     public function fetchFree();
     /**
