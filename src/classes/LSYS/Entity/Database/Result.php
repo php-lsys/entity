@@ -18,8 +18,10 @@ interface Result extends \Iterator{
     /**
      * 已从资源中获取的结果数量
      * 完成一次完整迭代后保证该值等于结果中的总数
-     * 迭代过程中不确定，可能是迭代次数，也可能时结果总数
+     * 迭代过程中不确定，可能是迭代次数，也可能是结果总数
+     * $iterator设置为true,可强制完成迭代.但如果调用过fetchFree,将数据丢失
+     * @param bool $iterator 是否强制完成迭代
      * @return int
      */
-    public function fetchCount();
+    public function fetchCount($iterator=false);
 }
