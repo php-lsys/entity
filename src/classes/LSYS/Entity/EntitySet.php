@@ -18,8 +18,8 @@ class EntitySet implements \Iterator{
         $this->_result->fetchFree();
         return $this;
     }
-    public function fetchCount(){
-        return $this->_result->fetchCount();
+    public function fetchCount($iterator=false){
+        return $this->_result->fetchCount($iterator);
     }
      public function key()
      {
