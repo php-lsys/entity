@@ -40,9 +40,13 @@ class ColumnSet implements \Countable,\ArrayAccess,\Iterator{
      * 往字段列表中添加字段
      * 已存在则覆盖
      * @param Column $column
+     * @param bool $exist_copy 是否拷贝原有属性到新字段对象
      * @return \LSYS\Entity\ColumnSet
      */
-    public function add(Column $column) {
+    public function add(Column $column,$exist_copy=false) {
+        if($exist_copy&&isset($this->_columns[$column->name()])){
+            $column->copy($this->_columns[$column->name()]);
+        }
         $this->_columns[$column->name()]=$column;
         return $this;
     }
