@@ -22,6 +22,14 @@ class EntityColumnSet{
         $this->_patch_columns=$patch_columns;
     }
     /**
+     * 是否是自定义请求字段
+     * 当返回false时,当前对象中的字段列表可能跟表字段存在不同
+     * @return boolean
+     */
+    public function isCustom() {
+        return !is_array($this->_columns)&&empty($this->_patch_columns);
+    }
+    /**
      * 转换为ColumnSet对象
      * @param ColumnSet $table_columns
      * @param boolean $patch
