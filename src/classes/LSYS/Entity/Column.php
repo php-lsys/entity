@@ -153,4 +153,17 @@ class Column{
           'allowNull'=>$this->_is_nullable,
         );
     }
+    /**
+     * 拷贝除名字外的所有属性
+     * @param Column $column
+     * @return \LSYS\Entity\Column
+     */
+    public function copy(Column $column) {
+        $this->_type=$column->_type;
+        $this->_is_default=$column->_is_default;
+        $this->_default=$column->_default;
+        $this->_is_nullable=$column->_is_nullable;
+        $this->_comment=$column->_comment;
+        return $this;
+    }
 }

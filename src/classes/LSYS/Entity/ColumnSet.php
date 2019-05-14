@@ -22,8 +22,7 @@ class ColumnSet implements \Countable,\ArrayAccess,\Iterator{
     protected $_columns=[];
     public function __construct(array $column){
         foreach ($column as $v){
-            assert($v instanceof Column);
-            $this->_columns[$v->name()]=$v;
+            $this->add($v);
         }
     }
     /**
@@ -36,6 +35,16 @@ class ColumnSet implements \Countable,\ArrayAccess,\Iterator{
             return $this->offsetGet($name)->getType();
         }
         return null;
+    }
+    /**
+     * 往字段列表中添加字段
+     * 已存在则覆盖
+     * @param Column $column
+     * @return \LSYS\Entity\ColumnSet
+     */
+    public function add(Column $column) {
+        $this->_columns[$column->name()]=$column;
+        return $this;
     }
     /**
      * 转换为数组
