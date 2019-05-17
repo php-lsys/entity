@@ -104,7 +104,7 @@ class DomeDB  extends PDO implements Database{
             } elseif ($value === TRUE||$value === FALSE) {
                 return $this->quote($value,PDO::PARAM_BOOL);
             } elseif (is_object ( $value )) {
-                return $this->quoteValue ( ( string ) $value );
+                return $this->quoteValue ( ( string ) $value ,$column_type);
             } elseif (is_array ( $value )) {
                 return '(' . implode ( ', ', array_map ( array (
                     $this,

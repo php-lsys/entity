@@ -16,6 +16,10 @@ class DomeEntityTest extends Entity{
         return (new Filter($this))
         ->rule(new DomeFilterCallback("trim"))
         ->rule(new DomeFilterCallback("strip_tags"),"enname")
+//         ->rules(array (//批量
+//             new DomeFilterCallback("trim"),
+//             new DomeFilterCallback("strip_tags"),
+//         ),'name')
         ;
     }
     public function validationFactory(){
