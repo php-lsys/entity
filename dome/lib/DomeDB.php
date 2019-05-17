@@ -18,7 +18,7 @@ class DomeDB  extends PDO implements Database{
         $res=parent::query($sql);
         if($res===false){
             $msg=$this->errorInfo();
-            throw new Exception(array_pop($msg));
+            throw new Exception("sql exec error:".array_shift($msg)."-".$sql);
         }
         return new DomeDBResult($res);
     }
@@ -27,7 +27,7 @@ class DomeDB  extends PDO implements Database{
         $res=$this->prepare($sql)->execute($data);
         if($res===false){
             $msg=$this->errorInfo();
-            throw new Exception(array_pop($msg));
+            throw new Exception("sql exec error:".array_shift($msg)."-".$sql);
         }
         return $res;
     }

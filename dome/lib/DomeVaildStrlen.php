@@ -2,7 +2,6 @@
 use LSYS\Entity\ValidRule;
 use LSYS\Entity;
 use LSYS\Entity\Validation;
-use function LSYS\Model\__ as __;
 class DomeVaildStrlen implements ValidRule{
     protected $_min;
     protected $_max;
@@ -29,10 +28,10 @@ class DomeVaildStrlen implements ValidRule{
           ":field"=>$field,  
         );
         if ($this->_min>0&&$len<$this->_min) {
-            $validation->error($field, __(":label [:field] strlen can't be < :min",$param));
+            $validation->error($field, strtr(":label [:field] strlen can't be < :min",$param));
         }
         if ($this->_max>0&&$len>$this->_max) {
-            $validation->error($field, __(":label [:field] strlen can't be > :max",$param));
+            $validation->error($field, strtr(":label [:field] strlen can't be > :max",$param));
         }
     }
     public function allowEmpty()

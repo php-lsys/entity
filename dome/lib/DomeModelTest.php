@@ -4,6 +4,18 @@ use LSYS\Entity\ColumnSet;
 use LSYS\Entity\Column;
 use LSYS\Entity\EntityColumnSet;
 use LSYS\Entity\EntitySet;
+/*
+ //示例表结构
+ CREATE TABLE `address` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `name` varchar(32) ,
+ `enname` varchar(64) ,
+ `acronym` varchar(12),
+ `code` varchar(21) ,
+ `add_time` int(11) ,
+ PRIMARY KEY (`id`)
+ )
+ */
 class DomeModelTest implements Table{
     protected static $_table_columns;
     public function tableColumns()
@@ -47,7 +59,7 @@ class DomeModelTest implements Table{
         $sql="select {$cos} from {$table} where id={$id}";
         $row=$this->db()->query($sql);
         $entity=new DomeEntityTest($this);
-        if($row->count()>0) $entity->loadData($row->current(),$col);
+        if($row=$row->current()) $entity->loadData($row,$col);
         return $entity;
     }
     public function findByWhere($where='1',$limit=10){

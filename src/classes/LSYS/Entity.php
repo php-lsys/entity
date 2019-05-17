@@ -306,7 +306,7 @@ class Entity implements \JsonSerializable{
     public function update(Validation $validation=null){
         $table=$this->table();
         if ( ! $this->loaded()){
-            $msg=strtr('Cannot update :object model because it is not loaded.',array("object"=>__CLASS__));
+            $msg=strtr('Cannot update :object model because it is not loaded.',array("object"=>get_called_class()));
             throw new Exception($msg);
         }
         $columns=$this->columns(false);
@@ -376,7 +376,7 @@ class Entity implements \JsonSerializable{
     public function create(Validation $validation=null){
         $table=$this->table();
         if ($this->loaded()){
-            $msg=strtr('Cannot create :object model because it is already loaded.',array("object"=>__CLASS__));
+            $msg=strtr('Cannot create :object model because it is already loaded.',array("object"=>get_called_class()));
             throw new Exception ( $msg);
         }
         
@@ -432,7 +432,7 @@ class Entity implements \JsonSerializable{
      */
     public function delete() {
         if (! $this->loaded ()){
-            $msg=strtr('Cannot delete :object model because it is not loaded.',array("object"=>__CLASS__));
+            $msg=strtr('Cannot delete :object model because it is not loaded.',array("object"=>get_called_class()));
             throw new Exception ($msg);
         }
         $table=$this->table();
@@ -471,7 +471,7 @@ class Entity implements \JsonSerializable{
         if (!$validation)return $this;
         if (($this->_valid = $validation->valid($this->_data+$this->columns(true)->asArray(ColumnSet::TYPE_DEFAULT))) === FALSE)
         {
-            throw (new Exception(strtr("validation data fail")))->setValidationError($validation->errors());
+            throw (new Exception(strtr("validation data fail [object]",array("object"=>get_called_class()))))->setValidationError($validation->errors());
         }
         return $this;
     }
