@@ -14,8 +14,8 @@ class DomeEntityTest extends Entity{
     }
     public function filterFactory() {
         return (new Filter($this))
-        ->rule(new DomeFilterCallback("trim"))
-        ->rule(new DomeFilterCallback("strip_tags"),"enname")
+        ->rule(new DomeFilterCallback("trim"))//全局过滤,不指定字段
+        ->rule(new DomeFilterCallback("strip_tags"),"enname")//指定字段过滤
 //         ->rules(array (//批量
 //             new DomeFilterCallback("trim"),
 //             new DomeFilterCallback("strip_tags"),
