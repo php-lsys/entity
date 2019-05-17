@@ -25,6 +25,9 @@ class DomeEntityTest extends Entity{
     public function validationFactory(){
         return (new Validation($this))
         ->rule(new DomeVaildStrlen(1, 15, 0),"enname")
+//         ->rules([//批量
+//             new DomeVaildStrlen(1, 15, 0),
+//         ],"name")
         ;
     }
 }
