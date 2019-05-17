@@ -38,12 +38,9 @@
 #include "src/class_exception.h"
 #include "src/class_filter.h"
 #include "src/class_filter_rule.h"
-#include "src/class_filter_rule_callback.h"
 #include "src/class_table.h"
 #include "src/class_validation.h"
 #include "src/class_validation_rule.h"
-#include "src/class_validation_rule_callback.h"
-
 
 /* If you declare any globals in php_entity.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(entity)
@@ -117,11 +114,9 @@ PHP_MINIT_FUNCTION(entity)
 	lsentity_exception_class_init();
 	lsentity_filter_class_init();
 	lsentity_filter_rule_class_init();
-	lsentity_filter_rule_callback_class_init();
 	lsentity_table_class_init();
 	lsentity_validation_class_init();
 	lsentity_validation_rule_class_init();
-	lsentity_validation_rule_callback_class_init();
 	/* If you have INI entries, uncomment these lines
 	REGISTER_INI_ENTRIES();
 	*/
