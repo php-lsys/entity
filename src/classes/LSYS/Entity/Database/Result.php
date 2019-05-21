@@ -14,7 +14,7 @@ interface Result extends \Iterator{
      * 一般当结果集非常大时使用，防止内存不足
      * @return $this
      */
-    public function fetchFree();
+    public function setFetchFree();
     /**
      * 已从资源中获取的结果数量
      * 完成一次完整迭代后保证该值等于结果中的总数

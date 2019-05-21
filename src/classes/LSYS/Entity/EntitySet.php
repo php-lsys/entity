@@ -14,8 +14,8 @@ class EntitySet implements \Iterator{
         $this->_entity=$entity_name;
         $this->_columns=$columns;
     }
-    public function fetchFree(){
-        $this->_result->fetchFree();
+    public function setFetchFree(){
+        $this->_result->setFetchFree();
         return $this;
     }
     public function fetchCount($iterator=false){
