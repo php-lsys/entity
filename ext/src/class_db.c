@@ -23,5 +23,5 @@ static zend_function_entry lsentity_db_class_method[] = {
 void lsentity_db_class_init(){
     zend_class_entry ce;
     INIT_NS_CLASS_ENTRY(ce,LSENTITY_NS,"Database",lsentity_db_class_method);
-    lsentity_db_ce_ptr = zend_register_internal_interface(&ce );
+    lsentity_db_ce_ptr = zend_register_internal_interface(&ce);
 }

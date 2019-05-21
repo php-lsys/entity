@@ -15,10 +15,12 @@ interface Database{
 	public function quoteColumn($column);
 	/**
 	 * 包裹值
+     * $column_type　为NULL　根据$value类型推断
 	 * @param string $value
+	 * @param mixed $column_type
 	 * @return string
 	 */
-	public function quoteValue($value,$column_type);
+	public function quoteValue($value,$column_type=null);
 	/**
 	 * 执行语句
 	 * @param string

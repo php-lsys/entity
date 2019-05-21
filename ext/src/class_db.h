@@ -5,16 +5,16 @@
 
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_quote_table_arginfo, 0, 0, 1)
-                ZEND_ARG_INFO(0, table)
+    ZEND_ARG_INFO(0, table)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_quote_column_arginfo, 0, 0, 1)
-                ZEND_ARG_INFO(0, column)
+    ZEND_ARG_INFO(0, column)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(lsentity_db_quote_value_arginfo, 0, 0, 2)
-                ZEND_ARG_INFO(0, value)
-                ZEND_ARG_INFO(0, column_type)
+ZEND_BEGIN_ARG_INFO_EX(lsentity_db_quote_value_arginfo, 0, 0, 1)
+    ZEND_ARG_INFO(0, value)
+    ZEND_ARG_INFO(0, column_type)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_exec_arginfo, 0, 0, 1)

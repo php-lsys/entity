@@ -33,11 +33,13 @@ ZEND_METHOD(lsentity_entity_column_set_class, __construct){
     zend_update_property(lsentity_entity_column_set_ce_ptr,object,ZEND_STRL("_patch_columns"),&temp_array);
     zval_ptr_dtor(&temp_array);
 }
+ZEND_METHOD(lsentity_entity_column_set_class, isCustom){}
 ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){}
 
 
 static zend_function_entry lsentity_entity_column_set_class_method[] = {
     ZEND_ME(lsentity_entity_column_set_class,__construct, lsentity_entity_column_set_construct_arginfo, ZEND_ACC_PUBLIC)
+    ZEND_ME(lsentity_entity_column_set_class,isCustom, NULL, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_column_set_class,asColumnSet, lsentity_entity_column_set_ascs_arginfo, ZEND_ACC_PUBLIC)
     ZEND_FE_END
 };

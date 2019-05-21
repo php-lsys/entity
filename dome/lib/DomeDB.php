@@ -96,7 +96,7 @@ class DomeDB  extends PDO implements Database{
         }
         return $table;
     }
-    public function quoteValue($value, $column_type)
+    public function quoteValue($value, $column_type=null)
     {
         try{
             if ($value === NULL) {
