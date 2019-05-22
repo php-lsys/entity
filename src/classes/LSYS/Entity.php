@@ -458,7 +458,9 @@ class Entity implements \JsonSerializable{
      * @return int|NULL
      */
     public function __toString(){
-        return strval($this->pk());
+		$pk=$this->pk();
+		$pk=is_array($pk)?implode(",",$pk):$pk;
+        return strval($pk);
     }
     /**
      * 检查当前已设置数据是否合规

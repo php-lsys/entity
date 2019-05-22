@@ -72,9 +72,9 @@ void lsentity_column_set_class_init(){
     INIT_NS_CLASS_ENTRY(ce,LSENTITY_NS,"ColumnSet",lsentity_column_set_class_method);
     lsentity_column_set_ce_ptr = zend_register_internal_class(&ce);
     zend_declare_property_null(lsentity_column_set_ce_ptr,ZEND_STRL("_columns"), ZEND_ACC_PROTECTED);
-    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_FIELD"),1);
-    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_ARRAY"),2);
-    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_DEFAULT"),3);
+    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_FIELD"),COLUMN_SET_TYPE_FIELD);
+    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_ARRAY"),COLUMN_SET_TYPE_ARRAY);
+    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_DEFAULT"),COLUMN_SET_TYPE_DEFAULT);
 }
 
 
