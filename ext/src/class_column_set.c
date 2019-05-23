@@ -6,9 +6,16 @@
 #include "zend.h"
 #include "php.h"
 #include "zend_API.h"
+#include "zend_interfaces.h"
+#include "zend_exceptions.h"
 
 #include "entity.h"
+#include "utils.h"
 #include "class_column_set.h"
+#include "class_exception.h"
+#include "class_column.h"
+
+
 
 ZEND_API zend_class_entry *lsentity_column_set_ce_ptr;
 
@@ -32,10 +39,66 @@ ZEND_END_ARG_INFO()
 
 
 ZEND_METHOD(lsentity_column_set_class, __construct){
-
+    zval *column,*object;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_ARRAY_EX(column, 0, 1)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+    object = getThis();
+    zval temp_array;
+    array_init(&temp_array);
+    zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),&temp_array);
+    zval_ptr_dtor(&temp_array);
+    zval *val;
+    ZEND_HASH_FOREACH_VAL(Z_ARR_P(column),val) {
+        lsentity_obj_check(lsentity_column_ce_ptr,val,1);
+        zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"add",NULL,val);
+    } ZEND_HASH_FOREACH_END();
 }
-ZEND_METHOD(lsentity_column_set_class, getType){}
-ZEND_METHOD(lsentity_column_set_class, add){}
+ZEND_METHOD(lsentity_column_set_class, getType){
+    zval *name,*object;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_STR(name)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    object=getThis();
+    if(lsentity_check_bool_with_1_params(&object,"offsetexists",name)){
+        zval column,type;
+        zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "offsetget",&column,name);
+        if(!zend_object_is_true(&column)){
+            zval_ptr_dtor(&column);
+            RETURN_NULL();
+        }
+        zend_call_method_with_1_params(&column,Z_OBJCE(column), NULL, "gettype",&type,name);
+        RETURN_ZVAL(&type,1,1);
+    }
+    RETURN_NULL();
+}
+ZEND_METHOD(lsentity_column_set_class, add){
+    zval *object, *column;
+    zend_bool exist_copy = 0;
+    ZEND_PARSE_PARAMETERS_START(1, 2)
+            Z_PARAM_OBJECT_OF_CLASS_EX(column, lsentity_column_ce_ptr, 0, 0)
+            Z_PARAM_BOOL(exist_copy)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+    object=getThis();
+    zval name;
+    zend_call_method_with_0_params(column,Z_OBJCE_P(column), NULL, "name",&name);
+    if(Z_TYPE(name)!=IS_STRING){
+        zval_ptr_dtor(&name);
+        RETURN_ZVAL(object,0,0);
+    }
+    zval *columnarr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),1,NULL);
+    zval * val=zend_hash_find(Z_ARR_P(columnarr),Z_STR(name));
+    if(val&&exist_copy){
+        zend_call_method_with_1_params(column,Z_OBJCE_P(column), NULL, "copy",NULL,val);
+    }
+    if(!val){
+        zend_hash_add(Z_ARR_P(columnarr),Z_STR(name),column);
+    }else{
+        zend_hash_update(Z_ARR_P(columnarr),Z_STR(name),column);
+    }
+    zval_ptr_dtor(&name);
+    RETURN_ZVAL(object,0,0);
+}
 ZEND_METHOD(lsentity_column_set_class, asArray){}
 ZEND_METHOD(lsentity_column_set_class, offsetExists){}
 ZEND_METHOD(lsentity_column_set_class, offsetUnset){}

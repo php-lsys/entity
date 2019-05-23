@@ -70,3 +70,40 @@ int lsentity_new_class(zval *class_name,zval *return_value,zval *params,int num_
     }
     return 1;
 }
+
+
+int lsentity_check_bool_with_0_params(zval *object,const char* method){
+    zval isexist;
+    zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, method, &isexist);
+    int ret=zend_is_true(&isexist);
+    zval_ptr_dtor(&isexist);
+    return ret;
+}
+
+int lsentity_check_bool_with_1_params(zval *object,const char* method,zval *param){
+    zval isexist;
+    zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, method, &isexist,param);
+    int ret=zend_is_true(&isexist);
+    zval_ptr_dtor(&isexist);
+    return ret;
+}
+
+int lsentity_check_bool_with_2_params(zval *object,const char* method,zval *param1,zval *param2){
+    zval isexist;
+    zend_call_method_with_2_params(object,Z_OBJCE_P(object), NULL, method, &isexist,param1,param2);
+    int ret=zend_is_true(&isexist);
+    zval_ptr_dtor(&isexist);
+    return ret;
+}
+
+int lsentity_obj_check(zend_class_entry * ce,zval *retobj,int throw){
+    if(zend_object_is_true(retobj)&&instanceof_function(Z_OBJCE_P(retobj),ce)) {
+        return 1;
+    }else{
+        zval_ptr_dtor(retobj);
+        if(throw)zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "the table method not return %s object",ZSTR_VAL(ce->name));
+        return 0;
+    }
+}
+
+
