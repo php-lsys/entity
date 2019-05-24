@@ -51,29 +51,139 @@ ZEND_END_ARG_INFO()
 
 
 ZEND_METHOD(lsentity_column_class, __construct){
-
+    zend_string *val;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_STR(val)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),val);
 }
 
 ZEND_METHOD(lsentity_column_class, name){
-
+    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL),0,0);
 }
 
-ZEND_METHOD(lsentity_column_class, setComment){}
-ZEND_METHOD(lsentity_column_class, comment){}
+ZEND_METHOD(lsentity_column_class, setComment){
+    zend_string *val;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_STR(val)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),val);
 
-ZEND_METHOD(lsentity_column_class, useDefault){}
-ZEND_METHOD(lsentity_column_class, setDefault){}
-ZEND_METHOD(lsentity_column_class, getDefault){}
-ZEND_METHOD(lsentity_column_class, setType){}
-ZEND_METHOD(lsentity_column_class, getType){}
-ZEND_METHOD(lsentity_column_class, setAllowNull){}
-ZEND_METHOD(lsentity_column_class, isAllowNull){}
-ZEND_METHOD(lsentity_column_class, compare){}
-ZEND_METHOD(lsentity_column_class, copy){}
-ZEND_METHOD(lsentity_column_class, read){}
-ZEND_METHOD(lsentity_column_class, __toString){}
-ZEND_METHOD(lsentity_column_class, asArray){}
+    RETURN_ZVAL(getThis(),0,0);
 
+}
+ZEND_METHOD(lsentity_column_class, comment){
+    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),0,NULL),0,0);
+}
+
+ZEND_METHOD(lsentity_column_class, useDefault){
+    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),0,NULL),0,0);
+}
+ZEND_METHOD(lsentity_column_class, setDefault){
+    zend_string *val;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_STR(val)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),val);
+    zend_update_property_bool(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),1);
+    RETURN_ZVAL(getThis(),0,0);
+
+}
+ZEND_METHOD(lsentity_column_class, getDefault){
+    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL),0,0);
+}
+ZEND_METHOD(lsentity_column_class, setType){
+    zend_string *val;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_STR(val)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),val);
+    RETURN_ZVAL(getThis(),0,0);
+}
+ZEND_METHOD(lsentity_column_class, getType){
+    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL),0,0);
+}
+ZEND_METHOD(lsentity_column_class, setAllowNull){
+    zend_bool val;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+        Z_PARAM_BOOL(val)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    zend_update_property_bool(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),val);
+
+    zval *def=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
+    if(val){
+        if(Z_TYPE_P(def)==IS_STRING&&!zend_is_true(def)){
+            zend_update_property_null(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"));
+        }
+    }else{
+        if(Z_TYPE_P(def)==IS_NULL){
+            zend_update_property_string(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),"");
+        }
+    }
+    RETURN_ZVAL(getThis(),0,0);
+}
+ZEND_METHOD(lsentity_column_class, isAllowNull){
+    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL),0,0);
+}
+
+ZEND_METHOD(lsentity_column_class, read){
+    zend_string *val;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_STR(val)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    RETURN_STR(val);
+}
+ZEND_METHOD(lsentity_column_class, __toString){
+    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL),0,0);
+}
+ZEND_METHOD(lsentity_column_class, asArray){
+
+    zval temp_array;
+    array_init(&temp_array);
+
+    zval *mzval;
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL);
+    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("name"),mzval ZEND_FILE_LINE_CC);
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL);
+    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("type"),mzval ZEND_FILE_LINE_CC);
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
+    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("default"),mzval ZEND_FILE_LINE_CC);
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL);
+    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("allowNull"),mzval ZEND_FILE_LINE_CC);
+
+    RETURN_ZVAL(&temp_array,1,1);
+
+}
+ZEND_METHOD(lsentity_column_class, compare){
+    zval *old_val,*new_val;
+    ZEND_PARSE_PARAMETERS_START(2, 2)
+        Z_PARAM_ZVAL(old_val)
+        Z_PARAM_ZVAL(new_val)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+    if((Z_TYPE_P(old_val)!=IS_NULL&&Z_TYPE_P(old_val)==IS_NULL)
+            ||(Z_TYPE_P(old_val)==IS_NULL&&Z_TYPE_P(old_val)!=IS_NULL))RETURN_FALSE;
+    RETURN_BOOL(zend_is_identical(old_val,new_val));
+}
+ZEND_METHOD(lsentity_column_class, copy){
+    zval *column;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_OBJECT_OF_CLASS_EX(column, lsentity_column_ce_ptr, 0, 0)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+    zval *mzval;
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL);
+    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_type"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),0,NULL);
+    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_is_default"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
+    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_default"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL);
+    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_is_nullable"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),0,NULL);
+    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_comment"),mzval);
+
+    RETURN_ZVAL(getThis(),0,0);
+
+}
 
 static zend_function_entry lsentity_column_class_method[] = {
         ZEND_ME(lsentity_column_class,__construct, lsentity_column_construct_arginfo, ZEND_ACC_PUBLIC)
@@ -103,7 +213,7 @@ void lsentity_column_class_init(){
     zend_declare_property_null(lsentity_column_ce_ptr,ZEND_STRL("_type"), ZEND_ACC_PROTECTED );
     zend_declare_property_bool(lsentity_column_ce_ptr,ZEND_STRL("_is_default"),0, ZEND_ACC_PROTECTED );
     zend_declare_property_null(lsentity_column_ce_ptr,ZEND_STRL("_default"), ZEND_ACC_PROTECTED );
-    zend_declare_property_bool(lsentity_column_ce_ptr,ZEND_STRL("_is_nullable"),0, ZEND_ACC_PROTECTED );
+    zend_declare_property_bool(lsentity_column_ce_ptr,ZEND_STRL("_is_nullable"),1, ZEND_ACC_PROTECTED );
     zend_declare_property_bool(lsentity_column_ce_ptr,ZEND_STRL("_comment"),0, ZEND_ACC_PROTECTED );
 }
 

@@ -9,19 +9,12 @@
 #include "utils.h"
 #include "class_table.h"
 
-int lsentity_new_class(zval *class_name,zval *return_value,zval *params,int num_args){
-    zend_class_entry *ce;
-    if ((ce = zend_lookup_class(Z_STR_P(class_name))) == NULL) {
-        if (!EG(exception)) {
-            zend_throw_exception_ex(lsentity_exception_ce_ptr, -1, "Class %s does not exist", Z_STRVAL_P(class_name));
-        }
-        return 0;
-    }
+int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int num_args){
     zval retval;
     zend_class_entry *old_scope;
     zend_function *constructor;
     if (UNEXPECTED(object_init_ex(return_value, ce) != SUCCESS)) {
-        zend_throw_exception_ex(lsentity_exception_ce_ptr, -1, "Class %s does not init", Z_STRVAL_P(class_name));
+        zend_throw_exception_ex(lsentity_exception_ce_ptr, -1, "Class %s does not init", ZSTR_VAL(ce->name));
         return 0;
     }
     old_scope = EG(fake_scope);

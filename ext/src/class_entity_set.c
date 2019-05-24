@@ -63,7 +63,7 @@ void lsentity_entity_set_class_init(){
     zend_class_entry ce;
     INIT_NS_CLASS_ENTRY(ce,LSENTITY_NS,"EntitySet",lsentity_entity_set_class_method);
     lsentity_entity_set_ce_ptr = zend_register_internal_class(&ce);
-    zend_do_inheritance(lsentity_entity_set_ce_ptr, zend_ce_iterator);
+    zend_do_implement_interface(lsentity_entity_set_ce_ptr, zend_ce_iterator);
     zend_declare_property_null(lsentity_entity_set_ce_ptr,ZEND_STRL("_result"), ZEND_ACC_PROTECTED);
     zend_declare_property_null(lsentity_entity_set_ce_ptr,ZEND_STRL("_columns"), ZEND_ACC_PROTECTED);
     zend_declare_property_null(lsentity_entity_set_ce_ptr,ZEND_STRL("_table"), ZEND_ACC_PROTECTED);
