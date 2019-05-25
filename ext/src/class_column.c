@@ -84,6 +84,8 @@ ZEND_METHOD(lsentity_column_class, setDefault){
     ZEND_PARSE_PARAMETERS_START(1, 1)
             Z_PARAM_STR(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+
+
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),val);
     zend_update_property_bool(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),1);
     RETURN_ZVAL(getThis(),0,0);
