@@ -100,3 +100,16 @@ int lsentity_obj_check(zend_class_entry * ce,zval *retobj,int throw){
 }
 
 
+int lsentity_in_array(zval *array,zval *value){
+    zval *entry;
+    zend_ulong num_idx;
+    zend_string *str_idx;
+    ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_idx, str_idx, entry) {
+                ZVAL_DEREF(entry);
+                if (fast_is_identical_function(value, entry)) {
+                    return 1;
+                }
+            } ZEND_HASH_FOREACH_END();
+    return 0;
+}
+

@@ -127,7 +127,7 @@ ZEND_METHOD(lsentity_column_set_class, asArray){
     object=getThis();
     zval *columnarr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),1,NULL);
     switch (type){
-        case COLUMN_SET_TYPE_FIELD: {
+        case LSENTITY_COLUMN_SET_TYPE_FIELD: {
             zval *input,				/* Input array */
                     *entry,
                     new_val;				/* New value */
@@ -164,7 +164,7 @@ ZEND_METHOD(lsentity_column_set_class, asArray){
             } ZEND_HASH_FILL_END();
          }
             break;
-        case COLUMN_SET_TYPE_DEFAULT:
+        case LSENTITY_COLUMN_SET_TYPE_DEFAULT:
             {
                 zval *cval;
                 zend_string *ckey;
@@ -177,7 +177,7 @@ ZEND_METHOD(lsentity_column_set_class, asArray){
                 } ZEND_HASH_FOREACH_END();
             }
             break;
-        case COLUMN_SET_TYPE_ARRAY:
+        case LSENTITY_COLUMN_SET_TYPE_ARRAY:
             {
                 zval *cval;
                 zend_string *ckey;
@@ -381,9 +381,9 @@ void lsentity_column_set_class_init(){
     lsentity_column_set_ce_ptr = zend_register_internal_class(&ce);
     zend_class_implements(lsentity_column_set_ce_ptr,3, zend_ce_iterator,zend_ce_countable,zend_ce_arrayaccess);
     zend_declare_property_null(lsentity_column_set_ce_ptr,ZEND_STRL("_columns"), ZEND_ACC_PROTECTED);
-    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_FIELD"),COLUMN_SET_TYPE_FIELD);
-    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_ARRAY"),COLUMN_SET_TYPE_ARRAY);
-    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_DEFAULT"),COLUMN_SET_TYPE_DEFAULT);
+    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_FIELD"),LSENTITY_COLUMN_SET_TYPE_FIELD);
+    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_ARRAY"),LSENTITY_COLUMN_SET_TYPE_ARRAY);
+    zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_DEFAULT"),LSENTITY_COLUMN_SET_TYPE_DEFAULT);
 }
 
 

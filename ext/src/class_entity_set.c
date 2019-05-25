@@ -4,9 +4,15 @@
 #include "php.h"
 #include "zend_API.h"
 #include "zend_interfaces.h"
+#include "zend_exceptions.h"
 #include "entity.h"
 #include "zend_inheritance.h"
+#include "class_db_result.h"
 #include "class_entity_set.h"
+#include "class_entity_column_set.h"
+#include "class_table.h"
+#include "class_exception.h"
+#include "utils.h"
 
 ZEND_API zend_class_entry *lsentity_entity_set_ce_ptr;
 
@@ -28,21 +34,160 @@ ZEND_END_ARG_INFO()
 
 
 ZEND_METHOD(lsentity_entity_set_class, __construct){
-    zval *table_object,*object;
-    zend_class_entry *table_class;
-    if (zend_parse_method_parameters(ZEND_NUM_ARGS() , getThis(), "|O",table_object,table_class) == FAILURE) {
-        RETURN_FALSE;
-    }
+    zval *db_result,*columns,*table,*object;
+    zend_string *entity_name;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_OBJECT_OF_CLASS(db_result, lsentity_db_result_ce_ptr)
+            Z_PARAM_STR(entity_name)
+            Z_PARAM_OPTIONAL
+            Z_PARAM_OBJECT_OF_CLASS(columns, lsentity_entity_column_set_ce_ptr)
+            Z_PARAM_OBJECT_OF_CLASS(table, lsentity_table_ce_ptr)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
-    zend_update_property(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_loaded"),table_object);
+    zend_update_property(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_result"),db_result);
+    zend_update_property_str(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_entity"),entity_name);
+    if(table)zend_update_property(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_table"),table);
+    if(columns)zend_update_property(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_columns"),columns);
 }
-ZEND_METHOD(lsentity_entity_set_class, setFetchFree){}
-ZEND_METHOD(lsentity_entity_set_class, fetchCount){}
-ZEND_METHOD(lsentity_entity_set_class, key){}
-ZEND_METHOD(lsentity_entity_set_class, next){}
-ZEND_METHOD(lsentity_entity_set_class, rewind){}
-ZEND_METHOD(lsentity_entity_set_class, asArray){}
-ZEND_METHOD(lsentity_entity_set_class, current){}
+ZEND_METHOD(lsentity_entity_set_class, setFetchFree){
+
+    zval *object;
+    object = getThis();
+
+    zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
+
+    zend_call_method_with_0_params(result,Z_OBJCE_P(result),NULL,"setfetchfree",NULL);
+    RETURN_ZVAL(object,0,0);
+
+}
+ZEND_METHOD(lsentity_entity_set_class, fetchCount){
+    zval *object;
+    zend_bool iterator;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_BOOL(iterator)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+    object = getThis();
+
+    zval ret;
+    zval param;
+    ZVAL_BOOL(&param,iterator);
+    zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"fetchcount",&ret,&param);
+    zval_ptr_dtor(&param);
+    RETURN_ZVAL(&ret,0,0);
+
+}
+ZEND_METHOD(lsentity_entity_set_class, key){
+    zval *object;
+    object = getThis();
+    zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
+    zval ret;
+    zend_call_method_with_0_params(result,Z_OBJCE_P(result),NULL,"key",&ret);
+    RETURN_ZVAL(&ret,1,1);
+
+}
+ZEND_METHOD(lsentity_entity_set_class, next){
+
+    zval *object;
+    object = getThis();
+    zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
+    zval ret;
+    zend_call_method_with_0_params(result,Z_OBJCE_P(result),NULL,"next",&ret);
+    RETURN_ZVAL(&ret,1,1);
+
+}
+ZEND_METHOD(lsentity_entity_set_class, rewind){
+
+    zval *object;
+    object = getThis();
+    zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
+    zval ret;
+    zend_call_method_with_0_params(result,Z_OBJCE_P(result),NULL,"rewind",&ret);
+    RETURN_ZVAL(&ret,1,1);
+
+}
+ZEND_METHOD(lsentity_entity_set_class, asArray){
+    //@todo ....
+}
+ZEND_METHOD(lsentity_entity_set_class, current){
+
+    zval *object;
+    object = getThis();
+    zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
+    zval ret;
+    zend_call_method_with_0_params(result,Z_OBJCE_P(result),NULL,"current",&ret);
+    zval *entity;
+    entity = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_entity"),0,NULL);
+
+    if(Z_TYPE(ret)==IS_NULL)RETURN_NULL();
+
+    zend_class_entry *ce;
+    if ((ce = zend_lookup_class(Z_STR_P(entity))) == NULL) {
+        if (!EG(exception)) {
+            zend_throw_exception_ex(lsentity_exception_ce_ptr, -1, "Class %s does not exist", Z_STRVAL_P(entity));
+        }
+        RETURN_NULL();
+    }
+
+    zval *table;
+    table = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),0,NULL);
+
+    zval param[]={
+            *table
+    };
+    lsentity_new_class(ce,return_value,param,1);
+
+
+
+
+    zval *columns=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),0,NULL);
+
+
+    zend_fcall_info fci;
+    zval retval;
+    zval params[3];
+
+    zval ptrue;
+    ZVAL_TRUE(&ptrue);
+
+    ZVAL_COPY_VALUE(&params[0], &ret);
+    ZVAL_COPY_VALUE(&params[1], columns);
+    ZVAL_COPY_VALUE(&params[2], &ptrue);
+    zval_ptr_dtor(&ptrue);
+
+    fci.size = sizeof(fci);
+    fci.object = Z_OBJ_P(return_value);
+    fci.retval = &retval;
+    fci.param_count = 3;
+    fci.params = params;
+    fci.no_separation = 1;
+
+
+    zend_fcall_info_cache fcic;
+    ZVAL_UNDEF(&fci.function_name); /* Unused */
+
+    fcic.initialized = 1;
+    zend_class_entry * obj_ce = Z_OBJCE_P(return_value);
+
+    HashTable *function_table = &obj_ce->function_table;
+        fcic.function_handler = zend_hash_str_find_ptr(
+                function_table, ZEND_STRL("loaddata"));
+    if (fcic.function_handler == NULL) {
+        /* error at c-level */
+        zend_error_noreturn(E_CORE_ERROR, "Couldn't find implementation for method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "loadData");
+        RETURN_NULL();
+    }
+    fcic.calling_scope = obj_ce;
+    fcic.object = Z_OBJ_P(return_value);
+    int _result = zend_call_function(&fci, &fcic);
+    if (_result == FAILURE) {
+        if (!EG(exception)) {
+            zend_error_noreturn(E_CORE_ERROR, "Couldn't execute method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "loadData");
+        }
+    }
+    zval_ptr_dtor(&retval);
+
+
+}
 ZEND_METHOD(lsentity_entity_set_class, valid){}
 
 static zend_function_entry lsentity_entity_set_class_method[] = {

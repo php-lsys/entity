@@ -1,6 +1,6 @@
 
 
-#include <Zend/zend_smart_str.h>
+
 #include "zend.h"
 #include "zend_hash.h"
 #include "php.h"
@@ -10,6 +10,7 @@
 #include "Zend/zend_exceptions.h"
 #include "ext/standard/php_array.h"
 #include "ext/standard/php_string.h"
+#include "zend_smart_str.h"
 #include "utils.h"
 #include "entity.h"
 #include "class_entity.h"
@@ -119,21 +120,10 @@ static zval * cache_obj_get(zval *object,const char *attr,const char *method,zen
     return NULL;
 }
 
-static int in_array(zval *array,zval *value){
-    zval *entry;
-    zend_ulong num_idx;
-    zend_string *str_idx;
-    ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_idx, str_idx, entry) {
-        ZVAL_DEREF(entry);
-        if (fast_is_identical_function(value, entry)) {
-            return 1;
-        }
-    } ZEND_HASH_FOREACH_END();
-    return 0;
-}
+
 static int comp_pkkey(zval *pk,zval *column){
     if(Z_TYPE_P(pk)==IS_ARRAY){
-        return !in_array(pk,column);
+        return !lsentity_in_array(pk,column);
     }
     return string_compare_function(column,pk);
 }
@@ -1152,7 +1142,7 @@ ZEND_METHOD(lsentity_entity_class, values){
         zval columns;
         if(get_columns(object,&columns,1)){
             zval param1,defarr;
-            ZVAL_LONG(&param1,COLUMN_SET_TYPE_FIELD);
+            ZVAL_LONG(&param1,LSENTITY_COLUMN_SET_TYPE_FIELD);
             zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
             php_array_merge(Z_ARR(arr),Z_ARR(defarr));
             zval_ptr_dtor(&defarr);
@@ -1222,7 +1212,7 @@ ZEND_METHOD(lsentity_entity_class, check){
     zval columns;
     if(get_columns(object,&columns,1)){
         zval param1,defarr;
-        ZVAL_LONG(&param1,COLUMN_SET_TYPE_DEFAULT);
+        ZVAL_LONG(&param1,LSENTITY_COLUMN_SET_TYPE_DEFAULT);
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
         php_array_merge(Z_ARR(arr),Z_ARR(defarr));
         zval_ptr_dtor(&defarr);
@@ -1259,7 +1249,7 @@ ZEND_METHOD(lsentity_entity_class, asArray){
     zval columns;
     if(get_columns(object,&columns,1)){
         zval param1,defarr;
-        ZVAL_LONG(&param1,COLUMN_SET_TYPE_DEFAULT);
+        ZVAL_LONG(&param1,LSENTITY_COLUMN_SET_TYPE_DEFAULT);
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
         zval arr;
         array_init(&arr);

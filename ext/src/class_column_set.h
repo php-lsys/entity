@@ -15,16 +15,16 @@ void lsentity_column_set_class_init();
  * 只返回字段
  * @var integer
  */
-#define COLUMN_SET_TYPE_FIELD 1
+#define LSENTITY_COLUMN_SET_TYPE_FIELD 1
 /**
  * 返回字段和默认值
  * @var integer
  */
-#define COLUMN_SET_TYPE_ARRAY 2
+#define LSENTITY_COLUMN_SET_TYPE_ARRAY 2
 /**
  * 返回字段和默认值
  * @var integer
  */
-#define COLUMN_SET_TYPE_DEFAULT 3
+#define LSENTITY_COLUMN_SET_TYPE_DEFAULT 3
 
 #endif
