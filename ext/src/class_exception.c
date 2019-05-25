@@ -46,7 +46,7 @@ ZEND_METHOD(lsentity_exception_class, setVaildationError){
     array_init(&arr);
     zval *entry;
     ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(val), entry) {
-        if(!Z_TYPE_P(entry)!=IS_STRING){
+        if(Z_TYPE_P(entry)==IS_STRING){
             zend_hash_next_index_insert(Z_ARR_P(&arr),entry);
         }
     } ZEND_HASH_FOREACH_END();
