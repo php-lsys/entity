@@ -395,7 +395,7 @@ ZEND_METHOD(lsentity_entity_class, validation){
 ZEND_METHOD(lsentity_entity_class, table){
     zval *object=getThis();
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),1,NULL);
-    RETURN_ZVAL(valid,0,0);
+    RETURN_ZVAL(valid,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, loadData){
     zval *data, *entity_column_set;
@@ -455,12 +455,12 @@ ZEND_METHOD(lsentity_entity_class, loadData){
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),loaded);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),loaded);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),loaded);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, exportData){
     zval *object=getThis();
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
-    RETURN_ZVAL(data,0,0);
+    RETURN_ZVAL(data,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, changed){
     zval *object=getThis();
@@ -482,7 +482,7 @@ ZEND_METHOD(lsentity_entity_class, clear){
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&temp_array);
     zval_ptr_dtor(&temp_array);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, pk){
     zval *object,table,pk;
@@ -557,18 +557,18 @@ ZEND_METHOD(lsentity_entity_class, columns){
         }
     }
     columns=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),1,NULL);
-    RETURN_ZVAL(columns,0,0);
+    RETURN_ZVAL(columns,1,0);
 }
 
 ZEND_METHOD(lsentity_entity_class, saved){
     zval *object=getThis();
     zval *loaded=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),1,NULL);
-    RETURN_ZVAL(loaded,0,0);
+    RETURN_ZVAL(loaded,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, loaded){
     zval *object=getThis();
     zval *loaded=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),1,NULL);
-    RETURN_ZVAL(loaded,0,0);
+    RETURN_ZVAL(loaded,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, update){
     zval *valid_object,*object;
@@ -675,7 +675,7 @@ ZEND_METHOD(lsentity_entity_class, update){
         zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),1);
         zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),1);
 
-        RETURN_ZVAL(object,0,0);
+        RETURN_ZVAL(object,1,0);
     }
 
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),1,NULL);
@@ -813,7 +813,7 @@ ZEND_METHOD(lsentity_entity_class, update){
 
     iterator_done:
     //
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 
 
 
@@ -995,7 +995,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval_ptr_dtor(&pkcol);
 //    RETURN_ZVAL(object,0,0);
     iterator_done:
-        RETURN_ZVAL(object,0,0);
+        RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, delete){
     zval *object=getThis();
@@ -1170,7 +1170,7 @@ ZEND_METHOD(lsentity_entity_class, values){
         zval* oldval=zend_hash_find(Z_ARR_P(values),Z_STR_P(col));
         if(oldval)zend_call_method_with_2_params(object,Z_OBJCE_P(object),&Z_OBJCE_P(object)->__set, "__set", NULL,col,oldval);
     } ZEND_HASH_FOREACH_END();
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, save){
     zval *valid_object,*object;
@@ -1184,7 +1184,7 @@ ZEND_METHOD(lsentity_entity_class, save){
     }else{
         zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "update", NULL,valid_object);
     }
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, check){
     zval *valid_object,*object;
@@ -1202,7 +1202,7 @@ ZEND_METHOD(lsentity_entity_class, check){
 
     if(!zend_object_is_true(valid_ok)){
         if(zend_object_is_true(&valid_object_obj))zval_ptr_dtor(&valid_object_obj);
-        RETURN_ZVAL(object,0,0);
+        RETURN_ZVAL(object,1,0);
     }
 
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
@@ -1228,7 +1228,7 @@ ZEND_METHOD(lsentity_entity_class, check){
 
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),is_valid);
 
-    if(is_valid)RETURN_ZVAL(object,0,0);
+    if(is_valid)RETURN_ZVAL(object,1,0);
 
     zend_object *obj=zend_throw_exception_ex(lsentity_exception_ce_ptr, 2, "validation data fail");
 
@@ -1240,7 +1240,7 @@ ZEND_METHOD(lsentity_entity_class, check){
         zend_call_method_with_1_params(&throw,Z_OBJCE(throw),NULL,"setvalidationerror",NULL,&errdata);
     }
     zval_ptr_dtor(&errdata);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 
 ZEND_METHOD(lsentity_entity_class, asArray){

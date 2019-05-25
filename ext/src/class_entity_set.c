@@ -57,7 +57,7 @@ ZEND_METHOD(lsentity_entity_set_class, setFetchFree){
     zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
 
     zend_call_method_with_0_params(result,Z_OBJCE_P(result),NULL,"setfetchfree",NULL);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 
 }
 ZEND_METHOD(lsentity_entity_set_class, fetchCount){
@@ -73,7 +73,7 @@ ZEND_METHOD(lsentity_entity_set_class, fetchCount){
     ZVAL_BOOL(&param,iterator);
     zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"fetchcount",&ret,&param);
     zval_ptr_dtor(&param);
-    RETURN_ZVAL(&ret,0,0);
+    RETURN_ZVAL(&ret,1,1);
 
 }
 ZEND_METHOD(lsentity_entity_set_class, key){

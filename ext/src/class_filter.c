@@ -98,7 +98,7 @@ ZEND_METHOD(lsentity_filter_class, rule){
         sgr=zend_hash_find(Z_ARR_P(gr),field);
         add_next_index_zval(sgr,filter_rule);
     }
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_filter_class, rules){
 
@@ -122,7 +122,7 @@ ZEND_METHOD(lsentity_filter_class, rules){
         zval_ptr_dtor(&ret);
     } ZEND_HASH_FOREACH_END();
 
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_filter_class, runFilter){
 

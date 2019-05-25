@@ -104,7 +104,7 @@ ZEND_METHOD(lsentity_column_set_class, add){
     zend_call_method_with_0_params(column,Z_OBJCE_P(column), NULL, "name",&name);
     if(Z_TYPE(name)!=IS_STRING){
         zval_ptr_dtor(&name);
-        RETURN_ZVAL(object,0,0);
+        RETURN_ZVAL(object,1,0);
     }
     zval *columnarr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),1,NULL);
     zval * val=zend_hash_find(Z_ARR_P(columnarr),Z_STR(name));
@@ -117,7 +117,7 @@ ZEND_METHOD(lsentity_column_set_class, add){
         zend_hash_update(Z_ARR_P(columnarr),Z_STR(name),column);
     }
     zval_ptr_dtor(&name);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_column_set_class, asArray){
     zend_long type;

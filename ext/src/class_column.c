@@ -69,7 +69,7 @@ ZEND_METHOD(lsentity_column_class, setComment){
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),val);
 
-    RETURN_ZVAL(getThis(),0,0);
+    RETURN_ZVAL(getThis(),1,0);
 
 }
 ZEND_METHOD(lsentity_column_class, comment){
@@ -88,7 +88,8 @@ ZEND_METHOD(lsentity_column_class, setDefault){
 
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),val);
     zend_update_property_bool(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),1);
-    RETURN_ZVAL(getThis(),0,0);
+
+    RETURN_ZVAL(getThis(),1,0);
 
 }
 ZEND_METHOD(lsentity_column_class, getDefault){
@@ -100,7 +101,7 @@ ZEND_METHOD(lsentity_column_class, setType){
             Z_PARAM_STR(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),val);
-    RETURN_ZVAL(getThis(),0,0);
+    RETURN_ZVAL(getThis(),1,0);
 }
 ZEND_METHOD(lsentity_column_class, getType){
     RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL),0,0);
@@ -122,7 +123,7 @@ ZEND_METHOD(lsentity_column_class, setAllowNull){
             zend_update_property_string(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),"");
         }
     }
-    RETURN_ZVAL(getThis(),0,0);
+    RETURN_ZVAL(getThis(),1,0);
 }
 ZEND_METHOD(lsentity_column_class, isAllowNull){
     RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL),0,0);
@@ -183,7 +184,7 @@ ZEND_METHOD(lsentity_column_class, copy){
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),0,NULL);
     zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_comment"),mzval);
 
-    RETURN_ZVAL(getThis(),0,0);
+    RETURN_ZVAL(getThis(),1,0);
 
 }
 

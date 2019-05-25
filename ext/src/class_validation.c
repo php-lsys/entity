@@ -180,7 +180,7 @@ ZEND_METHOD(lsentity_validation_class, label){
     if(!old)zend_hash_add(Z_ARR_P(labels),field,&labelval);
     else zend_hash_update(Z_ARR_P(labels),field,&labelval);
     zval_ptr_dtor(&labelval);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_validation_class, labels){
     zval *labels,*object;
@@ -199,7 +199,7 @@ ZEND_METHOD(lsentity_validation_class, labels){
     }
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_labels"),&sarr);
     zval_ptr_dtor(&sarr);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_validation_class, rule){
 
@@ -244,7 +244,7 @@ ZEND_METHOD(lsentity_validation_class, rule){
             add_next_index_zval(sgr,rule);
         }
     }
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 
 }
 ZEND_METHOD(lsentity_validation_class, rules){
@@ -269,7 +269,7 @@ ZEND_METHOD(lsentity_validation_class, rules){
                 zval_ptr_dtor(&ret);
             } ZEND_HASH_FOREACH_END();
 
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_validation_class, valid){
     zval t;
@@ -460,7 +460,7 @@ ZEND_METHOD(lsentity_validation_class, error){
     if(!old)zend_hash_add(Z_ARR_P(errors),field,&zerror);
     else zend_hash_update(Z_ARR_P(errors),field,&zerror);
     zval_ptr_dtor(&zerror);
-    RETURN_ZVAL(object,0,0);
+    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_validation_class, errors){
     zval *labels=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_errors"),0,NULL);
@@ -469,7 +469,7 @@ ZEND_METHOD(lsentity_validation_class, errors){
         array_init(&t);
         RETURN_ZVAL(&t,1,1);
     }
-    RETURN_ZVAL(labels,0,0);
+    RETURN_ZVAL(labels,1,0);
 }
 
 
