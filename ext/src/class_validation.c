@@ -55,7 +55,7 @@ ZEND_METHOD(lsentity_validation_class, __construct){
 
     zval *entity,*rule_group,*object;
     zend_bool allow_cache;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 3)
             Z_PARAM_OBJECT_OF_CLASS(entity,lsentity_entity_ce_ptr)
             Z_PARAM_OPTIONAL
             Z_PARAM_ARRAY(rule_group)
@@ -205,7 +205,7 @@ ZEND_METHOD(lsentity_validation_class, rule){
 
     zval *rule,*object;
     zend_string *field;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_OBJECT_OF_CLASS(rule,lsentity_validation_rule_ce_ptr)
             Z_PARAM_OPTIONAL
             Z_PARAM_STR(field)
@@ -251,7 +251,7 @@ ZEND_METHOD(lsentity_validation_class, rules){
 
     zval *filter_rules,*object;
     zend_string *field;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_ARRAY(filter_rules)
             Z_PARAM_OPTIONAL
             Z_PARAM_STR(field)
@@ -359,10 +359,6 @@ ZEND_METHOD(lsentity_validation_class, valid){
         if(Z_TYPE_P(setkey)!=IS_ARRAY)continue;
         ZEND_HASH_FOREACH_VAL(Z_ARR_P(setkey),rval){
 
-//            $value=isset($check_data[$field])?$check_data[$field]:null;
-//            if($rule->allowEmpty()&&in_array($value, array(null,false,'',array()), TRUE)){//可以为空
-//                continue;
-//            }
 //            $rule->check($this,$field,$value,$this->_labels[$field],$this->,$check_data);
 //            if (isset($this->_errors[$field])) {
 //                break;

@@ -150,7 +150,7 @@ static int arr_intersect_key(zval* retval,zval *data,zval *change){
 
 ZEND_METHOD(lsentity_entity_class, __construct){
     zval *table_object,*object;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(0, 1)
         Z_PARAM_OPTIONAL
         Z_PARAM_OBJECT_OF_CLASS_EX(table_object, lsentity_table_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
@@ -572,7 +572,7 @@ ZEND_METHOD(lsentity_entity_class, loaded){
 }
 ZEND_METHOD(lsentity_entity_class, update){
     zval *valid_object,*object;
-    ZEND_PARSE_PARAMETERS_START(0, 0)
+    ZEND_PARSE_PARAMETERS_START(0, 1)
             Z_PARAM_OPTIONAL
             Z_PARAM_OBJECT_OF_CLASS_EX(valid_object, lsentity_validation_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
@@ -820,7 +820,7 @@ ZEND_METHOD(lsentity_entity_class, update){
 }
 ZEND_METHOD(lsentity_entity_class, create){
     zval *valid_object,*object;
-    ZEND_PARSE_PARAMETERS_START(0, 0)
+    ZEND_PARSE_PARAMETERS_START(0, 1)
             Z_PARAM_OPTIONAL
             Z_PARAM_OBJECT_OF_CLASS_EX(valid_object, lsentity_validation_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
@@ -1128,7 +1128,7 @@ ZEND_METHOD(lsentity_entity_class, delete){
 }
 ZEND_METHOD(lsentity_entity_class, values){
     zval *values,*expected;
-    ZEND_PARSE_PARAMETERS_START(0, 0)
+    ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_ARRAY(values)
             Z_PARAM_OPTIONAL
             Z_PARAM_ARRAY(expected)
@@ -1174,7 +1174,7 @@ ZEND_METHOD(lsentity_entity_class, values){
 }
 ZEND_METHOD(lsentity_entity_class, save){
     zval *valid_object,*object;
-    ZEND_PARSE_PARAMETERS_START(0, 0)
+    ZEND_PARSE_PARAMETERS_START(0, 1)
             Z_PARAM_OPTIONAL
             Z_PARAM_OBJECT_OF_CLASS_EX(valid_object, lsentity_validation_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
@@ -1188,7 +1188,7 @@ ZEND_METHOD(lsentity_entity_class, save){
 }
 ZEND_METHOD(lsentity_entity_class, check){
     zval *valid_object,*object;
-    ZEND_PARSE_PARAMETERS_START(0, 0)
+    ZEND_PARSE_PARAMETERS_START(0, 1)
             Z_PARAM_OPTIONAL
             Z_PARAM_OBJECT_OF_CLASS_EX(valid_object, lsentity_validation_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);

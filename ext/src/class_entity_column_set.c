@@ -26,7 +26,7 @@ ZEND_END_ARG_INFO()
 
 ZEND_METHOD(lsentity_entity_column_set_class, __construct){
     zval *object,*column,*patch_columns;
-    ZEND_PARSE_PARAMETERS_START(0, 0)
+    ZEND_PARSE_PARAMETERS_START(0, 2)
             Z_PARAM_OPTIONAL
             Z_PARAM_ARRAY(column)
             Z_PARAM_ARRAY(patch_columns)
@@ -66,7 +66,7 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
 
     zend_bool patch=0;
     zval *column;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_OBJECT_OF_CLASS(column, lsentity_column_ce_ptr)
             Z_PARAM_OPTIONAL
             Z_PARAM_BOOL(patch)

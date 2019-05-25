@@ -40,7 +40,7 @@ ZEND_METHOD(lsentity_filter_class, __construct){
 
     zval *entity,*object,*rule_group;
     zend_bool  allow_cache;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 3)
             Z_PARAM_OBJECT_OF_CLASS(entity,lsentity_entity_ce_ptr)
             Z_PARAM_OPTIONAL
             Z_PARAM_ARRAY(rule_group)
@@ -77,7 +77,7 @@ ZEND_METHOD(lsentity_filter_class, rule){
 
     zval *filter_rule,*object;
     zend_string *field;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_OBJECT_OF_CLASS(filter_rule,lsentity_filter_rule_ce_ptr)
             Z_PARAM_OPTIONAL
             Z_PARAM_STR(field)
@@ -104,7 +104,7 @@ ZEND_METHOD(lsentity_filter_class, rules){
 
     zval *filter_rules,*object;
     zend_string *field;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_ARRAY(filter_rules)
             Z_PARAM_OPTIONAL
             Z_PARAM_STR(field)

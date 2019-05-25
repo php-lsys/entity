@@ -96,6 +96,7 @@ ZEND_METHOD(lsentity_column_set_class, add){
     zend_bool exist_copy = 0;
     ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_OBJECT_OF_CLASS_EX(column, lsentity_column_ce_ptr, 0, 0)
+            Z_PARAM_OPTIONAL
             Z_PARAM_BOOL(exist_copy)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object=getThis();
