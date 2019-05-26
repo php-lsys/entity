@@ -29,7 +29,10 @@ ZEND_METHOD(lsentity_exception_class, setErrorSql){
             Z_PARAM_STR(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_error_sql"),val);
-
+    zval arr;
+    array_init(&arr);
+    zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_validation_error"),&arr);
+    zval_ptr_dtor(&arr);
     RETURN_ZVAL(getThis(),1,0);
 
 
@@ -66,7 +69,9 @@ ZEND_METHOD(lsentity_exception_class, setVaildationError){
         smart_str_free(&err);
     }
 
+
     zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_validation_error"),val);
+    zval_ptr_dtor(&arr);
 
     RETURN_ZVAL(getThis(),1,0);
 
