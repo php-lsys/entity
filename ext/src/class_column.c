@@ -55,6 +55,7 @@ ZEND_METHOD(lsentity_column_class, __construct){
     ZEND_PARSE_PARAMETERS_START(1, 1)
             Z_PARAM_STR(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
+
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),val);
 }
 
@@ -173,16 +174,16 @@ ZEND_METHOD(lsentity_column_class, copy){
             Z_PARAM_OBJECT_OF_CLASS_EX(column, lsentity_column_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     zval *mzval;
-    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL);
-    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_type"),mzval);
-    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),0,NULL);
-    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_is_default"),mzval);
-    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
-    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_default"),mzval);
-    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL);
-    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_is_nullable"),mzval);
-    mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),0,NULL);
-    zend_update_property(Z_OBJCE_P(column),column,ZEND_STRL("_comment"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(column),column,ZEND_STRL("_type"),0,NULL);
+    zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(column),column,ZEND_STRL("_is_default"),0,NULL);
+    zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(column),column,ZEND_STRL("_default"),0,NULL);
+    zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(column),column,ZEND_STRL("_is_nullable"),0,NULL);
+    zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),mzval);
+    mzval=zend_read_property(Z_OBJCE_P(column),column,ZEND_STRL("_comment"),0,NULL);
+    zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),mzval);
 
     RETURN_ZVAL(getThis(),1,0);
 
