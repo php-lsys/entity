@@ -11,7 +11,7 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_validation_rule_check_arginfo, 0, 0, 6)
                 ZEND_ARG_INFO(0, field)
                 ZEND_ARG_INFO(0, value)
                 ZEND_ARG_INFO(0, label)
-                ZEND_ARG_OBJ_INFO_ENTITYNS(0, entity, Entity, 0)
+                ZEND_ARG_OBJ_INFO_ENTITYCLASS(0, entity, 0)
                 ZEND_ARG_ARRAY_INFO(0, check_data,0)
 ZEND_END_ARG_INFO()
 

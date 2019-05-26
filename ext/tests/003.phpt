@@ -1,5 +1,5 @@
 --TEST--
-check db interface
+check entity
 --SKIPIF--
 <?php if (!extension_loaded("entity")) print "skip"; ?>
 --FILE--
@@ -8,7 +8,7 @@ check db interface
 try{
 $ss= new LSYS\Entity\Exception("ssss");
 $ss->setErrorSql("select sss");
-$ss->setVaildationError(["aaa"=>"ddd","bb"=>["ddd"]]);
+$ss->setVaildationError(["aaa"=>"ddd","bb"=>["ddd"]]);//可能有bug
 throw $ss;
 }catch(\Exception $e){
    var_dump($e->getErrorSql());

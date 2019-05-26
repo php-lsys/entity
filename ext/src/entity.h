@@ -8,6 +8,9 @@
 
 #define LSENTITY_DB_NS LSENTITY_NS "\\Database"
 
+#define ZEND_ARG_OBJ_INFO_ENTITYCLASS(pass_by_ref, name, allow_null) \
+         { #name, ZEND_TYPE_ENCODE_CLASS_CONST(LSENTITY_NS, allow_null), pass_by_ref, 0 },
+
 #define ZEND_ARG_OBJ_INFO_ENTITYNS(pass_by_ref, name, classname, allow_null) \
          { #name, ZEND_TYPE_ENCODE_CLASS_CONST(LSENTITY_NS"\\"#classname, allow_null), pass_by_ref, 0 },
 

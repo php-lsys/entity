@@ -16,7 +16,7 @@
 ZEND_API zend_class_entry *lsentity_validation_ce_ptr;
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_validation_construct_arginfo, 0, 0, 1)
-                ZEND_ARG_OBJ_INFO_ENTITYNS(0, entity, Entity, 1)
+                ZEND_ARG_OBJ_INFO_ENTITYCLASS(0, entity, 1)
                 ZEND_ARG_ARRAY_INFO(0, rule_gruop,0)
                 ZEND_ARG_INFO(0, allow_cache)
 ZEND_END_ARG_INFO()

@@ -19,7 +19,7 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_exec_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, sql)
-    ZEND_ARG_ARRAY_INFO(0, data,1)
+    ZEND_ARG_ARRAY_INFO(0, data,0)
 ZEND_END_ARG_INFO()
 
 

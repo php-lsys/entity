@@ -5,7 +5,7 @@
 #include "zend_API.h"
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_filter_rule_filter_arginfo, 0, 0, 3)
-    ZEND_ARG_OBJ_INFO_ENTITYNS(0, entity, Entity, 0)
+    ZEND_ARG_OBJ_INFO_ENTITYCLASS(0, entity, 0)
     ZEND_ARG_INFO(0, value)
     ZEND_ARG_INFO(0, field)
 ZEND_END_ARG_INFO()

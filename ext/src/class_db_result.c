@@ -24,6 +24,7 @@ static zend_function_entry lsentity_db_result_class_method[] = {
 void lsentity_db_result_class_init(){
     zend_class_entry ce;
     INIT_NS_CLASS_ENTRY(ce,LSENTITY_DB_NS,"Result",lsentity_db_result_class_method);
+
     lsentity_db_result_ce_ptr = zend_register_internal_interface(&ce);
-    zend_do_inheritance(lsentity_db_result_ce_ptr, zend_ce_iterator);
+    zend_class_implements(lsentity_db_result_ce_ptr,1,zend_ce_iterator);
 }
