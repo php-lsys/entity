@@ -65,8 +65,9 @@ ZEND_METHOD(lsentity_column_set_class, __construct){
     zval_ptr_dtor(&temp_array);
     zval *val;
     ZEND_HASH_FOREACH_VAL(Z_ARR_P(column),val) {
-        lsentity_obj_check(lsentity_column_ce_ptr,val,1);
-        zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"add",NULL,val);
+        if(lsentity_obj_check(lsentity_column_ce_ptr,val,1)){
+            zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"add",NULL,val);
+        }
     } ZEND_HASH_FOREACH_END();
 }
 ZEND_METHOD(lsentity_column_set_class, getType){
