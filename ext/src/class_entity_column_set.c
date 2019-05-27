@@ -100,6 +100,7 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
             if(lsentity_check_bool_with_1_params(column,"offsetexists",tmp)){
                 zval param1;
                 zend_call_method_with_0_params(tmp,Z_OBJCE_P(tmp), NULL, "name", &param1);
+                Z_ADDREF_P(tmp);
                 zend_hash_add(Z_ARR(columntype),Z_STR(param1),tmp);
                 zval_ptr_dtor(&param1);
             }
