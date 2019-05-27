@@ -147,13 +147,13 @@ ZEND_METHOD(lsentity_column_class, asArray){
 
     zval *mzval;
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL);
-    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("name"),mzval ZEND_FILE_LINE_CC);
+    zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("name"),mzval);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL);
-    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("type"),mzval ZEND_FILE_LINE_CC);
+    zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("type"),mzval);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
-    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("default"),mzval ZEND_FILE_LINE_CC);
+    zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("default"),mzval);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL);
-    _zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("allowNull"),mzval ZEND_FILE_LINE_CC);
+    zend_hash_str_add(Z_ARR(temp_array),ZEND_STRL("allowNull"),mzval);
 
     RETURN_ZVAL(&temp_array,1,1);
 
