@@ -67,14 +67,14 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
     zend_bool patch=0;
     zval *column;
     ZEND_PARSE_PARAMETERS_START(1, 2)
-            Z_PARAM_OBJECT_OF_CLASS(column, lsentity_column_ce_ptr)
+            Z_PARAM_OBJECT_OF_CLASS(column, lsentity_column_set_ce_ptr)
             Z_PARAM_OPTIONAL
             Z_PARAM_BOOL(patch)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
     zval *mzval,*pzval;
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_columns"),0,NULL);
-    if(Z_TYPE_P(mzval)!=IS_ARRAY)RETURN_ZVAL(column,0,0);
+    if(Z_TYPE_P(mzval)!=IS_ARRAY)RETURN_ZVAL(column,1,0);
 
 
 
@@ -108,11 +108,13 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
         } ZEND_HASH_FOREACH_END();
 
     }
-
     zval param[]={
             columntype
     };
     lsentity_new_class(lsentity_column_set_ce_ptr,return_value,param,1);
+
+    zval_ptr_dtor(&columntype);
+
 }
 
 
