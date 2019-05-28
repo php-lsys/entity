@@ -150,7 +150,7 @@ ZEND_METHOD(lsentity_column_class, asArray){
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL);
     zend_hash_str_add(Z_ARR(temp_array),"name",sizeof("name")-1,mzval);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL);
-    zend_hash_str_add(Z_ARR(temp_array),"name",sizeof("type")-1,mzval);
+    zend_hash_str_add(Z_ARR(temp_array),"type",sizeof("type")-1,mzval);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
     zend_hash_str_add(Z_ARR(temp_array),"default",sizeof("default")-1,mzval);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL);

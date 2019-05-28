@@ -79,7 +79,7 @@ ZEND_METHOD(lsentity_column_set_class, getType){
     object=getThis();
     zval _name;
     ZVAL_STR(&_name,name);
-    if(lsentity_check_bool_with_1_params(object,"offsetexists",&_name)){//@todo 这有问题。。。
+    if(lsentity_check_bool_with_1_params(object,"offsetexists",&_name)){
         zval column,type;
         zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "offsetget",&column,&_name);
         if(!zend_object_is_true(&column)){
@@ -87,6 +87,8 @@ ZEND_METHOD(lsentity_column_set_class, getType){
             RETURN_NULL();
         }
         zend_call_method_with_1_params(&column,Z_OBJCE(column), NULL, "gettype",&type,&_name);
+        zval_ptr_dtor(&column);
+        zend_string_release(Z_STR(_name));
         RETURN_ZVAL(&type,1,1);
     }
     zend_string_release(Z_STR(_name));
@@ -227,14 +229,25 @@ ZEND_METHOD(lsentity_column_set_class, offsetGet){
     zval *object;
     object=getThis();
     zval *columnarr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),1,NULL);
-    zval* oldval=zend_hash_find(Z_ARR_P(columnarr),name);
-    if(!oldval) RETURN_NULL();
-    RETURN_ZVAL(oldval,0,0);
+    zval* oldval;
+
+
+    if (EXPECTED(columnarr && Z_TYPE_P(columnarr) == IS_ARRAY)) {
+        if ((oldval = zend_hash_find(Z_ARRVAL_P(columnarr), name)) != NULL) {
+            RETURN_ZVAL(oldval, 1, 0);
+        }
+    }
+
+    RETURN_NULL();
+//    zval* oldval=zend_hash_find(Z_ARR_P(columnarr),name);
+//    if(!oldval) RETURN_NULL();
+//    //Z_ADDREF(*oldval);
+//    RETURN_ZVAL(oldval,1,0);
 }
 ZEND_METHOD(lsentity_column_set_class, offsetSet){
     zend_string *name;
     zval *column;
-    ZEND_PARSE_PARAMETERS_START(1, 1)
+    ZEND_PARSE_PARAMETERS_START(2, 2)
             Z_PARAM_STR(name)
             Z_PARAM_OBJECT_OF_CLASS_EX(column, lsentity_column_ce_ptr, 0, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
@@ -260,7 +273,7 @@ ZEND_METHOD(lsentity_column_set_class, next){
 
     zend_hash_move_forward(array);
 
-    if (USED_RET()) {
+
         if ((entry = zend_hash_get_current_data(array)) == NULL) {
             RETURN_FALSE;
         }
@@ -271,7 +284,7 @@ ZEND_METHOD(lsentity_column_set_class, next){
 
         ZVAL_DEREF(entry);
         ZVAL_COPY(return_value, entry);
-    }
+
 
 }
 ZEND_METHOD(lsentity_column_set_class, valid){
@@ -325,7 +338,7 @@ ZEND_METHOD(lsentity_column_set_class, rewind){
 
     zend_hash_internal_pointer_reset(array);
 
-    if (USED_RET()) {
+
         if ((entry = zend_hash_get_current_data(array)) == NULL) {
             RETURN_FALSE;
         }
@@ -336,7 +349,7 @@ ZEND_METHOD(lsentity_column_set_class, rewind){
 
         ZVAL_DEREF(entry);
         ZVAL_COPY(return_value, entry);
-    }
+
 
 
 }
