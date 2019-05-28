@@ -67,7 +67,7 @@ int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int 
 
 int lsentity_check_bool_with_0_params(zval *object,const char* method){
     zval isexist;
-    zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, method, &isexist);
+    zend_call_method(object,Z_OBJCE_P(object), NULL, method, strlen(method), &isexist, 0, NULL, NULL);
     int ret=zend_is_true(&isexist);
     zval_ptr_dtor(&isexist);
     return ret;
@@ -75,7 +75,7 @@ int lsentity_check_bool_with_0_params(zval *object,const char* method){
 
 int lsentity_check_bool_with_1_params(zval *object,const char* method,zval *param){
     zval isexist;
-    zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, method, &isexist,param);
+    zend_call_method(object,Z_OBJCE_P(object), NULL, method, strlen(method), &isexist, 1, param, NULL);
     int ret=zend_is_true(&isexist);
     zval_ptr_dtor(&isexist);
     return ret;
@@ -83,7 +83,7 @@ int lsentity_check_bool_with_1_params(zval *object,const char* method,zval *para
 
 int lsentity_check_bool_with_2_params(zval *object,const char* method,zval *param1,zval *param2){
     zval isexist;
-    zend_call_method_with_2_params(object,Z_OBJCE_P(object), NULL, method, &isexist,param1,param2);
+    zend_call_method(object,Z_OBJCE_P(object), NULL, method, strlen(method), &isexist, 2, param1,param2);
     int ret=zend_is_true(&isexist);
     zval_ptr_dtor(&isexist);
     return ret;

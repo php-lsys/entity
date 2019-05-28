@@ -112,7 +112,7 @@ static int get_column(zval *columns,zend_string *column_str,zval *column,int thr
 static zval * cache_obj_get(zval *object,const char *attr,const char *method,zend_class_entry *ce,zval * return_value){
     zval * value=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL(attr),1,NULL);
     if(zend_is_true(value)) return value;
-    zend_call_method_with_0_params(object, Z_OBJCE_P(object), NULL, method, return_value);
+    zend_call_method(object,Z_OBJCE_P(object), NULL, method, strlen(method), return_value, 0, NULL, NULL);
     if(!lsentity_obj_check(ce,return_value,1))return NULL;
     if(!lsentity_check_bool_with_0_params(return_value,"allowcache")){
         zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL(attr),return_value);
