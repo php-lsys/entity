@@ -658,7 +658,9 @@ ZEND_METHOD(lsentity_entity_class, update){
                 data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
             }
             zval * find=zend_hash_find(Z_ARR_P(change),Z_STR(name));
-            if(find)zend_hash_add(Z_ARR(save_data),Z_STR(name),find);
+            if(find){
+                zend_hash_add(Z_ARR(save_data),Z_STR(name),find);
+            }
         }
         iter->funcs->move_forward(iter);
         if (EG(exception)) {
@@ -1313,7 +1315,7 @@ static zend_function_entry lsentity_entity_class_method[] = {
 
 void lsentity_entity_class_init(){
     zend_class_entry ce;
-    INIT_NS_CLASS_ENTRY(ce,LSENTITY_NS,"Entity",lsentity_entity_class_method);
+    INIT_NS_CLASS_ENTRY(ce,LS_NS,"Entity",lsentity_entity_class_method);
     lsentity_entity_ce_ptr = zend_register_internal_class(&ce );
     zend_declare_property_null(lsentity_entity_ce_ptr,ZEND_STRL("_table"), ZEND_ACC_PROTECTED );
     zend_declare_property_null(lsentity_entity_ce_ptr,ZEND_STRL("_query_column_set"), ZEND_ACC_PROTECTED );

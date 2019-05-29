@@ -10,13 +10,13 @@
 #include "class_table.h"
 
 int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int num_args){
-    zval retval;
     zend_class_entry *old_scope;
     zend_function *constructor;
     if (UNEXPECTED(object_init_ex(return_value, ce) != SUCCESS)) {
         zend_throw_exception_ex(lsentity_exception_ce_ptr, -1, "Class %s does not init", ZSTR_VAL(ce->name));
         return 0;
     }
+
     old_scope = EG(fake_scope);
     EG(fake_scope) = ce;
     constructor = Z_OBJ_HT_P(return_value)->get_constructor(Z_OBJ_P(return_value));
@@ -24,10 +24,10 @@ int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int 
 
     /* Run the constructor if there is one */
     if (constructor) {
+        zval retval;
         int ret, i;
         zend_fcall_info fci;
         zend_fcall_info_cache fcc;
-
         if (!(constructor->common.fn_flags & ZEND_ACC_PUBLIC)) {
             zend_throw_exception_ex(ce, 0, "Access to non-public constructor of class %s", ZSTR_VAL(ce->name));
             zval_dtor(return_value);
@@ -37,7 +37,6 @@ int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int 
         for (i = 0; i < num_args; i++) {
             if (Z_REFCOUNTED(params[i])) Z_ADDREF(params[i]);
         }
-
         fci.size = sizeof(fci);
         ZVAL_UNDEF(&fci.function_name);
         fci.object = Z_OBJ_P(return_value);
@@ -49,7 +48,6 @@ int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int 
         fcc.calling_scope = zend_get_executed_scope();
         fcc.called_scope = Z_OBJCE_P(return_value);
         fcc.object = Z_OBJ_P(return_value);
-
         ret = zend_call_function(&fci, &fcc);
         zval_ptr_dtor(&retval);
         for (i = 0; i < num_args; i++) {
@@ -90,11 +88,11 @@ int lsentity_check_bool_with_2_params(zval *object,const char* method,zval *para
 }
 
 int lsentity_obj_check(zend_class_entry * ce,zval *retobj,int throw){
-    if(zend_object_is_true(retobj)&&instanceof_function(Z_OBJCE_P(retobj),ce)) {
+    if(Z_TYPE_P(retobj)==IS_OBJECT&&zend_object_is_true(retobj)&&instanceof_function(Z_OBJCE_P(retobj),ce)) {
         return 1;
     }else{
         zval_ptr_dtor(retobj);
-        if(throw)zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "the table method not return %s object",ZSTR_VAL(ce->name));
+        if(throw)zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "your submit object not a %s object",ZSTR_VAL(ce->name));
         return 0;
     }
 }

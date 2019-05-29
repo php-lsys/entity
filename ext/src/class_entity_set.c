@@ -106,7 +106,56 @@ ZEND_METHOD(lsentity_entity_set_class, rewind){
 
 }
 ZEND_METHOD(lsentity_entity_set_class, asArray){
-    //@todo ....
+    zval *object;
+    zend_string *key,*value;
+    ZEND_PARSE_PARAMETERS_START(0, 2)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_STR(key)
+        Z_PARAM_STR(value)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+    object = getThis();
+    zval result;
+    array_init(&result);
+    if(!key&&!value){
+
+    }
+    RETURN_ZVAL(&result,1,1);
+//    if ($key === NULL AND $value === NULL)
+//    {
+//        // Indexed rows
+//
+//        foreach ($this as $row)
+//        {
+//            $results[] = $row->asArray();
+//        }
+//    }
+//    elseif ($key === NULL)
+//    {
+//        // Indexed columns
+//        foreach ($this as $row)
+//        {
+//            $results[] = $row->__get($value);
+//        }
+//    }
+//    elseif ($value === NULL)
+//    {
+//        foreach ($this as $row)
+//        {
+//            $row=$row->asArray();
+//            $results[$row[$key]] = $row;
+//        }
+//    }
+//    else
+//    {
+//        foreach ($this->_result as $row)
+//        {
+//            $results[$row->__get($key)] = $row->__get($value);
+//        }
+//    }
+//    $this->rewind();
+//    return $results;
+
+
 }
 ZEND_METHOD(lsentity_entity_set_class, current){
 

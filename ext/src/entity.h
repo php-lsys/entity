@@ -4,7 +4,9 @@
 #include "php.h"
 
 
-#define LSENTITY_NS "LSYS\\Entity"
+#define LS_NS "LSYS"
+
+#define LSENTITY_NS LS_NS "\\Entity"
 
 #define LSENTITY_DB_NS LSENTITY_NS "\\Database"
 
