@@ -13,6 +13,7 @@
 #include "class_table.h"
 #include "class_exception.h"
 #include "utils.h"
+#include "class_entity.h"
 
 ZEND_API zend_class_entry *lsentity_entity_set_ce_ptr;
 
@@ -116,46 +117,78 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
     object = getThis();
     zval result;
     array_init(&result);
+    zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"rewind",NULL);
     if(!key&&!value){
-
+        while (lsentity_check_bool_with_0_params(object,"valid")){
+            zval res,arr;
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+                zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
+                zend_hash_next_index_insert(Z_ARR(result),&arr);
+                zval_ptr_dtor(&arr);
+            } else{
+                array_init(&arr);
+                zend_hash_next_index_insert(Z_ARR(result),&arr);
+                zval_ptr_dtor(&arr);
+            }
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
+            zval_ptr_dtor(&res);
+        }
+    }else if(!key){
+        zval zvalue;
+        ZVAL_STR(&zvalue,value);
+        while (lsentity_check_bool_with_0_params(object,"valid")){
+            zval res,arr;
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+                zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&arr,&zvalue);
+                zend_hash_next_index_insert(Z_ARR(result),&arr);
+                zval_ptr_dtor(&arr);
+            } else{
+                ZVAL_NULL(&arr);
+                zend_hash_next_index_insert(Z_ARR(result),&arr);
+                zval_ptr_dtor(&arr);
+            }
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
+            zval_ptr_dtor(&res);
+        }
+        zval_ptr_dtor(&zvalue);
+    }else if(!value){
+        while (lsentity_check_bool_with_0_params(object,"valid")){
+            zval res,arr;
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+                zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
+                zval * val=zend_hash_find(Z_ARR(arr),key);
+                convert_to_string(&val);
+                zend_hash_add(Z_ARR(result),Z_STR_P(val),&arr);
+                zval_ptr_dtor(&arr);
+            }
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
+            zval_ptr_dtor(&res);
+        }
+    }else{
+        zval zkey,zvalue;
+        ZVAL_STR(&zkey,key);
+        ZVAL_STR(&zvalue,value);
+        while (lsentity_check_bool_with_0_params(object,"valid")){
+            zval res,rkey,rvalue;
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+                zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rkey,&zkey);
+                zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rvalue,&zvalue);
+                convert_to_string(&rkey);
+                zend_hash_add(Z_ARR(result),Z_STR(rkey),&zvalue);
+                zval_ptr_dtor(&rkey);
+                zval_ptr_dtor(&zvalue);
+            }
+            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
+            zval_ptr_dtor(&res);
+        }
+        zval_ptr_dtor(&zkey);
+        zval_ptr_dtor(&zvalue);
     }
     RETURN_ZVAL(&result,1,1);
-//    if ($key === NULL AND $value === NULL)
-//    {
-//        // Indexed rows
-//
-//        foreach ($this as $row)
-//        {
-//            $results[] = $row->asArray();
-//        }
-//    }
-//    elseif ($key === NULL)
-//    {
-//        // Indexed columns
-//        foreach ($this as $row)
-//        {
-//            $results[] = $row->__get($value);
-//        }
-//    }
-//    elseif ($value === NULL)
-//    {
-//        foreach ($this as $row)
-//        {
-//            $row=$row->asArray();
-//            $results[$row[$key]] = $row;
-//        }
-//    }
-//    else
-//    {
-//        foreach ($this->_result as $row)
-//        {
-//            $results[$row->__get($key)] = $row->__get($value);
-//        }
-//    }
-//    $this->rewind();
-//    return $results;
-
-
 }
 ZEND_METHOD(lsentity_entity_set_class, current){
 
@@ -236,7 +269,14 @@ ZEND_METHOD(lsentity_entity_set_class, current){
 
 
 }
-ZEND_METHOD(lsentity_entity_set_class, valid){}
+ZEND_METHOD(lsentity_entity_set_class, valid){
+    zval *object;
+    object = getThis();
+    zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
+    zval ret;
+    zend_call_method_with_0_params(result,Z_OBJCE_P(result),NULL,"valid",&ret);
+    RETURN_ZVAL(&ret,1,1);
+}
 
 static zend_function_entry lsentity_entity_set_class_method[] = {
     ZEND_ME(lsentity_entity_set_class,__construct, lsentity_entity_set_construct_arginfo, ZEND_ACC_PUBLIC)
