@@ -82,7 +82,7 @@ ZEND_METHOD(lsentity_column_set_class, getType){
     if(lsentity_check_bool_with_1_params(object,"offsetexists",&_name)){
         zval column,type;
         zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "offsetget",&column,&_name);
-        if(!zend_object_is_true(&column)){
+        if(Z_TYPE(column)!=IS_OBJECT||!zend_object_is_true(&column)){
             zval_ptr_dtor(&column);
             RETURN_NULL();
         }

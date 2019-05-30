@@ -35,7 +35,7 @@ ZEND_END_ARG_INFO()
 
 
 ZEND_METHOD(lsentity_entity_set_class, __construct){
-    zval *db_result,*columns,*table,*object;
+    zval *db_result,*columns=NULL,*table=NULL,*object;
     zend_string *entity_name;
     ZEND_PARSE_PARAMETERS_START(2,4)
             Z_PARAM_OBJECT_OF_CLASS(db_result, lsentity_db_result_ce_ptr)
