@@ -16,6 +16,7 @@ class mddtest implements Table{
     {
         return new ColumnSet([
             new Column("id"),
+            new Column("b"),
         ]);
     }
     public function db()
@@ -31,8 +32,7 @@ class mddtest implements Table{
 }
 $e=new Entity(new mddtest());
 
-$e->loadData(["a"=>"bbb","b"=>"ccc"]);
-
+$e->loadData(["id"=>"bbb","b"=>"ccc","m"=>"sss"]);
 
 
 

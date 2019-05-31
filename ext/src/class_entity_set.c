@@ -160,7 +160,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
             if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
                 zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
                 zval * val=zend_hash_find(Z_ARR(arr),key);
-                convert_to_string(&val);
+                convert_to_string(val);
                 zend_hash_add(Z_ARR(result),Z_STR_P(val),&arr);
                 zval_ptr_dtor(&arr);
             }

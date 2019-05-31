@@ -260,6 +260,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
             zval nullval;
             if(!oldval)ZVAL_NULL(&nullval);
             if (lsentity_check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,newvalptr)){
+                Z_ADDREF_P(newvalptr);
                 zend_hash_update(Z_ARR_P(data),column,newvalptr);
                 zval_ptr_dtor(&newval);
                 zval_ptr_dtor(&columns);
@@ -319,6 +320,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
                 zend_string * key;
                 ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(data),key,val) {
                     if(!zend_symtable_exists_ind(Z_ARR_P(change),key)){
+                        Z_ADDREF_P(val);
                         zend_hash_update(Z_ARR_P(change),key,val);
                     }
                 } ZEND_HASH_FOREACH_END();
@@ -356,7 +358,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),0);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),0);
-
+    Z_ADDREF_P(newvalptr);
     zend_hash_update(Z_ARR_P(data),column,newvalptr);
 }
 ZEND_METHOD(lsentity_entity_class, __get){
@@ -429,6 +431,7 @@ ZEND_METHOD(lsentity_entity_class, loadData){
             Z_PARAM_OBJECT_OF_CLASS_EX(entity_column_set, lsentity_entity_column_set_ce_ptr, 0, 0)
             Z_PARAM_BOOL(loaded)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+
     zval *object=getThis();
     if(entity_column_set){
         zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_query_column_set"),entity_column_set);
@@ -437,25 +440,30 @@ ZEND_METHOD(lsentity_entity_class, loadData){
     if(!get_columns(object,&columns,1)) RETURN_NULL();
     zval *val;
     zend_string * key;
+
     ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(data),key,val) {
         zval obj;
         if(get_column(&columns,key,&obj,0)){
             zval valobj;
             zend_call_method_with_1_params(&obj,Z_OBJCE(obj), NULL, "read", &valobj,val);
+            Z_ADDREF(valobj);
             zend_hash_update(Z_ARR_P(data),key,&valobj);
-            zval_ptr_dtor(&valobj);
+           zval_ptr_dtor(&valobj);
         }else{
-            zend_hash_del(Z_ARR_P(data),key);//????
+            zend_hash_del(Z_ARR_P(data),key);
         }
         zval_ptr_dtor(&obj);
     } ZEND_HASH_FOREACH_END();
+
     zval_ptr_dtor(&columns);
+
     zval *sdata=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
 
     zval mdata;
     array_init(&mdata);
     php_array_merge(Z_ARR(mdata),Z_ARR_P(sdata));
     php_array_merge(Z_ARR(mdata),Z_ARR_P(data));
+
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&mdata);
     zval_ptr_dtor(&mdata);
 
@@ -940,6 +948,7 @@ ZEND_METHOD(lsentity_entity_class, create){
             if(!zend_symtable_exists_ind(Z_ARR_P(data),Z_STR(name))&&lsentity_check_bool_with_0_params(val,"usedefault")){
                 zval def;
                 zend_call_method_with_0_params(val,Z_OBJCE_P(val),NULL,"getdefault",&def);
+                Z_ADDREF(def);
                 zend_hash_update(Z_ARR_P(data),Z_STR(name),&def);
                 zval_ptr_dtor(&def);
             }
@@ -1022,6 +1031,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     if(Z_TYPE(pkcol)==IS_STRING&&zend_symtable_exists_ind(Z_ARR_P(data),Z_STR(pkcol))){
         zval ind;
         zend_call_method_with_0_params(&db,Z_OBJCE(db),NULL,"insertid",&ind);
+        Z_ADDREF(ind);
         zend_hash_update(Z_ARR_P(data),Z_STR(pkcol),&ind);
         zval_ptr_dtor(&ind);
     }

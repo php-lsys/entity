@@ -339,7 +339,9 @@ ZEND_METHOD(lsentity_validation_class, valid){
                 php_array_merge(Z_ARR(trule),Z_ARR_P(h));
             }
             php_array_merge(Z_ARR(trule),Z_ARR_P(gr));
+            Z_ADDREF(trule);
             zend_hash_update(Z_ARR(rules),Z_STR_P(field),&trule);
+            zval_ptr_dtor(&trule);
         }ZEND_HASH_FOREACH_END();
     }
     zval_ptr_dtor(&keys);
@@ -456,6 +458,7 @@ ZEND_METHOD(lsentity_validation_class, error){
 
     zval zerror;
     ZVAL_STR(&zerror,error);
+    Z_ADDREF(zerror);
     if(!old)zend_hash_add(Z_ARR_P(errors),field,&zerror);
     else zend_hash_update(Z_ARR_P(errors),field,&zerror);
     zval_ptr_dtor(&zerror);
