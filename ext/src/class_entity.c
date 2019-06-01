@@ -192,7 +192,7 @@ ZEND_METHOD(lsentity_entity_class, __isset){
     ZEND_PARSE_PARAMETERS_START(1, 1)
             Z_PARAM_STR(column)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
-    zval *object;
+    zval *object=getThis();
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     if (zend_symtable_exists_ind(Z_ARR_P(data), column)) {
         RETURN_TRUE;
@@ -248,7 +248,11 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&newval,&zval_column,value);
     }else{
         ZVAL_COPY_VALUE(&newval,value);
+
     }
+
+
+
     zval_ptr_dtor(&filter);
 
 
@@ -360,7 +364,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),0);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),0);
-    Z_ADDREF(newval);
+    if(Z_REFCOUNTED(newval))Z_ADDREF(newval);
     zend_hash_update(Z_ARR_P(data),column,&newval);
     zval_ptr_dtor(&newval);
 }
@@ -740,7 +744,7 @@ ZEND_METHOD(lsentity_entity_class, update){
     array_init(&sets);
     zval *dval;
     zend_string *dkey;
-    ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(data),dkey,dval) {
+    ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(save_data),dkey,dval) {
                 zval _field;
                 zval key;
                 ZVAL_STR(&key,dkey);
@@ -749,7 +753,7 @@ ZEND_METHOD(lsentity_entity_class, update){
                 zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&_type,&key);
                 zval _sdata;
                 zend_call_method_with_2_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&_sdata,dval,&_type);
-
+                //@todo 有问题...
                 smart_str set = {0};
                 smart_str_append(&set, Z_STR(key));
                 smart_str_appends(&set, " = ");
@@ -1271,7 +1275,7 @@ ZEND_METHOD(lsentity_entity_class, check){
         if(get_validation(object,&valid_object_obj,0)) valid_ok=&valid_object_obj;
     }else valid_ok=valid_object;
 
-    if(Z_TYPE_P(valid_ok)!=IS_OBJECT||!zend_object_is_true(valid_ok)){
+    if(!valid_ok||Z_TYPE_P(valid_ok)!=IS_OBJECT||!zend_object_is_true(valid_ok)){
         if(Z_TYPE(valid_object_obj)==IS_OBJECT&&zend_object_is_true(&valid_object_obj))zval_ptr_dtor(&valid_object_obj);
         RETURN_ZVAL(object,1,0);
     }
