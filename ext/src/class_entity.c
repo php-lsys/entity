@@ -795,12 +795,13 @@ ZEND_METHOD(lsentity_entity_class, update){
 
 
 
-    smart_str sql = {0};
+    smart_str sql = {0};//@todo ？？？？
     smart_str_appends(&sql, " UPDATE ");
     smart_str_append(&sql, Z_STR(table_name));
     smart_str_appends(&sql, " SET ");
     smart_str_append(&sql, Z_STR(str_set));
     smart_str_appends(&sql, " WHERE ");
+
 
 
     if(Z_TYPE(_pkcol)==IS_ARRAY){
