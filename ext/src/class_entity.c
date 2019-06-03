@@ -133,12 +133,12 @@ static int get_column(zval *columns,zend_string *column_str,zval *column,int thr
 }
 
 static zval * cache_obj_get(zval *object,const char *attr,const char *method,zend_class_entry *ce,zval * return_value){
-    zval * value=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL(attr),1,NULL);
+    zval * value=zend_read_property(Z_OBJCE_P(object),object,attr,strlen(attr),1,NULL);
     if(zend_is_true(value)) return value;
     zend_call_method(object,Z_OBJCE_P(object), NULL, method, strlen(method), return_value, 0, NULL, NULL);
     if(!lsentity_obj_check(ce,return_value,0))return NULL;
     if(!lsentity_check_bool_with_0_params(return_value,"allowcache")){
-        zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL(attr),return_value);
+        zend_update_property(Z_OBJCE_P(object),object,attr,strlen(attr),return_value);
     }
     return NULL;
 }
@@ -234,6 +234,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
     zval *object=getThis();
 
+
     zval columns;
     if(!get_columns(object,&columns,1)) RETURN_NULL();
     zval zval_column;
@@ -250,6 +251,8 @@ ZEND_METHOD(lsentity_entity_class, __set){
         ZVAL_COPY_VALUE(&newval,value);
 
     }
+
+
 
 
 
@@ -277,11 +280,18 @@ ZEND_METHOD(lsentity_entity_class, __set){
         }
     }
 
+
+
     zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
+
+
+
+
     if (!zend_symtable_exists_ind(Z_ARR_P(change), column)) {
         zval* oldval=zend_hash_find(Z_ARR_P(data),column);
         zval nullval;
         if(!oldval)ZVAL_NULL(&nullval);
+        else if(Z_REFCOUNTED_P(oldval))Z_ADDREF_P(oldval);
         zend_hash_update(Z_ARR_P(change),column,oldval?oldval:&nullval);
     }
 
@@ -292,6 +302,10 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval_ptr_dtor(&table);
         RETURN_NULL();
     }
+
+
+
+
     if(loaded){
         zval zcolumn;
         ZVAL_STR(&zcolumn,column);
@@ -365,7 +379,10 @@ ZEND_METHOD(lsentity_entity_class, __set){
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),0);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),0);
     if(Z_REFCOUNTED(newval))Z_ADDREF(newval);
+
+
     zend_hash_update(Z_ARR_P(data),column,&newval);
+
     zval_ptr_dtor(&newval);
 }
 ZEND_METHOD(lsentity_entity_class, __get){
@@ -618,6 +635,7 @@ ZEND_METHOD(lsentity_entity_class, update){
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object=getThis();
 
+
     if (!lsentity_check_bool_with_0_params(object,"loaded")){
         zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "Cannot update %s model because it is not loaded",ZSTR_VAL(Z_OBJCE_P(object)->name));
         RETURN_NULL();
@@ -673,7 +691,6 @@ ZEND_METHOD(lsentity_entity_class, update){
     if (EG(exception)) {
         goto iterator_done;
     }
-
 
 
 
