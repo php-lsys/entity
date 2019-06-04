@@ -87,7 +87,7 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
         if(lsentity_check_bool_with_1_params(column,"offsetexists",tmp)){
             zval param1;
             zend_call_method_with_1_params(column,Z_OBJCE_P(column), NULL, "offsetget", &param1,tmp);
-            Z_ADDREF_P(&param1);
+            Z_REFCOUNTED(param1)&&Z_ADDREF_P(&param1);
             zend_hash_add(Z_ARR(columntype),Z_STR_P(tmp),&param1);
             zval_ptr_dtor(&param1);
         }
@@ -98,7 +98,7 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
         ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pzval), tmp) {
             zval param1;
             zend_call_method_with_0_params(tmp,Z_OBJCE_P(tmp), NULL, "name", &param1);
-            Z_ADDREF_P(tmp);
+            Z_REFCOUNTED_P(tmp)&&Z_ADDREF_P(tmp);
             zend_hash_add(Z_ARR(columntype),Z_STR(param1),tmp);
             zval_ptr_dtor(&param1);
         } ZEND_HASH_FOREACH_END();

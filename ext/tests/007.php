@@ -33,6 +33,7 @@ class mddtest implements Table{
     {
         return new ColumnSet([
             new Column("id"),
+            new Column("ids"),
             new Column("b"),
         ]);
     }
@@ -49,8 +50,9 @@ class mddtest implements Table{
 }
 $e=new Entity(new mddtest());
 
-$e->loadData(["id"=>"bbb","b"=>"cccafsdfasd-----------------------","m"=>"sss","dd"=>"fasdf"]);
+$e->loadData(["id"=>"bbb",'ids'=>"bbb","b"=>"adfasd","m"=>"sss","dd"=>"fasdf"]);
 $e->b="fasdfa";
+$e->ids="fasdfa";
 
 $e->save();
 
@@ -59,6 +61,7 @@ $e->save();
 //var_dump($e);
 
 ?>
+
 --EXPECT--
 
 
