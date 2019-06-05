@@ -184,6 +184,8 @@ ZEND_METHOD(lsentity_entity_class, __construct) {
     zval temp_array;
     array_init(&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
+    zval_ptr_dtor(&temp_array);
+    array_init(&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&temp_array);
     zval_ptr_dtor(&temp_array);
 }
@@ -281,10 +283,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     }
 
 
-
     zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
-
-
 
 
     if (!zend_symtable_exists_ind(Z_ARR_P(change), column)) {
@@ -292,7 +291,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval nullval;
         if(!oldval)ZVAL_NULL(&nullval);
         else if(Z_REFCOUNTED_P(oldval))Z_ADDREF_P(oldval);
-        zend_hash_update(Z_ARR_P(change),column,oldval?oldval:&nullval);//@todo  null有问题??
+        zend_hash_add(Z_ARR_P(change),column,oldval?oldval:&nullval);
     }
 
 
@@ -537,6 +536,8 @@ ZEND_METHOD(lsentity_entity_class, clear){
     zval temp_array;
     array_init(&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
+    zval_ptr_dtor(&temp_array);
+    array_init(&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&temp_array);
     zval_ptr_dtor(&temp_array);
     RETURN_ZVAL(object,1,0);
@@ -948,7 +949,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         RETURN_NULL();
     }
     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&pkcol,&_pkcol);
-    if(Z_TYPE(_pkcol)!=IS_STRING||Z_TYPE(_pkcol)!=IS_ARRAY){
+    if(Z_TYPE(_pkcol)!=IS_STRING&&Z_TYPE(_pkcol)!=IS_ARRAY){
         zval_ptr_dtor(&table_name);
         zval_ptr_dtor(&table);
         zval_ptr_dtor(&db);
@@ -1004,7 +1005,10 @@ ZEND_METHOD(lsentity_entity_class, create){
                 zval_ptr_dtor(&def);
             }
             zval * find=zend_hash_find(Z_ARR_P(data),Z_STR(name));
-            if(find)zend_hash_add(Z_ARR(save_data),Z_STR(name),find);
+            if(find){
+                Z_REFCOUNTED_P(find)&&Z_ADDREF_P(find);
+                zend_hash_add(Z_ARR(save_data),Z_STR(name),find);
+            }
         }
         iter->funcs->move_forward(iter);
         if (EG(exception)) {
@@ -1031,12 +1035,14 @@ ZEND_METHOD(lsentity_entity_class, create){
         zval key;
         ZVAL_STR(&key,dkey);
         zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&_field,&key);
+        Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
         add_next_index_str(&field,Z_STR(_field));
         zval _type;
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&_type,&key);
         zval _sdata;
-        zend_call_method_with_2_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&_sdata,dval,&_type);
-        add_next_index_str(&field,Z_STR(_sdata));
+        zend_call_method_with_2_params(&db,Z_OBJCE(db),NULL,"quotevalue",&_sdata,dval,&_type);
+        Z_REFCOUNTED(_sdata)&&Z_ADDREF(_sdata);
+        add_next_index_str(&sdata,Z_STR(_sdata));
         zval_ptr_dtor(&_type);
         zval_ptr_dtor(&_field);
         zval_ptr_dtor(&key);
@@ -1048,6 +1054,8 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval str_data;
     php_implode(glue, &sdata, &str_data);
     zend_string_release(glue);
+    zval_ptr_dtor(&sdata);
+    zval_ptr_dtor(&field);
 
     smart_str sql = {0};
     smart_str_appends(&sql, " INSERT INTO ");
