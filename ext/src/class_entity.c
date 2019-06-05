@@ -292,7 +292,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval nullval;
         if(!oldval)ZVAL_NULL(&nullval);
         else if(Z_REFCOUNTED_P(oldval))Z_ADDREF_P(oldval);
-        zend_hash_update(Z_ARR_P(change),column,oldval?oldval:&nullval);
+        zend_hash_update(Z_ARR_P(change),column,oldval?oldval:&nullval);//@todo  null有问题??
     }
 
 
@@ -664,6 +664,8 @@ ZEND_METHOD(lsentity_entity_class, update){
         zval_ptr_dtor(&db);
         RETURN_NULL();
     }
+
+
     zval _pkcol;
     if(!get_table_pk(&table,&_pkcol)){
         zval_ptr_dtor(&table_name);
@@ -671,6 +673,8 @@ ZEND_METHOD(lsentity_entity_class, update){
         zval_ptr_dtor(&db);
         RETURN_NULL();
     }
+
+
 
 
     zval columns;
@@ -682,8 +686,10 @@ ZEND_METHOD(lsentity_entity_class, update){
         RETURN_NULL();
     }
 
+
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
+
     zend_object_iterator   *iter;
     zend_class_entry       *ce = Z_OBJCE(columns);
     zval                   *val;
@@ -691,7 +697,6 @@ ZEND_METHOD(lsentity_entity_class, update){
     if (EG(exception)) {
         goto iterator_done;
     }
-
 
 
     if (iter->funcs->rewind) {
@@ -739,6 +744,7 @@ ZEND_METHOD(lsentity_entity_class, update){
             goto iterator_done;
         }
     }
+    zend_iterator_dtor(iter);
 
     if(zend_array_count(Z_ARR(save_data))==0){
         zval temp_array;
@@ -760,7 +766,6 @@ ZEND_METHOD(lsentity_entity_class, update){
         if(!valid_object)valid_object=&_valid_object;
         zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"check",NULL,valid_object);
     }
-
 
 
     zval sets;
@@ -865,6 +870,7 @@ ZEND_METHOD(lsentity_entity_class, update){
         smart_str_appends(&sql, " = ");
         smart_str_append(&sql, Z_STR(pk));
         zval_ptr_dtor(&pkcol);
+        zval_ptr_dtor(&pk);
     }
 
     smart_str_0(&sql);
@@ -888,8 +894,6 @@ ZEND_METHOD(lsentity_entity_class, update){
 
 
     iterator_done:
-
-
 
     zval_ptr_dtor(&table_name);
     zval_ptr_dtor(&table);
@@ -1007,7 +1011,7 @@ ZEND_METHOD(lsentity_entity_class, create){
             goto iterator_done;
         }
     }
-
+    zend_iterator_dtor(iter);
 
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),1,NULL);
     if(!zend_is_true(valid)|| valid_object){

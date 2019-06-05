@@ -50,7 +50,7 @@ class mddtest implements Table{
 }
 $e=new Entity(new mddtest());
 
-$e->loadData(["id"=>"bbb",'ids'=>"bbb","b"=>"adfasd","m"=>"sss","dd"=>"fasdf"]);
+//$e->loadData(["id"=>"bbb",'ids'=>"bbb","b"=>"adfasd","m"=>"sss","dd"=>"fasdf"]);
 $e->b="fasdfa";
 $e->ids="fasdfa";
 
