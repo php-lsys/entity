@@ -1009,6 +1009,7 @@ ZEND_METHOD(lsentity_entity_class, create){
                 Z_REFCOUNTED_P(find)&&Z_ADDREF_P(find);
                 zend_hash_add(Z_ARR(save_data),Z_STR(name),find);
             }
+            zval_ptr_dtor(&name);
         }
         iter->funcs->move_forward(iter);
         if (EG(exception)) {
@@ -1016,6 +1017,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         }
     }
     zend_iterator_dtor(iter);
+
 
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),1,NULL);
     if(!zend_is_true(valid)|| valid_object){
@@ -1030,7 +1032,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     array_init(&sdata);
     zval *dval;
     zend_string *dkey;
-    ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(data),dkey,dval) {
+    ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(save_data),dkey,dval) {
         zval _field;
         zval key;
         ZVAL_STR(&key,dkey);
@@ -1048,6 +1050,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         zval_ptr_dtor(&key);
         zval_ptr_dtor(&_sdata);
     } ZEND_HASH_FOREACH_END();
+    zval_ptr_dtor(&save_data);
     zval str_field;
     zend_string *glue = zend_string_init(ZEND_STRL(","), 0);
     php_implode(glue, &field, &str_field);
@@ -1056,6 +1059,8 @@ ZEND_METHOD(lsentity_entity_class, create){
     zend_string_release(glue);
     zval_ptr_dtor(&sdata);
     zval_ptr_dtor(&field);
+
+
 
     smart_str sql = {0};
     smart_str_appends(&sql, " INSERT INTO ");
