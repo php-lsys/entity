@@ -53,6 +53,8 @@ ZEND_METHOD(lsentity_filter_class, __construct){
     zval trr;
     array_init(&trr);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),&trr);
+    zval_ptr_dtor(&trr);
+    array_init(&trr);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),&trr);
     zval_ptr_dtor(&trr);
 
