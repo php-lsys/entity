@@ -747,6 +747,7 @@ ZEND_METHOD(lsentity_entity_class, update){
     }
     zend_iterator_dtor(iter);
 
+
     if(zend_array_count(Z_ARR(save_data))==0){
         zval temp_array;
         array_init(&temp_array);
@@ -874,6 +875,7 @@ ZEND_METHOD(lsentity_entity_class, update){
         zval_ptr_dtor(&pk);
     }
 
+
     smart_str_0(&sql);
     zval zsql;
     ZVAL_STR(&zsql,sql.s);
@@ -883,7 +885,7 @@ ZEND_METHOD(lsentity_entity_class, update){
 
     zval_ptr_dtor(&status);
     zval_ptr_dtor(&str_set);
-    zval_ptr_dtor(&zsql);
+   // zval_ptr_dtor(&zsql);
 
 
     zval temp_array;
