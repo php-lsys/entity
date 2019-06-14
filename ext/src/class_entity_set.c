@@ -122,7 +122,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,arr;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
                 zend_hash_next_index_insert(Z_ARR(result),&arr);
                 zval_ptr_dtor(&arr);
@@ -140,7 +140,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,arr;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&arr,&zvalue);
                 zend_hash_next_index_insert(Z_ARR(result),&arr);
                 zval_ptr_dtor(&arr);
@@ -157,7 +157,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,arr;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
                 zval * val=zend_hash_find(Z_ARR(arr),key);
                 convert_to_string(val);
@@ -174,7 +174,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,rkey,rvalue;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0)){
+            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rkey,&zkey);
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rvalue,&zvalue);
                 convert_to_string(&rkey);

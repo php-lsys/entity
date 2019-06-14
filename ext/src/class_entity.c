@@ -70,12 +70,12 @@ ZEND_END_ARG_INFO()
 
 static int get_table(zval *object,zval *table){
     zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "table", table);
-    return lsentity_obj_check(lsentity_table_ce_ptr,table,1);
+    return lsentity_obj_check(lsentity_table_ce_ptr,table,1,1);
 }
 static int get_table_columns(zval *table,zval *table_columns){
     zend_call_method_with_0_params(table,Z_OBJCE_P(table), NULL, "tablecolumns", table_columns);
 
-    if(lsentity_obj_check(lsentity_column_set_ce_ptr,table_columns,0))return 1;
+    if(lsentity_obj_check(lsentity_column_set_ce_ptr,table_columns,0,1))return 1;
     zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "return not a %s object of columns table::tableColumns()",ZSTR_VAL(lsentity_column_set_ce_ptr->name));
     return 0;
 
@@ -104,24 +104,24 @@ static int get_table_pk(zval *table,zval *pk){
 }
 static int get_db(zval *object,zval *db){
     zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "db", db);
-    if(lsentity_obj_check(lsentity_db_ce_ptr,db,0))return 1;
+    if(lsentity_obj_check(lsentity_db_ce_ptr,db,0,1))return 1;
     zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "return not a %s object of table::db method",ZSTR_VAL(lsentity_db_ce_ptr->name));
     return 0;
 }
 static int get_filter(zval *object,zval *filter){
     zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "filter", filter);
-    return lsentity_obj_check(lsentity_filter_ce_ptr,filter,0);
+    return lsentity_obj_check(lsentity_filter_ce_ptr,filter,0,1);
 }
 static int get_validation(zval *object,zval *validation,int throw){
     zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "validation", validation);
-    return lsentity_obj_check(lsentity_validation_ce_ptr,validation,throw);
+    return lsentity_obj_check(lsentity_validation_ce_ptr,validation,throw,1);
 }
 static int get_columns(zval *object,zval *columns,int patch){
     zval param;
     ZVAL_BOOL(&param,patch?1:0);
     zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "columns", columns,&param);
 
-    if(lsentity_obj_check(lsentity_column_set_ce_ptr,columns,0))return 1;
+    if(lsentity_obj_check(lsentity_column_set_ce_ptr,columns,0,1))return 1;
     zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "return not a %s object of Entity::columns method",ZSTR_VAL(lsentity_column_set_ce_ptr->name));
     return 0;
 }
@@ -129,14 +129,14 @@ static int get_column(zval *columns,zend_string *column_str,zval *column,int thr
     zval param;
     ZVAL_STR(&param,column_str);
     zend_call_method_with_1_params(columns,Z_OBJCE_P(columns), NULL, "offsetget",column,&param);
-    return lsentity_obj_check(lsentity_column_ce_ptr,column,throw);
+    return lsentity_obj_check(lsentity_column_ce_ptr,column,throw,1);
 }
 
 static zval * cache_obj_get(zval *object,const char *attr,const char *method,zend_class_entry *ce,zval * return_value){
     zval * value=zend_read_property(Z_OBJCE_P(object),object,attr,strlen(attr),1,NULL);
     if(zend_is_true(value)) return value;
     zend_call_method(object,Z_OBJCE_P(object), NULL, method, strlen(method), return_value, 0, NULL, NULL);
-    if(!lsentity_obj_check(ce,return_value,0))return NULL;
+    if(!lsentity_obj_check(ce,return_value,0,1))return NULL;
     if(!lsentity_check_bool_with_0_params(return_value,"allowcache")){
         zend_update_property(Z_OBJCE_P(object),object,attr,strlen(attr),return_value);
     }
@@ -598,11 +598,11 @@ ZEND_METHOD(lsentity_entity_class, columns){
             zval table_columns;
             if(get_table_columns(&table,&table_columns)){
                 zval *query_columns=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_query_column_set"),1,NULL);
-                if(lsentity_obj_check(lsentity_entity_column_set_ce_ptr,query_columns,0)){
+                if(lsentity_obj_check(lsentity_entity_column_set_ce_ptr,query_columns,0,0)){
                     zval merge_table_columns,zpatch;
                     ZVAL_BOOL(&zpatch,patch);
                     zend_call_method_with_2_params(query_columns,Z_OBJCE_P(query_columns), NULL, "ascolumnset", &merge_table_columns,&table_columns,&zpatch);
-                    if(lsentity_obj_check(lsentity_column_ce_ptr,&merge_table_columns,0)){
+                    if(lsentity_obj_check(lsentity_column_ce_ptr,&merge_table_columns,0,0)){
                         zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),&merge_table_columns);
                     }
                     zval_ptr_dtor(&merge_table_columns);
@@ -718,10 +718,10 @@ ZEND_METHOD(lsentity_entity_class, update){
         if (EG(exception)) {
             goto iterator_done;
         }
-        if(lsentity_obj_check(lsentity_column_ce_ptr,val,0)){
+        if(lsentity_obj_check(lsentity_column_ce_ptr,val,0,0)){
             zval name;
             zend_call_method_with_0_params(val,Z_OBJCE_P(val),NULL,"name",&name);
-            if(lsentity_obj_check(lsentity_column_save_ce_ptr,val,0)){
+            if(lsentity_obj_check(lsentity_column_save_ce_ptr,val,0,0)){
                 zend_call_method_with_2_params(val,Z_OBJCE_P(val),NULL,"update",NULL,object,&name);
             }
 
@@ -991,10 +991,10 @@ ZEND_METHOD(lsentity_entity_class, create){
         if (EG(exception)) {
             goto iterator_done;
         }
-        if(lsentity_obj_check(lsentity_column_ce_ptr,val,0)){
+        if(lsentity_obj_check(lsentity_column_ce_ptr,val,0,0)){
             zval name;
             zend_call_method_with_0_params(val,Z_OBJCE_P(val),NULL,"name",&name);
-            if(lsentity_obj_check(lsentity_column_save_ce_ptr,val,0)){
+            if(lsentity_obj_check(lsentity_column_save_ce_ptr,val,0,0)){
                 zend_call_method_with_2_params(val,Z_OBJCE_P(val),NULL,"create",NULL,object,&name);
             }
             if(!zend_symtable_exists_ind(Z_ARR_P(data),Z_STR(name))&&lsentity_check_bool_with_0_params(val,"usedefault")){

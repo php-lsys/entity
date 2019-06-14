@@ -87,7 +87,7 @@ ZEND_METHOD(lsentity_validation_class, __construct){
     ZVAL_FALSE(&param);
     zend_call_method_with_1_params(entity,Z_OBJCE_P(entity),NULL,"columns",&ret,&param);
     zval_ptr_dtor(&param);
-    if(!lsentity_obj_check(lsentity_column_set_ce_ptr,&ret,1)){
+    if(!lsentity_obj_check(lsentity_column_set_ce_ptr,&ret,1,1)){
         zval_ptr_dtor(&ret);
         RETURN_NULL();
     }
@@ -266,7 +266,7 @@ ZEND_METHOD(lsentity_validation_class, rules){
 
     zval *entry;
     ZEND_HASH_FOREACH_VAL(Z_ARR_P(filter_rules),entry) {
-                if(lsentity_obj_check(lsentity_validation_rule_ce_ptr,entry,1)){
+                if(lsentity_obj_check(lsentity_validation_rule_ce_ptr,entry,1,0)){
                     RETURN_NULL();
                 }
                 zval ret;

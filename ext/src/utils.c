@@ -87,11 +87,11 @@ int lsentity_check_bool_with_2_params(zval *object,const char* method,zval *para
     return ret;
 }
 
-int lsentity_obj_check(zend_class_entry * ce,zval *retobj,int throw){
+int lsentity_obj_check(zend_class_entry * ce,zval *retobj,int throw,int drop){
     if(Z_TYPE_P(retobj)==IS_OBJECT&&zend_object_is_true(retobj)&&instanceof_function(Z_OBJCE_P(retobj),ce)) {
         return 1;
     }else{
-        zval_ptr_dtor(retobj);
+        if(drop)zval_ptr_dtor(retobj);
         if(throw)zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "your submit object not a %s object",ZSTR_VAL(ce->name));
         return 0;
     }

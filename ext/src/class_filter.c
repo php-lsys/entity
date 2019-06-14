@@ -115,7 +115,7 @@ ZEND_METHOD(lsentity_filter_class, rules){
 
     zval *entry;
     ZEND_HASH_FOREACH_VAL(Z_ARR_P(filter_rules),entry) {
-        if(lsentity_obj_check(lsentity_filter_rule_ce_ptr,entry,1)){
+        if(lsentity_obj_check(lsentity_filter_rule_ce_ptr,entry,1,0)){
             RETURN_NULL();
         }
         zval ret;

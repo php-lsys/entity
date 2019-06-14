@@ -46,7 +46,7 @@ ZEND_METHOD(lsentity_entity_column_set_class, __construct){
     if(patch_columns){
         zval *tmp;
         ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(patch_columns), tmp) {
-            if(!lsentity_obj_check(lsentity_column_ce_ptr,tmp,1)){
+            if(!lsentity_obj_check(lsentity_column_ce_ptr,tmp,1,0)){
                 RETURN_FALSE;
             }
         } ZEND_HASH_FOREACH_END();
