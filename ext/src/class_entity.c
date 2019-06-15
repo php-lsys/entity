@@ -317,24 +317,25 @@ ZEND_METHOD(lsentity_entity_class, __set){
             if(!oldval)ZVAL_NULL(&nullval);
             int is_change=!lsentity_check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,value);
             if(Z_TYPE(pk)==IS_ARRAY){
-                //@todo  这里...
-                zval *value,*entry;
+                zval _pk;
+                ZVAL_DUP(&_pk,&pk);
+                zval *entry;
                 zend_ulong num_idx;
                 zend_string *str_idx;
-                ZEND_HASH_FOREACH_KEY_VAL(Z_ARR(pk), num_idx, str_idx, entry) {
+                ZEND_HASH_FOREACH_KEY_VAL(Z_ARR(_pk), num_idx, str_idx, entry) {
                     ZVAL_DEREF(entry);
-                    if (fast_is_identical_function(value, entry)) {
+                    if (zend_string_equals(column, Z_STR_P(entry))) {
                         if (str_idx) {
-                            zend_hash_del(Z_ARR(pk),str_idx);
+                            zend_hash_del(Z_ARR(_pk),str_idx);
                         } else {
-                            zend_hash_index_del(Z_ARR(pk),num_idx);
+                            zend_hash_index_del(Z_ARR(_pk),num_idx);
                         }
                         break;
                     }
                 } ZEND_HASH_FOREACH_END();
                 if(!is_change){
                     zval *col;
-                    ZEND_HASH_FOREACH_VAL(Z_ARR(pk),col) {
+                    ZEND_HASH_FOREACH_VAL(Z_ARR(_pk),col) {
                         zval* _change=zend_hash_find(Z_ARR_P(change),Z_STR_P(col));
                         if(_change){
                             if(!is_change){
@@ -350,6 +351,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
                         }
                     } ZEND_HASH_FOREACH_END();
                 }
+                zval_ptr_dtor(&_pk);
             }
             if(is_change){
                 zval *val;
@@ -847,7 +849,7 @@ ZEND_METHOD(lsentity_entity_class, update){
             if(_pk){
                 zval type;
                 ZVAL_NULL(&type);
-                zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&type,&_pkcol);
+                zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&type,col);
                 zend_call_method_with_2_params(&db,Z_OBJCE(db),NULL,"quotevalue",&pk,_pk,&type);
                 zval_ptr_dtor(&type);
             }else ZVAL_EMPTY_STRING(&pk);
@@ -861,15 +863,19 @@ ZEND_METHOD(lsentity_entity_class, update){
             zval str;
             ZVAL_STR(&str,_where.s);
             smart_str_free(&_where);
+            Z_ADDREF(str);
             add_next_index_str(&wheres,Z_STR(str));
             zval_ptr_dtor(&pkcol);
+            zval_ptr_dtor(&str);
             zval_ptr_dtor(&pk);
         } ZEND_HASH_FOREACH_END();
         zval str_where;
         zend_string *glue = zend_string_init(ZEND_STRL(" and "), 0);
         php_implode(glue, &wheres, &str_where);
+        zend_string_release(glue);
         smart_str_append(&sql, Z_STR(str_where));
         zval_ptr_dtor(&wheres);
+        zval_ptr_dtor(&str_where);
 
     }else{
 
@@ -890,6 +896,7 @@ ZEND_METHOD(lsentity_entity_class, update){
         zval_ptr_dtor(&pkcol);
         zval_ptr_dtor(&pk);
     }
+
 
 
     smart_str_0(&sql);
@@ -976,7 +983,6 @@ ZEND_METHOD(lsentity_entity_class, create){
         RETURN_NULL();
     }
     zval_ptr_dtor(&_pkcol);
-    convert_to_string(&pkcol);
     zval columns;
     if(!get_table_columns(&table,&columns)){
         zval_ptr_dtor(&table_name);
