@@ -87,6 +87,7 @@ static int get_table_pk(zval *table,zval *pk){
     if(!check&&Z_TYPE_P(pk)==IS_ARRAY){
         if(zend_array_count(Z_ARR_P(pk))==0)check=0;
         else{
+            check=1;
             zval *val;
             ZEND_HASH_FOREACH_VAL(Z_ARR_P(pk),val) {
                 if(Z_TYPE_P(val)!=IS_STRING){
@@ -96,6 +97,7 @@ static int get_table_pk(zval *table,zval *pk){
             } ZEND_HASH_FOREACH_END();
         }
     }
+
     if(!check){
         zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "the table::primaryKey method return not is: string,array string");
         return 0;
@@ -315,7 +317,21 @@ ZEND_METHOD(lsentity_entity_class, __set){
             if(!oldval)ZVAL_NULL(&nullval);
             int is_change=!lsentity_check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,value);
             if(Z_TYPE(pk)==IS_ARRAY){
-                zend_hash_del(Z_ARR(pk),column);
+                //@todo  这里...
+                zval *value,*entry;
+                zend_ulong num_idx;
+                zend_string *str_idx;
+                ZEND_HASH_FOREACH_KEY_VAL(Z_ARR(pk), num_idx, str_idx, entry) {
+                    ZVAL_DEREF(entry);
+                    if (fast_is_identical_function(value, entry)) {
+                        if (str_idx) {
+                            zend_hash_del(Z_ARR(pk),str_idx);
+                        } else {
+                            zend_hash_index_del(Z_ARR(pk),num_idx);
+                        }
+                        break;
+                    }
+                } ZEND_HASH_FOREACH_END();
                 if(!is_change){
                     zval *col;
                     ZEND_HASH_FOREACH_VAL(Z_ARR(pk),col) {
@@ -756,8 +772,8 @@ ZEND_METHOD(lsentity_entity_class, update){
 
         zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),1);
         zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),1);
-
-        RETURN_ZVAL(object,1,0);
+        zval_ptr_dtor(&save_data);
+        goto iterator_done;
     }
 
 
@@ -878,14 +894,14 @@ ZEND_METHOD(lsentity_entity_class, update){
 
     smart_str_0(&sql);
     zval zsql;
-    ZVAL_STR(&zsql,sql.s);
+    ZVAL_STR_COPY(&zsql,sql.s);
     zval status;
     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
     smart_str_free(&sql);
 
     zval_ptr_dtor(&status);
     zval_ptr_dtor(&str_set);
-   // zval_ptr_dtor(&zsql);
+    zval_ptr_dtor(&zsql);
 
 
     zval temp_array;
@@ -897,6 +913,7 @@ ZEND_METHOD(lsentity_entity_class, update){
 
 
     iterator_done:
+
 
     zval_ptr_dtor(&table_name);
     zval_ptr_dtor(&table);
@@ -1074,7 +1091,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     smart_str_appends(&sql, " )");
     smart_str_0(&sql);
     zval zsql;
-    ZVAL_STR(&zsql,sql.s);
+    ZVAL_STR_COPY(&zsql,sql.s);
     zval status;
     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
     smart_str_free(&sql);
@@ -1090,8 +1107,8 @@ ZEND_METHOD(lsentity_entity_class, create){
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
     zval_ptr_dtor(&temp_array);
 
-    zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),0);
-    zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),0);
+    zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),1);
+    zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),1);
 
 
     if(Z_TYPE(pkcol)==IS_STRING&&zend_symtable_exists_ind(Z_ARR_P(data),Z_STR(pkcol))){

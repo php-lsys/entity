@@ -219,7 +219,8 @@ class Entity implements \JsonSerializable{
                 //更改主键值
                 if (is_array($primaryKey)){
                     $change=!$columns->offsetGet($column)->compare($this->_change[$column],$value);
-                    unset($primaryKey[$column]);
+					$_key_=array_search($column, $primaryKey);
+					if($_key_!==false)unset($primaryKey[$_key_],$_key_);
                     if(!$change)foreach ($primaryKey as $v){
                         if(isset($this->_change[$v])){
                             $data=isset($this->_data[$v])?$this->_data[$v]:null;
