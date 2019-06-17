@@ -54,18 +54,38 @@ $e->loadData(["id"=>"bbb",'ids'=>"bbb","b"=>"adfasd","m"=>"sss","dd"=>"fasdf"]);
 var_dump($e->loaded());
 $e->b="fasdfa";
 $e->ids="fasdfa";
+var_dump($e->changed());
+var_dump($e->pk());
+var_dump($e->loaded());
+var_dump($e->saved());
+var_dump($e->check());
+
 $e->save();
 
 $e->clear();
 
+
 var_dump($e->loaded());
 $e->b="fasdfa";
-//$e->ids="fasdfa";
-//$e->save();
+$e->ids="fasdfa";
+
+var_dump($e->values(array("b"=>"ddd")));
+
+$e->create();
 
 
 
-//var_dump($e);
+var_dump($e->filter());
+var_dump($e->labels());
+var_dump($e->validation());
+var_dump($e->table());
+var_dump($e->exportData());
+var_dump($e->columns(true));
+var_dump($e->columns(0));
+var_dump($e->columns(0));
+var_dump($e->asArray(0));
+
+//var_dump($e->delete());
 
 ?>
 
