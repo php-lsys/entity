@@ -1274,7 +1274,7 @@ ZEND_METHOD(lsentity_entity_class, values){
     zval *object=getThis();
     zval arr;
     array_init(&arr);
-    if (zend_is_true(expected)) {
+    if (expected&&Z_TYPE_P(expected)==IS_ARRAY) {
         php_array_merge(Z_ARR(arr), Z_ARR_P(values));
     }else{
         zval columns;
@@ -1284,6 +1284,7 @@ ZEND_METHOD(lsentity_entity_class, values){
             zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
             php_array_merge(Z_ARR(arr),Z_ARR(defarr));
             zval_ptr_dtor(&defarr);
+            zval_ptr_dtor(&param1);
             zval_ptr_dtor(&columns);
         }
         zval table,pk;
@@ -1306,8 +1307,11 @@ ZEND_METHOD(lsentity_entity_class, values){
     zval *col;
     ZEND_HASH_FOREACH_VAL(Z_ARR(arr),col) {
         zval* oldval=zend_hash_find(Z_ARR_P(values),Z_STR_P(col));
-        if(oldval)zend_call_method_with_2_params(object,Z_OBJCE_P(object),&Z_OBJCE_P(object)->__set, "__set", NULL,col,oldval);
+        if(oldval){
+            zend_call_method_with_2_params(object,Z_OBJCE_P(object),&Z_OBJCE_P(object)->__set, "__set", NULL,col,oldval);
+        }
     } ZEND_HASH_FOREACH_END();
+    zval_ptr_dtor(&arr);
     RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, save){
