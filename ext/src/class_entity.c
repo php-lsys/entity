@@ -1294,10 +1294,13 @@ ZEND_METHOD(lsentity_entity_class, values){
                     zval *col;
                     ZEND_HASH_FOREACH_VAL(Z_ARR(pk),col) {
                         zval* oldval=zend_hash_find(Z_ARR_P(values),Z_STR_P(col));
-                        if(oldval)zend_hash_del(Z_ARR_P(values),Z_STR_P(col));
+                        if(oldval){
+                            zend_hash_del(Z_ARR_P(values),Z_STR_P(col));
+                        }
                     } ZEND_HASH_FOREACH_END();
                 }else{
-                    zend_hash_del(Z_ARR(arr),Z_STR(pk));
+                    convert_to_string(&pk);
+                    zend_hash_del(Z_ARR_P(values),Z_STR(pk));
                 }
                 zval_ptr_dtor(&pk);
             }
