@@ -1410,8 +1410,8 @@ ZEND_METHOD(lsentity_entity_class, asArray){
         php_array_merge(Z_ARR(arr),Z_ARR(defarr));
         zval_ptr_dtor(&defarr);
         zval_ptr_dtor(&param1);
-        zval_ptr_dtor(&columns);//@todo 这里漏内存..
-        RETVAL_ZVAL(&arr,1,1);
+        zval_ptr_dtor(&columns);
+        RETURN_ZVAL(&arr,1,1);
     }
     RETVAL_ZVAL(data,0,0);
 }
