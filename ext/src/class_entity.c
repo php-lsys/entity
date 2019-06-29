@@ -1179,7 +1179,6 @@ ZEND_METHOD(lsentity_entity_class, delete){
         RETURN_NULL();
     }
 
-
     zval_ptr_dtor(&table);
     convert_to_string(&table_name);
 
@@ -1190,6 +1189,7 @@ ZEND_METHOD(lsentity_entity_class, delete){
     smart_str_appends(&sql, " WHERE ");
 
 
+
     if(Z_TYPE(_pkcol)==IS_ARRAY){
         zval *col,wheres;
         array_init(&wheres);
@@ -1198,19 +1198,17 @@ ZEND_METHOD(lsentity_entity_class, delete){
                     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&pkcol,col);
                     convert_to_string(&pkcol);
 
-
                     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
                     zval pk;
                     zval *_pk=zend_hash_find(Z_ARR_P(data),Z_STR_P(col));
                     if(_pk){
                         zval type;
                         ZVAL_NULL(&type);
-                        zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&type,&_pkcol);
+                        zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&type,col);
                         zend_call_method_with_2_params(&db,Z_OBJCE(db),NULL,"quotevalue",&pk,_pk,&type);
                         zval_ptr_dtor(&type);
                     }else ZVAL_EMPTY_STRING(&pk);
                     convert_to_string(&pk);
-
 
                     smart_str _where = {0};
                     smart_str_append(&_where, Z_STR(pkcol));
@@ -1218,9 +1216,9 @@ ZEND_METHOD(lsentity_entity_class, delete){
                     smart_str_append(&_where, Z_STR(pk));
                     smart_str_0(&_where);
                     zval str;
-                    ZVAL_STR(&str,_where.s);
+                    ZVAL_STR_COPY(&str,_where.s);
                     smart_str_free(&_where);
-                    add_next_index_str(&wheres,Z_STR(str));
+                    zend_hash_next_index_insert(Z_ARRVAL(wheres),&str);
                     zval_ptr_dtor(&pkcol);
                     zval_ptr_dtor(&pk);
                 } ZEND_HASH_FOREACH_END();
@@ -1228,7 +1226,9 @@ ZEND_METHOD(lsentity_entity_class, delete){
         zend_string *glue = zend_string_init(ZEND_STRL(" and "), 0);
         php_implode(glue, &wheres, &str_where);
         smart_str_append(&sql, Z_STR(str_where));
-
+        zval_ptr_dtor(&wheres);
+        zend_string_release(glue);
+        zval_ptr_dtor(&str_where);
     }else{
 
         zval type,_pk,pk;
@@ -1260,6 +1260,9 @@ ZEND_METHOD(lsentity_entity_class, delete){
     smart_str_free(&sql);
     zval_ptr_dtor(&status);
 
+
+    zval_ptr_dtor(&columns);
+    zval_ptr_dtor(&db);
     zval_ptr_dtor(&_pkcol);
     zval_ptr_dtor(&table_name);
     zval_ptr_dtor(&zsql);
