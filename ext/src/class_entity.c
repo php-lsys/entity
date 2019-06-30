@@ -1064,7 +1064,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         ZVAL_STR(&key,dkey);
         zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&_field,&key);
         Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
-        add_next_index_str(&field,Z_STR(_field));
+        zend_hash_next_index_insert(Z_ARR(field),&_field);
         zval _type;
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&_type,&key);
         zval _sdata;
