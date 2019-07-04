@@ -1277,7 +1277,7 @@ ZEND_METHOD(lsentity_entity_class, delete){
     zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"clear",return_value);
 }
 ZEND_METHOD(lsentity_entity_class, values){
-    zval *values,*expected;
+    zval *values,*expected=NULL;
     ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_ARRAY(values)
             Z_PARAM_OPTIONAL
