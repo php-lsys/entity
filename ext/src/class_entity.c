@@ -1288,7 +1288,7 @@ ZEND_METHOD(lsentity_entity_class, values){
     array_init(&arr);
     zval _value;
     ZVAL_DUP(&_value,values);
-    zend_print_zval_r(&_value,0);
+
     if (expected&&Z_TYPE_P(expected)==IS_ARRAY) {
         php_array_merge(Z_ARR(arr), Z_ARR(_value));
     }else{
@@ -1323,6 +1323,7 @@ ZEND_METHOD(lsentity_entity_class, values){
         }
     }
     zval *col;
+
     ZEND_HASH_FOREACH_VAL(Z_ARR(arr),col) {
         zval* oldval=zend_hash_find(Z_ARR(_value),Z_STR_P(col));
         if(oldval){
