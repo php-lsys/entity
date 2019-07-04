@@ -180,10 +180,19 @@ const zend_function_entry entity_functions[] = {
 };
 /* }}} */
 
+
+static const zend_module_dep entity_json_deps[] = {
+#ifdef HAVE_JSON
+		ZEND_MOD_REQUIRED("json")
+#endif
+		ZEND_MOD_END
+};
+
 /* {{{ entity_module_entry
  */
 zend_module_entry entity_module_entry = {
-	STANDARD_MODULE_HEADER,
+	STANDARD_MODULE_HEADER_EX, NULL,
+	entity_json_deps,
 	"entity",
 	entity_functions,
 	PHP_MINIT(entity),
@@ -194,7 +203,7 @@ zend_module_entry entity_module_entry = {
 	PHP_ENTITY_VERSION,
 	STANDARD_MODULE_PROPERTIES
 };
-/* }}} */
+
 
 #ifdef COMPILE_DL_ENTITY
 #ifdef ZTS

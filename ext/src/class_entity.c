@@ -24,6 +24,10 @@
 #include "class_column_save.h"
 #include "class_db.h"
 
+#ifdef HAVE_JSON
+#include "ext/json/php_json.h"
+#endif
+
 ZEND_API zend_class_entry *lsentity_entity_ce_ptr;
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_set_arginfo, 0, 0, 2)
@@ -1412,6 +1416,7 @@ ZEND_METHOD(lsentity_entity_class, check){
 ZEND_METHOD(lsentity_entity_class, asArray){
     zval *object=getThis();
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
+
     zval columns;
     if(get_columns(object,&columns,1)){
         zval param1,defarr;
@@ -1420,7 +1425,21 @@ ZEND_METHOD(lsentity_entity_class, asArray){
         zval arr;
         array_init(&arr);
         php_array_merge(Z_ARR(arr),Z_ARR_P(data));
-        php_array_merge(Z_ARR(arr),Z_ARR(defarr));
+        zval *src_entry;
+        zend_string *string_key;
+        ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(defarr), string_key, src_entry) {
+            if (UNEXPECTED(Z_ISREF_P(src_entry) &&
+                           Z_REFCOUNT_P(src_entry) == 1)) {
+                ZVAL_UNREF(src_entry);
+            }
+            Z_TRY_ADDREF_P(src_entry);
+            if (string_key) {
+                if(!zend_hash_find(Z_ARR(arr),string_key))
+                zend_hash_update(Z_ARR(arr), string_key, src_entry);
+            } else {
+                zend_hash_next_index_insert_new(Z_ARR(arr), src_entry);
+            }
+        } ZEND_HASH_FOREACH_END();
         zval_ptr_dtor(&defarr);
         zval_ptr_dtor(&param1);
         zval_ptr_dtor(&columns);
@@ -1482,6 +1501,10 @@ void lsentity_entity_class_init(){
     zend_class_entry ce;
     INIT_NS_CLASS_ENTRY(ce,LS_NS,"Entity",lsentity_entity_class_method);
     lsentity_entity_ce_ptr = zend_register_internal_class(&ce );
+    #ifdef HAVE_JSON
+        zend_class_implements(lsentity_entity_ce_ptr,1, php_json_serializable_ce);
+    #endif
+
     zend_declare_property_null(lsentity_entity_ce_ptr,ZEND_STRL("_table"), ZEND_ACC_PROTECTED );
     zend_declare_property_null(lsentity_entity_ce_ptr,ZEND_STRL("_query_column_set"), ZEND_ACC_PROTECTED );
     zend_declare_property_null(lsentity_entity_ce_ptr,ZEND_STRL("_columns"), ZEND_ACC_PROTECTED );
