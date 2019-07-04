@@ -433,6 +433,7 @@ ZEND_METHOD(lsentity_entity_class, __toString){
         zend_string *glue = zend_string_init(ZEND_STRL(","), 0);
         php_implode(glue, &pk, &str_set);
         zend_string_release(glue);
+        zval_ptr_dtor(&pk);
         RETURN_ZVAL(&str_set,1,1);
     }
     convert_to_string(&pk);
