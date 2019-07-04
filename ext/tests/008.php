@@ -52,7 +52,7 @@ class mddtest implements Table{
 }
 $e=new Entity(new mddtest());
 $new =new Validation($e);
-
+$new->valid(array("id"=>"111","ids"=>"ddd"));
 ?>
 
 --EXPECT--

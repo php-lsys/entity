@@ -350,7 +350,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
             zval_ptr_dtor(&trule);
         }ZEND_HASH_FOREACH_END();
     }
-    zval_ptr_dtor(&keys);
+
     zval *setkey,*rval;
     zend_string * fieldkey;
     zval emptyarr;
@@ -439,7 +439,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
         }ZEND_HASH_FOREACH_END();
     } ZEND_HASH_FOREACH_END();
     zval_ptr_dtor(&emptyarr);
-
+    zval_ptr_dtor(&keys);
     zval *err=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_errors"),0,NULL);
     RETURN_BOOL(zend_hash_num_elements(Z_ARR_P(err))>0);
 
