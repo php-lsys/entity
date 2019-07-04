@@ -473,6 +473,10 @@ ZEND_METHOD(lsentity_entity_class, loadData){
             Z_PARAM_BOOL(loaded)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
+    zval zdata;
+    ZVAL_DUP(&zdata,data);
+    data=&zdata;
+
     zval *object=getThis();
     if(entity_column_set){
         zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_query_column_set"),entity_column_set);
@@ -503,7 +507,7 @@ ZEND_METHOD(lsentity_entity_class, loadData){
     zval mdata;
     array_init(&mdata);
     php_array_merge(Z_ARR(mdata),Z_ARR_P(sdata));
-    Z_REFCOUNTED_P(data)&&Z_ADDREF_P(data);//参数要放到属性必须加引用
+  //  Z_REFCOUNTED_P(data)&&Z_ADDREF_P(data);//参数要放到属性必须加引用
     php_array_merge(Z_ARR(mdata),Z_ARR_P(data));
 
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&mdata);
@@ -527,6 +531,9 @@ ZEND_METHOD(lsentity_entity_class, loadData){
             zval_ptr_dtor(&table);
         }else loaded=0;
     }
+
+    zval_ptr_dtor(data);
+
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),loaded);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),loaded);
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),loaded);

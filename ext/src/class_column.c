@@ -131,11 +131,11 @@ ZEND_METHOD(lsentity_column_class, isAllowNull){
 }
 
 ZEND_METHOD(lsentity_column_class, read){
-    zend_string *val;
+    zval *val;
     ZEND_PARSE_PARAMETERS_START(1, 1)
-            Z_PARAM_STR(val)
+            Z_PARAM_ZVAL(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
-    RETURN_STR(val);
+    RETURN_ZVAL(val,1,0);
 }
 ZEND_METHOD(lsentity_column_class, __toString){
     RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL),0,0);

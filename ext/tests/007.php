@@ -10,7 +10,7 @@ check entity
 --SKIPIF--
 <?php if (!extension_loaded("entity")) print "skip"; ?>
 --FILE--
-<?php 
+<?php
 class mytestdb implements Database{
     public function quoteTable($table){
         return $table;
@@ -45,35 +45,35 @@ class mddtest implements Table{
     }
     public function primaryKey()
     {
-        return "id";
+        return ["id","ids","b"];
     }
 }
 $e=new Entity(new mddtest());
-
-$e->loadData(["id"=>"bbb",'ids'=>"bbb","b"=>"adfasd","m"=>"sss","dd"=>"fasdf"]);
-var_dump($e->loaded());
+$e->loadData(["id"=>"bbb",'ids'=>"bbb","b"=>"adfasddd","m"=>"sss","dd"=>"fasdf"]);
+var_dump($e);
+/*
+$e->loaded();
 $e->b="fasdfa";
 $e->ids="fasdfa";
-var_dump($e->changed());
-var_dump($e->pk());
-var_dump($e->loaded());
-var_dump($e->saved());
-var_dump($e->check());
+$e->changed();
+$e->pk();
+$e->loaded();
+$e->saved();
+$e->check();
 
 $e->save();
 
 $e->clear();
 
 
-var_dump($e->loaded());
+$e->loaded();
+
 $e->b="fasdfa";
 $e->ids="fasdfa";
 
-var_dump($e->values(array("b"=>"ddd")));
+$e->values(array("b"=>"ddd"));
 
 $e->create();
-
-
 
 var_dump($e->filter());
 var_dump($e->labels());
@@ -82,11 +82,12 @@ var_dump($e->table());
 var_dump($e->exportData());
 var_dump($e->columns(true));
 var_dump($e->columns(0));
-var_dump($e->columns(0));
 var_dump($e->asArray(0));
 
-//var_dump($e->delete());
-
+var_dump($e->exportData());
+var_dump($e->delete());
+$e->values(array("b"=>"ddd"));
+*/
 ?>
 
 --EXPECT--
