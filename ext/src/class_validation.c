@@ -250,7 +250,7 @@ ZEND_METHOD(lsentity_validation_class, rule){
                 zval_ptr_dtor(&ta);
             }
             sgr=zend_hash_find(Z_ARR_P(gr),field);
-
+            Z_REFCOUNTED_P(rule)&&Z_ADDREF_P(rule);
             add_next_index_zval(sgr,rule);
         }
     }
