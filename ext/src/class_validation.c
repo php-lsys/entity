@@ -183,6 +183,7 @@ ZEND_METHOD(lsentity_validation_class, label){
     zval *old=zend_hash_find(Z_ARR_P(labels),field);
     zval labelval;
     ZVAL_STR(&labelval,label);
+    Z_REFCOUNT(labelval)&&Z_ADDREF(labelval);
     if(!old)zend_hash_add(Z_ARR_P(labels),field,&labelval);
     else zend_hash_update(Z_ARR_P(labels),field,&labelval);
     zval_ptr_dtor(&labelval);
@@ -233,20 +234,23 @@ ZEND_METHOD(lsentity_validation_class, rule){
         if(!old){
             zval zfield;
             ZVAL_STR(&zfield,field);
+            Z_REFCOUNT(zfield)&&Z_ADDREF(zfield);
             zend_hash_add(Z_ARR_P(labels),field,&zfield);
             zval_ptr_dtor(&zfield);
         }
 
-        zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("rules"),0,NULL);
+        zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
         if(Z_TYPE_P(gr)==IS_ARRAY){
             zval *sgr=zend_hash_find(Z_ARR_P(gr),field);
             if(!sgr){
                 zval ta;
                 array_init(&ta);
+                Z_REFCOUNT(ta)&&Z_ADDREF(ta);
                 zend_hash_add(Z_ARR_P(gr),field,&ta);
                 zval_ptr_dtor(&ta);
             }
             sgr=zend_hash_find(Z_ARR_P(gr),field);
+
             add_next_index_zval(sgr,rule);
         }
     }

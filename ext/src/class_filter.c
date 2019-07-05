@@ -94,6 +94,7 @@ ZEND_METHOD(lsentity_filter_class, rule){
         if(!sgr){
             zval ta;
             array_init(&ta);
+            Z_REFCOUNTED(ta)&&Z_ADDREF(ta);
             zend_hash_add(Z_ARR_P(gr),field,&ta);
             zval_ptr_dtor(&ta);
         }
