@@ -297,8 +297,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
     zval keys;
 
     if (elem_count>0) {
-        zval *input,				/* Input array */
-                *entry,				/* An entry in the input array */
+        zval *entry,
                 new_val;				/* New value */
         zend_ulong num_idx;
         zend_string *str_idx;
@@ -313,8 +312,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
                     ZEND_HASH_FILL_ADD(&new_val);
                 }
             } else {
-                /* Go through input array and add keys to the return array */
-                ZEND_HASH_FOREACH_KEY_VAL_IND(Z_ARRVAL_P(input), num_idx, str_idx, entry) {
+                ZEND_HASH_FOREACH_KEY_VAL_IND(arrval, num_idx, str_idx, entry) {
                             if (str_idx) {
                                 ZVAL_STR_COPY(&new_val, str_idx);
                             } else {
