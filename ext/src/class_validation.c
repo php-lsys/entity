@@ -183,7 +183,7 @@ ZEND_METHOD(lsentity_validation_class, label){
     zval *old=zend_hash_find(Z_ARR_P(labels),field);
     zval labelval;
     ZVAL_STR(&labelval,label);
-    Z_REFCOUNT(labelval)&&Z_ADDREF(labelval);
+    Z_REFCOUNTED(labelval)&&Z_ADDREF(labelval);
     if(!old)zend_hash_add(Z_ARR_P(labels),field,&labelval);
     else zend_hash_update(Z_ARR_P(labels),field,&labelval);
     zval_ptr_dtor(&labelval);
@@ -234,7 +234,7 @@ ZEND_METHOD(lsentity_validation_class, rule){
         if(!old){
             zval zfield;
             ZVAL_STR(&zfield,field);
-            Z_REFCOUNT(zfield)&&Z_ADDREF(zfield);
+            Z_REFCOUNTED(zfield)&&Z_ADDREF(zfield);
             zend_hash_add(Z_ARR_P(labels),field,&zfield);
             zval_ptr_dtor(&zfield);
         }
@@ -245,7 +245,7 @@ ZEND_METHOD(lsentity_validation_class, rule){
             if(!sgr){
                 zval ta;
                 array_init(&ta);
-                Z_REFCOUNT(ta)&&Z_ADDREF(ta);
+                Z_REFCOUNTED(ta)&&Z_ADDREF(ta);
                 zend_hash_add(Z_ARR_P(gr),field,&ta);
                 zval_ptr_dtor(&ta);
             }
