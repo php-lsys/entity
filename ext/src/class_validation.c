@@ -365,7 +365,8 @@ ZEND_METHOD(lsentity_validation_class, valid){
     zval *labels=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_labels"),0,NULL);
     zval *entity=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_entity"),0,NULL);
 
-    ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(keys),fieldkey,setkey) {
+    ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(rules),fieldkey,setkey) {
+
         if(Z_TYPE_P(setkey)!=IS_ARRAY)continue;
         ZEND_HASH_FOREACH_VAL(Z_ARR_P(setkey),rval){
 
