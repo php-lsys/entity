@@ -78,7 +78,7 @@ ZEND_METHOD(lsentity_filter_class, __construct){
 ZEND_METHOD(lsentity_filter_class, rule){
 
     zval *filter_rule,*object;
-    zend_string *field;
+    zend_string *field=NULL;
     ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_OBJECT_OF_CLASS(filter_rule,lsentity_filter_rule_ce_ptr)
             Z_PARAM_OPTIONAL
@@ -106,7 +106,7 @@ ZEND_METHOD(lsentity_filter_class, rule){
 ZEND_METHOD(lsentity_filter_class, rules){
 
     zval *filter_rules,*object;
-    zend_string *field;
+    zend_string *field=NULL;
     ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_ARRAY(filter_rules)
             Z_PARAM_OPTIONAL

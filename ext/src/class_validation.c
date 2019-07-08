@@ -211,7 +211,7 @@ ZEND_METHOD(lsentity_validation_class, labels){
 ZEND_METHOD(lsentity_validation_class, rule){
 
     zval *rule,*object;
-    zend_string *field;
+    zend_string *field=NULL;
     ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_OBJECT_OF_CLASS(rule,lsentity_validation_rule_ce_ptr)
             Z_PARAM_OPTIONAL
@@ -220,7 +220,8 @@ ZEND_METHOD(lsentity_validation_class, rule){
     object = getThis();
     if(!field){
         zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
-        add_next_index_zval(gr,rule);
+        Z_REFCOUNTED_P(rule)&&Z_ADDREF_P(rule);
+        zend_hash_next_index_insert(Z_ARR_P(gr),rule);
     }else{
         zval *labels=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_labels"),0,NULL);
         if(Z_TYPE_P(labels)!=IS_ARRAY){
@@ -260,7 +261,7 @@ ZEND_METHOD(lsentity_validation_class, rule){
 ZEND_METHOD(lsentity_validation_class, rules){
 
     zval *filter_rules,*object;
-    zend_string *field;
+    zend_string *field=NULL;
     ZEND_PARSE_PARAMETERS_START(1, 2)
             Z_PARAM_ARRAY(filter_rules)
             Z_PARAM_OPTIONAL
@@ -468,8 +469,10 @@ ZEND_METHOD(lsentity_validation_class, error){
     zval zerror;
     ZVAL_STR(&zerror,error);
     Z_REFCOUNTED(zerror)&&Z_ADDREF(zerror);
-    if(!old)zend_hash_add(Z_ARR_P(errors),field,&zerror);
-    else zend_hash_update(Z_ARR_P(errors),field,&zerror);
+    if(!old) {
+        Z_REFCOUNTED(zerror)&&Z_ADDREF(zerror);
+        zend_hash_add(Z_ARR_P(errors), field, &zerror);
+    }else zend_hash_update(Z_ARR_P(errors),field,&zerror);
     zval_ptr_dtor(&zerror);
     RETURN_ZVAL(object,1,0);
 }

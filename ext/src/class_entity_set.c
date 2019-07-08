@@ -108,7 +108,7 @@ ZEND_METHOD(lsentity_entity_set_class, rewind){
 }
 ZEND_METHOD(lsentity_entity_set_class, asArray){
     zval *object;
-    zend_string *key,*value;
+    zend_string *key=NULL,*value=NULL;
     ZEND_PARSE_PARAMETERS_START(0, 2)
         Z_PARAM_OPTIONAL
         Z_PARAM_STR(key)
