@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__."/../vendor/autoload.php";
+//include_once __DIR__."/../vendor/autoload.php";
 include_once __DIR__."/lib/DomeDB.php";
 include_once __DIR__."/lib/DomeDBResult.php";
 include_once __DIR__."/lib/DomeEntityTest.php";
