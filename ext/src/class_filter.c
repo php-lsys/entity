@@ -63,7 +63,7 @@ ZEND_METHOD(lsentity_filter_class, __construct){
         zend_ulong num_idx;
         zend_string *str_idx;
         ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(rule_group), num_idx, str_idx, entry) {
-            if(Z_TYPE_P(entity)==IS_ARRAY){
+            if(Z_TYPE_P(entry)==IS_ARRAY&&str_idx){
                 zval ret;
                 ZVAL_STR(&ret,str_idx);
                 zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rules",NULL,entry,&ret);
@@ -87,6 +87,7 @@ ZEND_METHOD(lsentity_filter_class, rule){
     object = getThis();
     if(!field){
         zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
+        Z_REFCOUNTED_P(filter_rule)&&Z_ADDREF_P(filter_rule);
         add_next_index_zval(gr,filter_rule);
     }else{
         zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
@@ -99,6 +100,7 @@ ZEND_METHOD(lsentity_filter_class, rule){
             zval_ptr_dtor(&ta);
         }
         sgr=zend_hash_find(Z_ARR_P(gr),field);
+        Z_REFCOUNTED_P(filter_rule)&&Z_ADDREF_P(filter_rule);
         add_next_index_zval(sgr,filter_rule);
     }
     RETURN_ZVAL(object,1,0);
@@ -116,13 +118,21 @@ ZEND_METHOD(lsentity_filter_class, rules){
 
     zval *entry;
     ZEND_HASH_FOREACH_VAL(Z_ARR_P(filter_rules),entry) {
-        if(lsentity_obj_check(lsentity_filter_rule_ce_ptr,entry,1,0)){
+        if(!lsentity_obj_check(lsentity_filter_rule_ce_ptr,entry,1,0)){
+
             RETURN_NULL();
         }
-        zval ret;
-        ZVAL_STR(&ret,field);
-        zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,&ret,entry);
-        zval_ptr_dtor(&ret);
+
+        if(field) {
+            zval ret;
+            ZVAL_STR(&ret, field);
+            zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,entry,&ret);
+            zval_ptr_dtor(&ret);
+        }else{
+            zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,entry);
+        }
+
+
     } ZEND_HASH_FOREACH_END();
 
     RETURN_ZVAL(object,1,0);
@@ -202,6 +212,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
 
     } ZEND_HASH_FOREACH_END();
 
+    zval_ptr_dtor(&rules);
     RETURN_ZVAL(&_value,1,1);
 
 }

@@ -28,6 +28,7 @@ class mytestdb implements Database{
         return 1;
     }
 }
+
 class mddtest implements Table{
     public function tableColumns()
     {
@@ -45,49 +46,52 @@ class mddtest implements Table{
     }
     public function primaryKey()
     {
-        return ["id","ids","b"];
+        return ["id","ids"];
     }
 }
 $e=new Entity(new mddtest());
 $e->loadData(["id"=>"bbb",'ids'=>"bbb","b"=>"adfasddd","m"=>"sss","dd"=>"fasdf"]);
-var_dump($e);
-/*
-$e->loaded();
-$e->b="fasdfa";
-$e->ids="fasdfa";
-$e->changed();
-$e->pk();
-$e->loaded();
-$e->saved();
-$e->check();
+//var_dump($e);
 
-$e->save();
+//$e->loaded();
+//$e->b="fasdfa";
+//$e->ids="fasdfa";
+//$e->changed();
+//$e->pk();
+//$e->loaded();
+//$e->saved();
+//$e->check();
 
-$e->clear();
+//$e->save();
+
+//$e->clear();
 
 
-$e->loaded();
+//$e->loaded();
 
-$e->b="fasdfa";
-$e->ids="fasdfa";
+//$e->b="fasdfa";
+//$e->ids="fasdfa";
 
-$e->values(array("b"=>"ddd"));
+//echo $e;
+//$e->values(array("b"=>"ddddddddd"));
 
-$e->create();
+//$e->create();
 
-var_dump($e->filter());
-var_dump($e->labels());
-var_dump($e->validation());
-var_dump($e->table());
-var_dump($e->exportData());
-var_dump($e->columns(true));
-var_dump($e->columns(0));
-var_dump($e->asArray(0));
+//var_dump($e->filter());
+//var_dump($e->labels());
+//var_dump($e->validation());
+//var_dump($e->table());
+//var_dump($e->exportData());
+//var_dump($e->columns(true));
+//var_dump($e->columns(0));
+var_dump($e->asarray());
 
-var_dump($e->exportData());
-var_dump($e->delete());
-$e->values(array("b"=>"ddd"));
-*/
+//var_dump($e->exportData());
+//var_dump($e->delete());
+//$e->values(array("b"=>"ddd"));
+
+echo json_encode($e);
+
 ?>
 
 --EXPECT--

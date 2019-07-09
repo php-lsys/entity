@@ -152,7 +152,7 @@ ZEND_METHOD(lsentity_validation_class, __construct){
         zend_ulong num_idx;
         zend_string *str_idx;
         ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(rule_group), num_idx, str_idx, entry) {
-            if(Z_TYPE_P(entity)==IS_ARRAY){
+            if(Z_TYPE_P(entry)==IS_ARRAY&&str_idx){
                 zval ret;
                 ZVAL_STR(&ret,str_idx);
                 zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rules",NULL,entry,&ret);
@@ -274,10 +274,17 @@ ZEND_METHOD(lsentity_validation_class, rules){
                 if(lsentity_obj_check(lsentity_validation_rule_ce_ptr,entry,1,0)){
                     RETURN_NULL();
                 }
-                zval ret;
-                ZVAL_STR(&ret,field);
-                zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,&ret,entry);
-                zval_ptr_dtor(&ret);
+
+
+                if(field){
+                    zval ret;
+                    ZVAL_STR(&ret,field);
+                    zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,entry,&ret);
+                    zval_ptr_dtor(&ret);
+                }else{
+                   zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,entry);
+                }
+
             } ZEND_HASH_FOREACH_END();
 
     RETURN_ZVAL(object,1,0);

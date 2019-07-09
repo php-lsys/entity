@@ -91,11 +91,18 @@ class DomeFilterCallback implements FilterRule{
     }
 }
 $e=new Entity(new mddtest());
-$new =new Filter($e);
+$new =new Filter($e,["id"=>[new DomeFilterCallback(function($value){
+                               return strip_tags($value);
+                           })]],true);
+//$new->rules([new DomeFilterCallback(function($value){
+//    return strip_tags($value);
+//})]);
 $new->rule(new DomeFilterCallback(function($value){
     return strip_tags($value);
-}));
-var_dump($new->runFilter("id","aa<aa>bb"));
+}),"id");
+var_dump($new->runFilter("id","aa<aa>sdfasbb"));
+var_dump($new->allowCache());
+
 ?>
 
 --EXPECT--
