@@ -47,7 +47,7 @@ class DomeDBResult implements \LSYS\Entity\Database\Result {
     {
         return count($this->_total);
     }
-    public function fetchFree()
+    public function setFetchFree()
     {
         
     }
