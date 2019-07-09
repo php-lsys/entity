@@ -419,6 +419,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
             fci.no_separation = 1;
 
             zend_fcall_info_cache fcic;
+            fcic.initialized = 1;
             ZVAL_UNDEF(&fci.function_name); /* Unused */
 
             zend_class_entry * obj_ce = Z_OBJCE_P(rval);

@@ -48,6 +48,7 @@ int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int 
         fcc.calling_scope = zend_get_executed_scope();
         fcc.called_scope = Z_OBJCE_P(return_value);
         fcc.object = Z_OBJ_P(return_value);
+        fcc.initialized = 1;
         ret = zend_call_function(&fci, &fcc);
         zval_ptr_dtor(&retval);
         for (i = 0; i < num_args; i++) {

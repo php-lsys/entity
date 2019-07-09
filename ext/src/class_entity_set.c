@@ -245,6 +245,7 @@ ZEND_METHOD(lsentity_entity_set_class, current){
 
 
     zend_fcall_info_cache fcic;
+    fcic.initialized = 1;
     ZVAL_UNDEF(&fci.function_name); /* Unused */
 
     zend_class_entry * obj_ce = Z_OBJCE_P(return_value);
