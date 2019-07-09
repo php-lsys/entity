@@ -191,12 +191,12 @@ ZEND_METHOD(lsentity_validation_class, label){
 }
 ZEND_METHOD(lsentity_validation_class, labels){
     zval *labels,*object;
-    zend_string *field,*label;
     ZEND_PARSE_PARAMETERS_START(1, 1)
             Z_PARAM_ARRAY(labels)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     zval *olabels=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_labels"),0,NULL);
     zval sarr;
+    object = getThis();
     array_init(&sarr);
     if(olabels&&Z_TYPE_P(olabels)==IS_ARRAY){
         php_array_merge(Z_ARR(sarr),Z_ARR_P(olabels));
@@ -271,10 +271,9 @@ ZEND_METHOD(lsentity_validation_class, rules){
 
     zval *entry;
     ZEND_HASH_FOREACH_VAL(Z_ARR_P(filter_rules),entry) {
-                if(lsentity_obj_check(lsentity_validation_rule_ce_ptr,entry,1,0)){
+                if(!lsentity_obj_check(lsentity_validation_rule_ce_ptr,entry,1,0)){
                     RETURN_NULL();
                 }
-
 
                 if(field){
                     zval ret;

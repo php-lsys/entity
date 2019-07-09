@@ -93,15 +93,16 @@ class DomeVaildNum implements ValidRule{
     }
 }
 $e=new Entity(new mddtest());
-$new =new Validation($e);
+$new =new Validation($e,["id"=>[new DomeVaildNum(1, 1000, 0)]],true);
 $new->label("id","主键");
-$new->rule(new DomeVaildNum(1, 10, 0),"id");
-$new->rule(new DomeVaildNum(1, 20, 0),"ids");
-var_dump($new->valid(array("id"=>"111","ids"=>"2222")));
+$new->labels(["id"=>"主键s"]);
+$new->rules([new DomeVaildNum(1, 30, 0)],"id");
+$new->rule(new DomeVaildNum(1, 20, 1),"ids");
+var_dump($new->valid(array("id"=>"111")));
 var_dump($new->errors());
-//var_dump($new->error("ids", "dddd"));
-//var_dump($new->error("idsw", "dddd"));
-//var_dump($new->errors());
+$new->error("idsw", "dddd");
+var_dump($new->errors());
+var_dump($new->allowCache());
 ?>
 
 --EXPECT--
