@@ -89,7 +89,7 @@ ZEND_METHOD(lsentity_filter_class, rule){
         zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
         add_next_index_zval(gr,filter_rule);
     }else{
-        zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("rules"),0,NULL);
+        zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
         zval *sgr=zend_hash_find(Z_ARR_P(gr),field);
         if(!sgr){
             zval ta;
@@ -136,7 +136,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
             Z_PARAM_ZVAL(value)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
-    zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("rules"),0,NULL);
+    zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
     zval *grs=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
     zval *rule=zend_hash_find(Z_ARR_P(gr),field);
     zval rules;
