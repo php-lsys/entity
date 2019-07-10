@@ -419,7 +419,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
             fci.no_separation = 1;
 
             zend_fcall_info_cache fcic;
-            fcic.initialized = 1;
+          //  fcic.initialized = 1;
             ZVAL_UNDEF(&fci.function_name); /* Unused */
 
             zend_class_entry * obj_ce = Z_OBJCE_P(rval);
@@ -434,6 +434,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
             }
             fcic.calling_scope = obj_ce;
             fcic.object = Z_OBJ_P(rval);
+            fcic.calling_scope = zend_get_executed_scope();
             int _result = zend_call_function(&fci, &fcic);
             if (_result == FAILURE) {
                 if (!EG(exception)) {
