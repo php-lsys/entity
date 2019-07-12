@@ -492,6 +492,7 @@ ZEND_METHOD(lsentity_entity_class, loadData){
     zend_string * key;
 
     ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(data),key,val) {
+        if(!key)continue;
         zval obj;
         if(get_column(&columns,key,&obj,0)){
             zval valobj;
@@ -634,7 +635,7 @@ ZEND_METHOD(lsentity_entity_class, columns){
                     zval merge_table_columns,zpatch;
                     ZVAL_BOOL(&zpatch,patch);
                     zend_call_method_with_2_params(query_columns,Z_OBJCE_P(query_columns), NULL, "ascolumnset", &merge_table_columns,&table_columns,&zpatch);
-                    if(lsentity_obj_check(lsentity_column_ce_ptr,&merge_table_columns,0,0)){
+                    if(lsentity_obj_check(lsentity_column_set_ce_ptr,&merge_table_columns,0,0)){
                         zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),&merge_table_columns);
                     }
                     zval_ptr_dtor(&merge_table_columns);

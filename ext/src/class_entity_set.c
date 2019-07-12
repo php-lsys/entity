@@ -41,8 +41,8 @@ ZEND_METHOD(lsentity_entity_set_class, __construct){
             Z_PARAM_OBJECT_OF_CLASS(db_result, lsentity_db_result_ce_ptr)
             Z_PARAM_STR(entity_name)
             Z_PARAM_OPTIONAL
-            Z_PARAM_OBJECT_OF_CLASS(columns, lsentity_entity_column_set_ce_ptr)
-            Z_PARAM_OBJECT_OF_CLASS(table, lsentity_table_ce_ptr)
+            Z_PARAM_OBJECT_OF_CLASS_EX(columns, lsentity_entity_column_set_ce_ptr,1,0)
+            Z_PARAM_OBJECT_OF_CLASS_EX(table, lsentity_table_ce_ptr,1,0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
     zend_update_property(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_result"),db_result);
@@ -246,13 +246,17 @@ ZEND_METHOD(lsentity_entity_set_class, current){
 
     zend_fcall_info_cache fcic;
   //  fcic.initialized = 1;
+
+
+
+
     ZVAL_UNDEF(&fci.function_name); /* Unused */
 
     zend_class_entry * obj_ce = Z_OBJCE_P(return_value);
 
     HashTable *function_table = &obj_ce->function_table;
-        fcic.function_handler = zend_hash_str_find_ptr(
-                function_table, ZEND_STRL("loaddata"));
+    fcic.function_handler = zend_hash_str_find_ptr(
+            function_table, ZEND_STRL("loaddata"));
     if (fcic.function_handler == NULL) {
         /* error at c-level */
         zend_error_noreturn(E_CORE_ERROR, "Couldn't find implementation for method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "loadData");
@@ -263,6 +267,7 @@ ZEND_METHOD(lsentity_entity_set_class, current){
     int _result = zend_call_function(&fci, &fcic);
     if (_result == FAILURE) {
         if (!EG(exception)) {
+            //@todo bug,,,,
             zend_error_noreturn(E_CORE_ERROR, "Couldn't execute method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "loadData");
         }
     }
