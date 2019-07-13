@@ -255,16 +255,16 @@ ZEND_METHOD(lsentity_entity_class, __set){
     zval newval;
     if(get_filter(object,&filter)){
         zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&newval,&zval_column,value);
+        zval_ptr_dtor(&filter);
     }else{
         ZVAL_COPY_VALUE(&newval,value);
-
     }
 
 
 
 
 
-    zval_ptr_dtor(&filter);
+
 
 
     int loaded=lsentity_check_bool_with_0_params(object,"loaded");
