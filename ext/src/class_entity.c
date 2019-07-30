@@ -1414,14 +1414,21 @@ ZEND_METHOD(lsentity_entity_class, check){
 
     if(is_valid)RETURN_ZVAL(object,1,0);
 
-    zend_object *obj=zend_throw_exception_ex(lsentity_exception_ce_ptr, 2, "validation data fail");
-
     zval errdata;
     zend_call_method_with_0_params(valid_ok,Z_OBJCE_P(valid_ok),NULL,"errors",&errdata);
     if(Z_TYPE(errdata)==IS_ARRAY){
-        zval throw;
-        ZVAL_OBJ(&throw,obj);
-        zend_call_method_with_1_params(&throw,Z_OBJCE(throw),NULL,"setvalidationerror",NULL,&errdata);
+
+        zval ex, tmp;
+        object_init_ex(&ex, lsentity_exception_ce_ptr);
+        ZVAL_STRING(&tmp, "validation data fail");
+        zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_MESSAGE), &tmp);
+        zval_ptr_dtor(&tmp);
+        ZVAL_LONG(&tmp, 2);
+        zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_CODE), &tmp);
+        zend_print_zval_r(&ex,0);
+        zend_call_method_with_1_params(&ex,Z_OBJCE(ex),NULL,"setvaildationerror",NULL,&errdata);
+        zend_throw_exception_internal(&ex);
+        RETURN_NULL();
     }
     zval_ptr_dtor(&errdata);
     RETURN_ZVAL(object,1,0);
