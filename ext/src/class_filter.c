@@ -159,10 +159,12 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     }
     zval *entity = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_entity"),0,NULL);
     zval *entry;
-    zval _value;
-    ZVAL_COPY_VALUE(&_value, value);
+    zval rvalue;
+    ZVAL_COPY_VALUE(&rvalue, value);
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
 
+                zval _value;
+                ZVAL_COPY_VALUE(&_value, &rvalue);
 
                 zend_fcall_info fci;
                 zval retval;
@@ -206,14 +208,15 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                     }
                 }
 
-                ZVAL_COPY_VALUE(&_value, &retval);
+
+                ZVAL_DUP(&rvalue, &retval);
 
                 zval_ptr_dtor(&retval);
 
     } ZEND_HASH_FOREACH_END();
 
     zval_ptr_dtor(&rules);
-    RETURN_ZVAL(&_value,1,1);
+    RETURN_ZVAL(&rvalue,1,1);
 
 }
 ZEND_METHOD(lsentity_filter_class, allowCache){
