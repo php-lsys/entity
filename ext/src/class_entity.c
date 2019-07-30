@@ -803,6 +803,7 @@ ZEND_METHOD(lsentity_entity_class, update){
         ZVAL_NULL(&_valid_object);
         if(!valid_object)valid_object=&_valid_object;
         zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"check",NULL,valid_object);
+        if (EG(exception))RETURN_NULL();
     }
 
 
@@ -1068,6 +1069,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         ZVAL_NULL(&_valid_object);
         if(!valid_object)valid_object=&_valid_object;
         zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"check",NULL,valid_object);
+        if (EG(exception))RETURN_NULL();
     }
 
     zval field,sdata;
