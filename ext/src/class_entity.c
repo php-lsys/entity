@@ -1080,6 +1080,10 @@ ZEND_METHOD(lsentity_entity_class, create){
         zval key;
         ZVAL_STR(&key,dkey);
         zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&_field,&key);
+        if(Z_TYPE(_field)!=IS_STRING){
+            zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "obj %s quoteColumn method return not a string,param[%s]",ZSTR_VAL(Z_OBJCE(db)->name),ZSTR_VAL(Z_STR(key)));
+            RETURN_NULL();
+        }
         Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
         zend_hash_next_index_insert(Z_ARR(field),&_field);
         zval _type;
