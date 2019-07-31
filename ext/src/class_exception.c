@@ -37,7 +37,7 @@ ZEND_METHOD(lsentity_exception_class, setErrorSql){
 
 
 }
-ZEND_METHOD(lsentity_exception_class, setVaildationError){
+ZEND_METHOD(lsentity_exception_class, setValidationError){
 
 
     zval *val;
@@ -80,16 +80,16 @@ ZEND_METHOD(lsentity_exception_class, setVaildationError){
 ZEND_METHOD(lsentity_exception_class, getErrorSql){
     RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_error_sql"),0,NULL),0,0);
 }
-ZEND_METHOD(lsentity_exception_class, getVaildationError){
+ZEND_METHOD(lsentity_exception_class, getValidationError){
     RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_validation_error"),0,NULL),0,0);
 }
 
 
 static zend_function_entry lsentity_exception_class_method[] = {
     ZEND_ME(lsentity_exception_class,setErrorSql, lsentity_exception_errsql_arginfo, ZEND_ACC_PUBLIC)
-    ZEND_ME(lsentity_exception_class,setVaildationError, lsentity_exception_vaild_arginfo, ZEND_ACC_PUBLIC)
+    ZEND_ME(lsentity_exception_class,setValidationError, lsentity_exception_vaild_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_exception_class,getErrorSql, NULL, ZEND_ACC_PUBLIC)
-    ZEND_ME(lsentity_exception_class,getVaildationError, NULL, ZEND_ACC_PUBLIC)
+    ZEND_ME(lsentity_exception_class,getValidationError, NULL, ZEND_ACC_PUBLIC)
     ZEND_FE_END
 };
 
