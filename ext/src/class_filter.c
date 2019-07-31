@@ -202,9 +202,13 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                 fcic.calling_scope = obj_ce;
                 fcic.object = Z_OBJ_P(entry);
                 int _result = zend_call_function(&fci, &fcic);
+
+                zval_ptr_dtor(&_value);
+
                 if (_result == FAILURE) {
                     if (!EG(exception)) {
                         zend_error_noreturn(E_CORE_ERROR, "Couldn't execute method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "filter");
+                        break;
                     }
                 }
 
@@ -212,6 +216,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                 ZVAL_DUP(&rvalue, &retval);
 
                 zval_ptr_dtor(&retval);
+
 
     } ZEND_HASH_FOREACH_END();
 
