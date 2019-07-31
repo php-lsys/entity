@@ -444,12 +444,12 @@ ZEND_METHOD(lsentity_validation_class, valid){
             zval_ptr_dtor(&retval);
 
             zval *err=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_errors"),0,NULL);
-            if(Z_TYPE_P(err)==IS_ARRAY&&zend_hash_find(Z_ARR_P(err),fieldkey)){
+            if((Z_TYPE_P(err)==IS_ARRAY&&zend_hash_find(Z_ARR_P(err),fieldkey))||EG(exception)){
                 break;
             }
-
         }ZEND_HASH_FOREACH_END();
     } ZEND_HASH_FOREACH_END();
+    zval_ptr_dtor(&rules);
     zval_ptr_dtor(&emptyarr);
     zval_ptr_dtor(&keys);
     zval *err=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_errors"),0,NULL);

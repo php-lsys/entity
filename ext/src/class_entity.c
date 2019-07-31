@@ -411,7 +411,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
     zend_hash_update(Z_ARR_P(data),column,&newval);
 
-    //zval_ptr_dtor(&newval);//@这里有问题
+    zval_ptr_dtor(&newval);//@这里有问题
 }
 ZEND_METHOD(lsentity_entity_class, __get){
     zend_string *column;
@@ -993,6 +993,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         zval_ptr_dtor(&table);
         RETURN_NULL();
     }
+
     zval _table_name;
     zend_call_method_with_0_params(&table,Z_OBJCE(table),NULL,"tablename",&_table_name);
     if(Z_TYPE(_table_name)!=IS_STRING){
@@ -1024,6 +1025,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         RETURN_NULL();
     }
     zval_ptr_dtor(&_pkcol);
+
     zval columns;
     if(!get_table_columns(&table,&columns)){
         zval_ptr_dtor(&table_name);
@@ -1091,7 +1093,15 @@ ZEND_METHOD(lsentity_entity_class, create){
         ZVAL_NULL(&_valid_object);
         if(!valid_object)valid_object=&_valid_object;
         zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"check",NULL,valid_object);
-        if (EG(exception))RETURN_NULL();
+        if (EG(exception)){
+            zval_ptr_dtor(&save_data);
+            zval_ptr_dtor(&table_name);
+            zval_ptr_dtor(&table);
+            zval_ptr_dtor(&db);
+            zval_ptr_dtor(&columns);
+            zval_ptr_dtor(&pkcol);
+            RETURN_NULL();
+        }
     }
 
     zval field,sdata;
@@ -1108,6 +1118,7 @@ ZEND_METHOD(lsentity_entity_class, create){
             zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "obj %s quoteColumn method return not a string,param[%s]",ZSTR_VAL(Z_OBJCE(db)->name),ZSTR_VAL(Z_STR(key)));
             zval_ptr_dtor(&key);
             zval_ptr_dtor(&table_name);
+            zval_ptr_dtor(&columns);
             zval_ptr_dtor(&table);
             zval_ptr_dtor(&db);
             zval_ptr_dtor(&pkcol);
@@ -1125,6 +1136,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         if (EG(exception)){
             zval_ptr_dtor(&key);
             zval_ptr_dtor(&table_name);
+            zval_ptr_dtor(&columns);
             zval_ptr_dtor(&table);
             zval_ptr_dtor(&db);
             zval_ptr_dtor(&pkcol);
@@ -1460,6 +1472,11 @@ ZEND_METHOD(lsentity_entity_class, check){
 
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),is_valid);
 
+
+    zval_ptr_dtor(&arr);
+
+
+
     if(is_valid)RETURN_ZVAL(object,1,0);
 
 
@@ -1470,9 +1487,11 @@ ZEND_METHOD(lsentity_entity_class, check){
     zval_ptr_dtor(&tmp);
     ZVAL_LONG(&tmp, 2);
     zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_CODE), &tmp);
-
+    zval_ptr_dtor(&tmp);
     zval errdata;
     zend_call_method_with_0_params(valid_ok,Z_OBJCE_P(valid_ok),NULL,"errors",&errdata);
+
+
     if(Z_TYPE(errdata)==IS_ARRAY){
         zend_call_method_with_1_params(&ex,Z_OBJCE(ex),NULL,"setvalidationerror",NULL,&errdata);
     }

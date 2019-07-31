@@ -58,6 +58,7 @@ ZEND_METHOD(lsentity_exception_class, setValidationError){
             smart_str_append(&err,glue);
         }
     } ZEND_HASH_FOREACH_END();
+    smart_str_0(&err);
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("message"),err.s);
     smart_str_free(&err);
     zend_string_release(glue);
