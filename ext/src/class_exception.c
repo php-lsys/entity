@@ -45,33 +45,25 @@ ZEND_METHOD(lsentity_exception_class, setValidationError){
         Z_PARAM_ARRAY(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
 
-    zval arr;
-    array_init(&arr);
     zval *entry;
+    zend_string *glue;
+    glue= zend_string_init(ZEND_STRL(" "), 0);
+    zval *msg=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("message"),0,NULL);
+    smart_str err = {0};
+    smart_str_append(&err, Z_STR_P(msg));
+    smart_str_appends(&err, " : ");
     ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(val), entry) {
         if(Z_TYPE_P(entry)==IS_STRING){
-            zend_hash_next_index_insert(Z_ARR_P(&arr),entry);
+            smart_str_append(&err, Z_STR_P(entry));
+            smart_str_append(&err,glue);
         }
     } ZEND_HASH_FOREACH_END();
-
-    if(zend_array_count(Z_ARR(arr))>0){
-        zval *msg=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("message"),0,NULL);
-        zval str_set;
-        zend_string *glue;
-        glue= zend_string_init(ZEND_STRL(","), 0);
-        php_implode(glue, &arr, &str_set);
-        zend_string_release(glue);
-        smart_str err = {0};
-        smart_str_append(&err, Z_STR_P(msg));
-        smart_str_appends(&err, " : ");
-        smart_str_append(&err, Z_STR(str_set));
-        zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("message"),err.s);
-        smart_str_free(&err);
-    }
-
+    zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("message"),err.s);
+    smart_str_free(&err);
+    zend_string_release(glue);
 
     zend_update_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_validation_error"),val);
-    zval_ptr_dtor(&arr);
+
 
     RETURN_ZVAL(getThis(),1,0);
 

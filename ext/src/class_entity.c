@@ -1427,8 +1427,8 @@ ZEND_METHOD(lsentity_entity_class, check){
     zend_call_method_with_0_params(valid_ok,Z_OBJCE_P(valid_ok),NULL,"errors",&errdata);
     if(Z_TYPE(errdata)==IS_ARRAY){
         zend_call_method_with_1_params(&ex,Z_OBJCE(ex),NULL,"setvalidationerror",NULL,&errdata);
-        zend_throw_exception_internal(&ex);
     }
+    zend_throw_exception_internal(&ex);
     zval_ptr_dtor(&errdata);
     RETURN_ZVAL(object,1,0);
 }
