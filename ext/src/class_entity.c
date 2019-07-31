@@ -1393,15 +1393,18 @@ ZEND_METHOD(lsentity_entity_class, check){
     zval arr;
     array_init(&arr);
     php_array_merge(Z_ARR(arr),Z_ARR_P(data));
+
     zval columns;
     if(get_columns(object,&columns,1)){
         zval param1,defarr;
         ZVAL_LONG(&param1,LSENTITY_COLUMN_SET_TYPE_DEFAULT);
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
-        php_array_merge(Z_ARR(arr),Z_ARR(defarr));
+        php_array_merge(Z_ARR(defarr),Z_ARR(arr));
         zval_ptr_dtor(&defarr);
         zval_ptr_dtor(&columns);
     }
+
+
 
     zval valid,param;
     ZVAL_LONG(&param,1);
