@@ -449,7 +449,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
             }
         }ZEND_HASH_FOREACH_END();
     } ZEND_HASH_FOREACH_END();
-    zval_ptr_dtor(&rules);
+    //zval_ptr_dtor(&rules);
     zval_ptr_dtor(&emptyarr);
     zval_ptr_dtor(&keys);
     zval *err=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_errors"),0,NULL);
