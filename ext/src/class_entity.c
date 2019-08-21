@@ -1406,6 +1406,7 @@ ZEND_METHOD(lsentity_entity_class, values){
     ZEND_HASH_FOREACH_VAL(Z_ARR(arr),col) {
         zval* oldval=zend_hash_find(Z_ARR(_value),Z_STR_P(col));
         if(oldval){
+            Z_REFCOUNTED_P(oldval)&&Z_ADDREF_P(oldval);//@todo ?? 不添加引用好像有问题
             zend_call_method_with_2_params(object,Z_OBJCE_P(object),&Z_OBJCE_P(object)->__set, "__set", NULL,col,oldval);
         }
     } ZEND_HASH_FOREACH_END();
