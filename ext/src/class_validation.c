@@ -54,7 +54,7 @@ ZEND_METHOD(lsentity_validation_class, __construct){
 
 
     zval *entity,*rule_group=NULL,*object;
-    zend_bool allow_cache;
+    zend_bool allow_cache=1;
     ZEND_PARSE_PARAMETERS_START(1, 3)
             Z_PARAM_OBJECT_OF_CLASS(entity,lsentity_entity_ce_ptr)
             Z_PARAM_OPTIONAL

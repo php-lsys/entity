@@ -39,7 +39,7 @@ ZEND_END_ARG_INFO()
 ZEND_METHOD(lsentity_filter_class, __construct){
 
     zval *entity,*object,*rule_group=NULL;
-    zend_bool  allow_cache;
+    zend_bool  allow_cache=1;
     ZEND_PARSE_PARAMETERS_START(1, 3)
             Z_PARAM_OBJECT_OF_CLASS(entity,lsentity_entity_ce_ptr)
             Z_PARAM_OPTIONAL
