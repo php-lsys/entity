@@ -533,9 +533,11 @@ ZEND_METHOD(lsentity_entity_class, loadData){
     zval *sdata=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     //zend_print_zval_r(data,0);
     zval mdata;
+    zval tmp;
+    ZVAL_DUP(&tmp,sdata);
     array_init(&mdata);
-    php_array_merge(Z_ARR(mdata),Z_ARR_P(sdata));
-  //  Z_REFCOUNTED_P(data)&&Z_ADDREF_P(data);//参数要放到属性必须加引用
+    php_array_merge(Z_ARR(mdata),Z_ARR(tmp));
+    zval_ptr_dtor(&tmp);
     php_array_merge(Z_ARR(mdata),Z_ARR_P(data));
 
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&mdata);
@@ -1450,7 +1452,10 @@ ZEND_METHOD(lsentity_entity_class, check){
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval arr;
     array_init(&arr);
-    php_array_merge(Z_ARR(arr),Z_ARR_P(data));
+    zval tmp1;
+    ZVAL_DUP(&tmp1,data);
+    php_array_merge(Z_ARR(arr),Z_ARR(tmp1));
+    zval_ptr_dtor(&tmp1);
 
     zval columns;
     if(get_columns(object,&columns,1)){
@@ -1515,7 +1520,10 @@ ZEND_METHOD(lsentity_entity_class, asArray){
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
         zval arr;
         array_init(&arr);
-        php_array_merge(Z_ARR(arr),Z_ARR_P(data));
+        zval tmp;
+        ZVAL_DUP(&tmp,data);
+        php_array_merge(Z_ARR(arr),Z_ARR(tmp));
+        zval_ptr_dtor(&tmp);
         zval *src_entry;
         zend_string *string_key;
         ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(defarr), string_key, src_entry) {

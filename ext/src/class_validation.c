@@ -199,10 +199,16 @@ ZEND_METHOD(lsentity_validation_class, labels){
     object = getThis();
     array_init(&sarr);
     if(olabels&&Z_TYPE_P(olabels)==IS_ARRAY){
-        php_array_merge(Z_ARR(sarr),Z_ARR_P(olabels));
+        zval tmp;
+        ZVAL_DUP(&tmp,olabels);
+        php_array_merge(Z_ARR(sarr),Z_ARR(tmp));
+        zval_ptr_dtor(&tmp);
     }
     if(labels&&Z_TYPE_P(labels)==IS_ARRAY){
-        php_array_merge(Z_ARR(sarr),Z_ARR_P(labels));
+        zval tmp;
+        ZVAL_DUP(&tmp,labels);
+        php_array_merge(Z_ARR(sarr),Z_ARR(tmp));
+        zval_ptr_dtor(&tmp);
     }
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_labels"),&sarr);
     zval_ptr_dtor(&sarr);
@@ -351,9 +357,15 @@ ZEND_METHOD(lsentity_validation_class, valid){
             zval trule;
             array_init(&trule);
             if(h&&Z_TYPE_P(h)==IS_ARRAY){
-                php_array_merge(Z_ARR(trule),Z_ARR_P(h));
+                zval tmp;
+                ZVAL_DUP(&tmp,h);
+                php_array_merge(Z_ARR(trule),Z_ARR(tmp));
+                zval_ptr_dtor(&tmp);
             }
-            php_array_merge(Z_ARR(trule),Z_ARR_P(gr));
+            zval tmp1;
+            ZVAL_DUP(&tmp1,gr);
+            php_array_merge(Z_ARR(trule),Z_ARR(tmp1));
+            zval_ptr_dtor(&tmp1);
             Z_REFCOUNTED(trule)&&Z_ADDREF(trule);
             zend_hash_update(Z_ARR(rules),Z_STR_P(field),&trule);
             zval_ptr_dtor(&trule);
