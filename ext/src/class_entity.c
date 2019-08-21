@@ -247,12 +247,9 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
     zval filter;
     zval newval;
-
     if(get_filter(object,&filter)){
-
         zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&newval,&zval_column,value);
         zval_ptr_dtor(&filter);
-
     }else{
         ZVAL_COPY_VALUE(&newval,value);
     }
@@ -1259,6 +1256,8 @@ ZEND_METHOD(lsentity_entity_class, delete){
         RETURN_NULL();
     }
 
+
+
     zval_ptr_dtor(&table);
     convert_to_string(&table_name);
 
@@ -1331,6 +1330,8 @@ ZEND_METHOD(lsentity_entity_class, delete){
         zval_ptr_dtor(&pk);
     }
 
+
+
     smart_str_0(&sql);
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
@@ -1348,7 +1349,7 @@ ZEND_METHOD(lsentity_entity_class, delete){
     zval_ptr_dtor(&_pkcol);
     zval_ptr_dtor(&table_name);
     zval_ptr_dtor(&zsql);
-    zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"clear",return_value);
+    zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"clear",NULL);
 
     RETURN_ZVAL(&status,1,1);
 }
@@ -1465,9 +1466,12 @@ ZEND_METHOD(lsentity_entity_class, check){
 
     zval valid,param;
     ZVAL_LONG(&param,1);
+
     zend_call_method_with_1_params(valid_ok,Z_OBJCE_P(valid_ok), NULL, "valid", &valid,&arr);
+
     zend_bool is_valid=zend_is_true(&valid);
     zval_ptr_dtor(&valid);
+
     if(Z_TYPE(valid_object_obj)==IS_OBJECT&&zend_object_is_true(&valid_object_obj))zval_ptr_dtor(&valid_object_obj);
 
     zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),is_valid);

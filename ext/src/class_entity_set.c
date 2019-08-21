@@ -272,6 +272,7 @@ ZEND_METHOD(lsentity_entity_set_class, current){
         }
     }
     zval_ptr_dtor(&retval);
+    zval_ptr_dtor(&ret);
 
 
 }

@@ -145,6 +145,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
             Z_PARAM_STR(field)
             Z_PARAM_ZVAL(value)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+
     object = getThis();
     zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
     zval *grs=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
@@ -152,17 +153,22 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     zval rules;
     array_init(&rules);
     if(rule&&Z_TYPE_P(rule)==IS_ARRAY){
-        Z_ADDREF_P(rule);//@todo ??
-        php_array_merge(Z_ARR(rules),Z_ARR_P(rule));
+        zval tmp;
+        ZVAL_DUP(&tmp,rule);
+        php_array_merge(Z_ARR(rules),Z_ARR(tmp));
+        zval_ptr_dtor(&tmp);
     }
     if(Z_TYPE_P(grs)==IS_ARRAY){
-        Z_ADDREF_P(grs);//@todo ??
-        php_array_merge(Z_ARR(rules),Z_ARR_P(grs));
+        zval tmp;
+        ZVAL_DUP(&tmp,grs);
+        php_array_merge(Z_ARR(rules),Z_ARR(tmp));
+        zval_ptr_dtor(&tmp);
     }
     zval *entity = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_entity"),0,NULL);
     zval *entry;
     zval rvalue;
     ZVAL_COPY_VALUE(&rvalue, value);
+
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
 
                 zval _value;
