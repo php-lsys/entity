@@ -66,20 +66,20 @@ PHP_INI_END()
 /* Every user-visible function in PHP should document itself in the source */
 /* {{{ proto string confirm_entity_compiled(string arg)
    Return a string to confirm that the module is compiled in */
-PHP_FUNCTION(confirm_entity_compiled)
-{
-	char *arg = NULL;
-	size_t arg_len, len;
-	zend_string *strg;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &arg, &arg_len) == FAILURE) {
-		return;
-	}
-
-	strg = strpprintf(0, "Congratulations! You have successfully modified ext/%.78s/config.m4. Module %.78s is now compiled into PHP.", "entity", arg);
-
-	RETURN_STR(strg);
-}
+//PHP_FUNCTION(confirm_entity_compiled)
+//{
+//	char *arg = NULL;
+//	size_t arg_len, len;
+//	zend_string *strg;
+//
+//	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &arg, &arg_len) == FAILURE) {
+//		return;
+//	}
+//
+//	strg = strpprintf(0, "Congratulations! You have successfully modified ext/%.78s/config.m4. Module %.78s is now compiled into PHP.", "entity", arg);
+//
+//	RETURN_STR(strg);
+//}
 /* }}} */
 /* The previous line is meant for vim and emacs, so it can correctly fold and
    unfold functions in source code. See the corresponding marks just before
@@ -175,7 +175,7 @@ PHP_MINFO_FUNCTION(entity)
  * Every user visible function must have an entry in entity_functions[].
  */
 const zend_function_entry entity_functions[] = {
-	PHP_FE(confirm_entity_compiled,	NULL)		/* For testing, remove later. */
+    //PHP_FE(confirm_entity_compiled,	NULL)		/* For testing, remove later. */
 	PHP_FE_END	/* Must be the last line in entity_functions[] */
 };
 /* }}} */
