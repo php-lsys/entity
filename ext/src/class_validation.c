@@ -431,7 +431,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
             fci.no_separation = 1;
 
             zend_fcall_info_cache fcic;
-          //  fcic.initialized = 1;
+
             ZVAL_UNDEF(&fci.function_name); /* Unused */
 
             zend_class_entry * obj_ce = Z_OBJCE_P(rval);
@@ -444,6 +444,9 @@ ZEND_METHOD(lsentity_validation_class, valid){
                 zend_error_noreturn(E_CORE_ERROR, "Couldn't find implementation for method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "check");
                 RETURN_NULL();
             }
+            #if PHP_VERSION_ID<70300  //@todo php7.2版本不一样
+            fcic.initialized = 1;
+            #endif
             fcic.calling_scope = obj_ce;
             fcic.object = Z_OBJ_P(rval);
             fcic.calling_scope = zend_get_executed_scope();

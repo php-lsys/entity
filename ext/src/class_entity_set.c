@@ -245,7 +245,9 @@ ZEND_METHOD(lsentity_entity_set_class, current){
 
 
     zend_fcall_info_cache fcic;
-  //  fcic.initialized = 1;
+    #if PHP_VERSION_ID<70300 //@todo　//@todo php7.2版本不一样
+    fcic.initialized = 1;
+    #endif
 
 
 
