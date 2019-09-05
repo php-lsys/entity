@@ -17,6 +17,7 @@ interface Result extends \Iterator{
     public function setFetchFree();
     /**
      * 已从资源中获取的结果数量
+     * 如果存在结果返回值必须从1开始,记录集无任何结果才能返回0
      * 完成一次完整迭代后保证该值等于结果中的总数
      * 迭代过程中不确定，可能是迭代次数，也可能是结果总数
      * $iterator设置为true,可强制完成迭代.但如果调用过fetchFree,将数据丢失
