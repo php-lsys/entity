@@ -1,11 +1,11 @@
 <?php
 include_once __DIR__."/boot.php";
 $model1=new DomeModelTest();
-//  $entit=$model1->findById(3597);
-//  print_r($entit->asArray());
-// $entit->name="sss";
-// $entit->save();
-//$e=new Entity($model1);//可以直接用Entity类
+ $entit=$model1->findById(3597);
+ print_r($entit->asArray());
+$entit->name="sss";
+$entit->save();
+$e=new \LSYS\Entity($model1);//可以直接用Entity类
 $entity=new DomeEntityTest($model1);
 $entity->values(array(
     'name'=>"fasdfadsf",
