@@ -126,10 +126,12 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
             if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
+                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
                 zend_hash_next_index_insert(Z_ARR(result),&arr);
                 zval_ptr_dtor(&arr);
             } else{
                 array_init(&arr);
+                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
                 zend_hash_next_index_insert(Z_ARR(result),&arr);
                 zval_ptr_dtor(&arr);
             }
@@ -144,10 +146,12 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
             if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&arr,&zvalue);
+                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
                 zend_hash_next_index_insert(Z_ARR(result),&arr);
                 zval_ptr_dtor(&arr);
             } else{
                 ZVAL_NULL(&arr);
+                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
                 zend_hash_next_index_insert(Z_ARR(result),&arr);
                 zval_ptr_dtor(&arr);
             }
@@ -163,6 +167,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
                 zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
                 zval * val=zend_hash_find(Z_ARR(arr),key);
                 convert_to_string(val);
+                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
                 zend_hash_add(Z_ARR(result),Z_STR_P(val),&arr);
                 zval_ptr_dtor(&arr);
             }
@@ -180,6 +185,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rkey,&zkey);
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rvalue,&zvalue);
                 convert_to_string(&rkey);
+                Z_REFCOUNTED(zvalue)&&Z_ADDREF(zvalue);
                 zend_hash_add(Z_ARR(result),Z_STR(rkey),&zvalue);
                 zval_ptr_dtor(&rkey);
                 zval_ptr_dtor(&zvalue);
