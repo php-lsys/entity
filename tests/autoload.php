@@ -9,6 +9,3 @@ if (is_file(__DIR__ . '/../vendor/autoload.php')) {
     exit(1);
 }
 $load->setPsr4("TestLSYSEntityLib\\",[__DIR__."/classes/TestLSYSEntityLib"]);
-\LSYS\Config\File::dirs(array(
-    __DIR__."/config",
-));

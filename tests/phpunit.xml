@@ -2,12 +2,12 @@
 <phpunit bootstrap="autoload.php">
     <testsuites>
         <testsuite name="LSYS Tests">
-            <directory suffix="Test.php">./classes/LSYS</directory>
+            <directory suffix="Test.php">./classes/TestLSYSEntity</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-         	<directory suffix=".php">../src/classes/TestLSYSEntity</directory>
+         	<directory suffix=".php">../src/classes/LSYS</directory>
         </whitelist>
     </filter>
     <logging>

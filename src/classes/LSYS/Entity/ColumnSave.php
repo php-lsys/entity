@@ -1,21 +1,22 @@
 <?php
 namespace LSYS\Entity;
 use LSYS\Entity;
-
-/**
- * 保存时回调字段
- */
-interface ColumnSave{
+if (!interface_exists(ColumnSave::class)){
     /**
-     * 更新时回调
-     * @param Entity $entity
-     * @param string $column
+     * 保存时回调字段
      */
-   public function update(Entity $entity,$column);
-   /**
-    * 创建时回调
-    * @param Entity $entity
-    * @param string $column
-    */
-   public function create(Entity $entity,$column);
+    interface ColumnSave{
+        /**
+         * 更新时回调
+         * @param Entity $entity
+         * @param string $column
+         */
+       public function update(Entity $entity,$column);
+       /**
+        * 创建时回调
+        * @param Entity $entity
+        * @param string $column
+        */
+       public function create(Entity $entity,$column);
+    }
 }

@@ -1,36 +1,42 @@
 <?php
 namespace TestLSYSEntityLib;
 use LSYS\Entity\Database;
-//数据库实现,一般框架都带有,增加实现即可
-class DomeDB  extends \PDO implements Database{
+//一般框架都带自己的数据库实现,可基于框架自带的数据库实现以下Database接口,以下是基于PDO简易实现
+class DomeDB implements Database{
     protected static $obj;
     public static function instance() {
-        if(!self::$obj){
-            self::$obj=new self('mysql:host=127.0.0.1;dbname=test','root','110');
-            self::$obj->exec('SET NAMES "utf8"');
-        }
+        if(!self::$obj)self::$obj=new static();
         return self::$obj;
+    }
+    protected $pdo;
+    public function __construct() {
+        $this->pdo=new \PDO('mysql:host=127.0.0.1;dbname=test','root','');
+        $this->pdo->exec('SET NAMES "utf8"');
     }
     /**
      * @param string $sql
      * @return DomeDBResult
      */
-    public function query($sql){
-        $res=parent::query($sql);
-        if($res===false){
+    public function query($sql,array $data=[]){
+        $prepare=$this->pdo->prepare($sql);
+        if(!$prepare->execute($data)){
             $msg=$this->errorInfo();
             throw new \Exception("sql exec error:".array_shift($msg)."-".$sql);
         }
-        return new DomeDBResult($res);
+        return new DomeDBResult($prepare);
     }
     public function exec($sql,array $data=[])
     {
-        $res=$this->prepare($sql)->execute($data);
-        if($res===false){
+        $prepare=$this->pdo->prepare($sql);
+        if($prepare->execute($data)===false){
             $msg=$this->errorInfo();
             throw new \Exception("sql exec error:".array_shift($msg)."-".$sql);
         }
-        return $res;
+        return true;
+    }
+    public function insertId()
+    {
+        return $this->pdo->lastInsertId();
     }
     public function quoteColumn($column)
     {
@@ -45,7 +51,6 @@ class DomeDB  extends \PDO implements Database{
         }
         // Convert to a string
         $column = ( string ) $column;
-        
         $column = str_replace ( $identifier, $escaped_identifier, $column );
         if ($column === '*') {
             return $column;
@@ -101,9 +106,9 @@ class DomeDB  extends \PDO implements Database{
     {
         try{
             if ($value === NULL) {
-                return $this->quote($value,\PDO::PARAM_NULL);
+                return $this->pdo->quote($value,\PDO::PARAM_NULL);
             } elseif ($value === TRUE||$value === FALSE) {
-                return $this->quote($value,\PDO::PARAM_BOOL);
+                return $this->pdo->quote($value,\PDO::PARAM_BOOL);
             } elseif (is_object ( $value )) {
                 return $this->quoteValue ( ( string ) $value ,$column_type);
             } elseif (is_array ( $value )) {
@@ -112,17 +117,13 @@ class DomeDB  extends \PDO implements Database{
                     __FUNCTION__
                 ), $value ) ) . ')';
             } elseif (is_int ( $value )) {
-                return $this->quote($value,\PDO::PARAM_INT);
+                return $this->pdo->quote($value,\PDO::PARAM_INT);
             } elseif (is_float ( $value )) {
                 return $this->quote(sprintf ( '%F', $value ),\PDO::PARAM_STR);
             }
-            return $this->quote($value);
+            return $this->pdo->quote($value);
         }catch (\Exception $e){//callback can't throw exception...
             return "'".addslashes($value)."'";
         }
-    }
-    public function insertId()
-    {
-        return $this->lastInsertId();
     }
 }

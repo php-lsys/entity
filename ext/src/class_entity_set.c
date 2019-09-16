@@ -68,14 +68,16 @@ ZEND_METHOD(lsentity_entity_set_class, fetchCount){
             Z_PARAM_BOOL(iterator)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
-
-    zval ret;
-    zval param;
-    ZVAL_BOOL(&param,iterator);
-    zend_call_method_with_1_params(object,Z_OBJCE_P(object),NULL,"fetchcount",&ret,&param);
-    zval_ptr_dtor(&param);
-    RETURN_ZVAL(&ret,1,1);
-
+    zval *result=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_result"),0,NULL);
+    if(Z_TYPE_P(result)==IS_OBJECT&&zend_object_is_true(result)){
+    	zval ret;
+    	zval param;
+    	ZVAL_BOOL(&param,iterator);
+        zend_call_method_with_1_params(result,Z_OBJCE_P(result),NULL,"fetchcount",&ret,&param);
+        zval_ptr_dtor(&param);
+        RETURN_ZVAL(&ret,1,1);
+    }
+    RETURN_LONG(0);
 }
 ZEND_METHOD(lsentity_entity_set_class, key){
     zval *object;

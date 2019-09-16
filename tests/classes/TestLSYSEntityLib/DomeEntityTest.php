@@ -17,18 +17,17 @@ class DomeEntityTest extends Entity{
         return (new Filter($this))
         ->rule(new DomeFilterCallback("trim"))//全局过滤,不指定字段
         ->rule(new DomeFilterCallback("strip_tags"),"enname")//指定字段过滤
-//         ->rules(array (//批量
-//             new DomeFilterCallback("trim"),
-//             new DomeFilterCallback("strip_tags"),
-//         ),'name')
+        ->rules(array (//批量
+            new DomeFilterCallback("strip_tags"),
+        ),'name')
         ;
     }
     public function validationFactory(){
         return (new Validation($this))
         ->rule(new DomeVaildStrlen(1, 15, 0),"enname")
-//         ->rules([//批量
-//             new DomeVaildStrlen(1, 15, 0),
-//         ],"name")
+        ->rules([//批量
+            new DomeVaildStrlen(1, 15, 0),
+        ],"name")
         ;
     }
 }
