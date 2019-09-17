@@ -1,5 +1,11 @@
-数据记录实体类
+数据记录映射对象
 ========
+
+
+
+[![Build Status](https://travis-ci.com/php-lsys/entity.svg?branch=master)](https://travis-ci.com/php-lsys/entity)
+[![Coverage Status](https://coveralls.io/repos/github/php-lsys/entity/badge.svg?branch=master)](https://coveralls.io/github/php-lsys/entity?branch=master)
+
 
 > 主要用在数据库orm记录映射实体对象
 
