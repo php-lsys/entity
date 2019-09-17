@@ -6,13 +6,34 @@ use TestLSYSEntityLib\DomeModelTest;
 use LSYS\Entity;
 use LSYS\Entity\EntityColumnSet;
 use TestLSYSEntityLib\DomeModelTestPkArr;
+use LSYS\Entity\Column;
 class LSYSEntity extends TestCase
 {
+    public function testColumn(){
+        $c=new Column("a");
+        $c->setAllowNull(true);
+        $this->assertTrue($c->isAllowNull());
+        $c->setComment("aa");
+        $this->assertEquals("aa", $c->comment());
+        $c->setAllowNull(false);
+        $this->assertEquals($c->getDefault(), '');
+        $c->setDefault(1);
+        $this->assertEquals($c->getDefault(), 1);
+        $c->setType("int");
+        $this->assertEquals($c->getType(), 'int');
+        $this->assertEquals(strval($c),"a");
+        $b=new Column("b");
+        $b->copy($c);
+        $this->assertEquals($b->getType(),"int");
+        $this->assertEquals($b->getDefault(), 1);
+    }
     public function testEntity()
     {
         $model1=new DomeModelTest();
         $e=new Entity($model1);
         $this->assertEquals("id", $e->columns(true)->offsetGet("id")->asArray()['name']);
+        $this->assertEquals("name", $e->columns(true)->offsetGet("name")->asArray()['name']);
+        $this->assertEquals("code", $e->columns(true)->offsetGet("code")->asArray()['name']);
         $this->assertTrue(is_array($e->labels()));
         $this->assertNull($e->filter());
         $this->assertNull($e->validation());
@@ -32,8 +53,11 @@ class LSYSEntity extends TestCase
         $this->assertFalse($e->saved());
         $e->clear();
         $this->assertFalse($e->loaded());
-        $this->name="fff";
-        $e->loadData($data,new EntityColumnSet(["id","name"]),true);
+        $e->name="fff";
+        $this->assertTrue((new EntityColumnSet())->notCustom());
+        $ecs=new EntityColumnSet(["id","name"]);
+        $this->assertFalse($ecs->notCustom());
+        $e->loadData($data,$ecs,true);
         $this->assertNotEmpty(json_encode($e));
         unset($e->id);
         $this->assertFalse($e->loaded());
@@ -52,6 +76,21 @@ class LSYSEntity extends TestCase
         $e->id=10;
         $this->assertTrue($e->loaded());
     }
+    public function testEx()
+    {
+        $this->expectException(\LSYS\Entity\Exception::class);
+        $sql="select sleep(1)";
+        $err=array("error1","error2");
+        try{
+            throw (new \LSYS\Entity\Exception(""))->setErrorSql($sql)
+            ->setValidationError($err);
+        }catch(\LSYS\Entity\Exception $e){
+            $this->assertEquals($sql, $e->getErrorSql());
+            $this->assertEquals($err, $e->getValidationError());
+            $this->assertNotEmpty($e->getMessage());
+            throw $e;
+        }
+    }
     public function testEntitySetEx1()
     {
         $model1=new DomeModelTest();
@@ -67,6 +106,20 @@ class LSYSEntity extends TestCase
         $this->expectException(\LSYS\Entity\Exception::class);
         $e->id_bad_columns;
     }
+//     public function testEntityPkArrChange()
+//     {
+//         $model1=new DomeModelTestPkArr();
+//         $e=new Entity($model1);
+//         $e->id="11111121212";
+//         $e->code="fasdfasd";
+//         $e->name="ddddddddddddddd";
+//         $e->enname="ddddddddddddddd";
+//         $e->save();
+//         $this->assertTrue($e->saved());
+//         $e->enname="dddddddddd";
+//         $e->save();
+//         $this->assertTrue($e->saved());
+//     }
     public function testEntityPkArr()
     {
         $model1=new DomeModelTestPkArr();
@@ -99,6 +152,8 @@ class LSYSEntity extends TestCase
         $this->assertTrue($entity->loaded());
         $this->assertTrue($entity->saved());
         $this->assertEmpty($entity->changed());
+        $entity->update();
+        sleep(1);//自动更新时间
         $entity->name="bbbbb";
         $this->assertArrayHasKey("name", $entity->changed());
         $entity->save();
@@ -115,16 +170,16 @@ class LSYSEntity extends TestCase
             $this->assertTrue($value instanceof Entity);
             $this->assertTrue($value->loaded());
         }
-//         $t=$res->asArray();
-//         $t=array_shift($t);
-//         $this->assertArrayHasKey("id", $t);
-//         $t=$res->asArray("id");
-//         $key=array_keys($t);
-//         $this->assertEquals($key[0], $t[$key[0]]['id']);
-//         $tt=$res->asArray(null,"id");
-//         $this->assertEquals($tt[0],$key[0]);
-//         $ttt=$res->asArray("id","name");
-//         $this->assertEquals($ttt[$key[0]], $t[$key[0]]['name']);
+        $t=$res->asArray();
+        $t=array_shift($t);
+        $this->assertArrayHasKey("id", $t);
+        $t=$res->asArray("id");
+        $key=array_keys($t);
+        $this->assertEquals($key[0], $t[$key[0]]['id']);
+        $tt=$res->asArray(null,"id");
+        $this->assertEquals($tt[0],$key[0]);
+        $ttt=$res->asArray("id","name");
+        $this->assertEquals($ttt[$key[0]], $t[$key[0]]['name']);
         
         $this->assertTrue($res->fetchCount(0)>0);
         
@@ -135,12 +190,39 @@ class LSYSEntity extends TestCase
         $entity=$model1->findById($pk);
         $this->assertFalse($entity->loaded());
     }
+    public function testEntityUpdateEx(){
+        $model1=new DomeModelTest();
+        $this->expectException(\LSYS\Entity\Exception::class);
+        $e=$model1->findById(-11);
+        $e->name="dddaaaa";
+        $e->enname="dddaaaa";
+        $e->update();
+    }
+    public function testEntityDeleteEx(){
+        $model1=new DomeModelTest();
+        $this->expectException(\LSYS\Entity\Exception::class);
+        $e=$model1->findById(-11);
+        $e->delete();
+    }
+    public function testEntityCreateEx(){
+        $model1=new DomeModelTest();
+        $entity=new DomeEntityTest($model1);
+        $entity->values(array(
+            'name'=>"fasdfadsf",
+            "acronym"=>"11",
+            "code"=>11
+        ));
+        $entity->enname="name afasdfa <strip>ss</sss> ";
+        $entity->save();
+        $this->expectException(\LSYS\Entity\Exception::class);
+        $entity->create();
+    }
     public function testModelValid()
     {
         $this->expectException(\LSYS\Entity\Exception::class);
         $model1=new DomeModelTest();
         $entity=new DomeEntityTest($model1);
-        $entity->enname="1";
+        $entity->enname="11111111111111111111111111111111111111111111";
         $entity->name="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         $entity->save();
     }

@@ -1,6 +1,7 @@
 <?php
 namespace LSYS\Entity;
 use LSYS\Entity;
+// @codeCoverageIgnoreStart
 if (!interface_exists(FilterRule::class)){
     interface FilterRule{
         /**
@@ -12,3 +13,4 @@ if (!interface_exists(FilterRule::class)){
         public function filter(Entity $entity,$value,$field);
     }
 }
+// @codeCoverageIgnoreEnd

@@ -490,12 +490,10 @@ ZEND_METHOD(lsentity_validation_class, error){
     zval *old=zend_hash_find(Z_ARR_P(errors),field);
 
     zval zerror;
-    ZVAL_STR(&zerror,error);
+    ZVAL_STR_COPY(&zerror,error);
     Z_REFCOUNTED(zerror)&&Z_ADDREF(zerror);
-    if(!old) {
-        Z_REFCOUNTED(zerror)&&Z_ADDREF(zerror);
-        zend_hash_add(Z_ARR_P(errors), field, &zerror);
-    }else zend_hash_update(Z_ARR_P(errors),field,&zerror);
+    if(!old)zend_hash_add(Z_ARR_P(errors), field, &zerror);
+    else zend_hash_update(Z_ARR_P(errors),field,&zerror);
     zval_ptr_dtor(&zerror);
     RETURN_ZVAL(object,1,0);
 }

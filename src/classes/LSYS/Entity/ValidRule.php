@@ -1,6 +1,7 @@
 <?php
 namespace LSYS\Entity;
 use LSYS\Entity;
+// @codeCoverageIgnoreStart
 if (!interface_exists(ValidRule::class)){
     interface ValidRule{
         /**
@@ -19,3 +20,4 @@ if (!interface_exists(ValidRule::class)){
         public function check(Validation $validation,$field,$value,$label,Entity $entity,array $check_data);
     }
 }
+// @codeCoverageIgnoreEnd

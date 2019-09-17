@@ -425,7 +425,11 @@ ZEND_METHOD(lsentity_entity_class, __get){
     zval *object=getThis();
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval* oldval=zend_hash_find(Z_ARR_P(data),column);
-    if(oldval) RETURN_ZVAL(oldval,0,0);
+    if(oldval){
+        zval tmp;
+        ZVAL_DUP(&tmp,oldval);
+        RETURN_ZVAL(&tmp,1,1);
+    }
     zval columns;
     if(!get_columns(object,&columns,1)) RETURN_NULL();
     zval obj;
@@ -1016,22 +1020,20 @@ ZEND_METHOD(lsentity_entity_class, create){
         zval_ptr_dtor(&db);
         RETURN_NULL();
     }
-    zval _pkcol,pkcol;
-    if(!get_table_pk(&table,&_pkcol)){
+    zval pkcol;
+    if(!get_table_pk(&table,&pkcol)){
         zval_ptr_dtor(&table_name);
         zval_ptr_dtor(&table);
         zval_ptr_dtor(&db);
         RETURN_NULL();
     }
-    zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&pkcol,&_pkcol);
-    if(Z_TYPE(_pkcol)!=IS_STRING&&Z_TYPE(_pkcol)!=IS_ARRAY){
+    if(Z_TYPE(pkcol)!=IS_STRING&&Z_TYPE(pkcol)!=IS_ARRAY){
         zval_ptr_dtor(&table_name);
         zval_ptr_dtor(&table);
         zval_ptr_dtor(&db);
         zval_ptr_dtor(&pkcol);
         RETURN_NULL();
     }
-    zval_ptr_dtor(&_pkcol);
 
     zval columns;
     if(!get_table_columns(&table,&columns)){
@@ -1116,6 +1118,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     array_init(&sdata);
     zval *dval;
     zend_string *dkey;
+
     ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(save_data),dkey,dval) {
         zval _field;
         zval key;
@@ -1155,7 +1158,6 @@ ZEND_METHOD(lsentity_entity_class, create){
             RETURN_NULL();
         }
 
-
         Z_REFCOUNTED(_sdata)&&Z_ADDREF(_sdata);
         zend_hash_next_index_insert(Z_ARR(sdata),&_sdata);
         zval_ptr_dtor(&_type);
@@ -1163,12 +1165,15 @@ ZEND_METHOD(lsentity_entity_class, create){
         zval_ptr_dtor(&key);
         zval_ptr_dtor(&_sdata);
     } ZEND_HASH_FOREACH_END();
+
     zval_ptr_dtor(&save_data);
+
     zval str_field;
     zend_string *glue = zend_string_init(ZEND_STRL(","), 0);
     php_implode(glue, &field, &str_field);
     zval str_data;
     php_implode(glue, &sdata, &str_data);
+
     zend_string_release(glue);
     zval_ptr_dtor(&sdata);
     zval_ptr_dtor(&field);
@@ -1187,7 +1192,9 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
     zval status;
+
     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
+
     smart_str_free(&sql);
     zval_ptr_dtor(&status);
 
@@ -1307,7 +1314,9 @@ ZEND_METHOD(lsentity_entity_class, delete){
                     zval str;
                     ZVAL_STR_COPY(&str,_where.s);
                     smart_str_free(&_where);
+                    Z_REFCOUNTED(str)&&Z_ADDREF_P(&str);
                     zend_hash_next_index_insert(Z_ARRVAL(wheres),&str);
+                    zval_ptr_dtor(&str);
                     zval_ptr_dtor(&pkcol);
                     zval_ptr_dtor(&pk);
                 } ZEND_HASH_FOREACH_END();
@@ -1498,17 +1507,16 @@ ZEND_METHOD(lsentity_entity_class, check){
     if(is_valid)RETURN_ZVAL(object,1,0);
 
 
-    zval ex, tmp;
+    zval ex, tmp,tmpc;
     object_init_ex(&ex, lsentity_exception_ce_ptr);
     ZVAL_STRING(&tmp, "validation data fail");
     zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_MESSAGE), &tmp);
     zval_ptr_dtor(&tmp);
-    ZVAL_LONG(&tmp, 2);
-    zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_CODE), &tmp);
-    zval_ptr_dtor(&tmp);
+    ZVAL_LONG(&tmpc, 2);
+    zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_CODE), &tmpc);
+    zval_ptr_dtor(&tmpc);
     zval errdata;
     zend_call_method_with_0_params(valid_ok,Z_OBJCE_P(valid_ok),NULL,"errors",&errdata);
-
 
     if(Z_TYPE(errdata)==IS_ARRAY){
         zend_call_method_with_1_params(&ex,Z_OBJCE(ex),NULL,"setvalidationerror",NULL,&errdata);

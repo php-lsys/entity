@@ -120,7 +120,10 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
     zval result;
     array_init(&result);
     zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"rewind",NULL);
-    if(!key&&!value){
+
+
+
+    if((!key||ZSTR_LEN(key)<=1)&&(!value||ZSTR_LEN(value)<=1)){
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,arr;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
@@ -138,7 +141,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
             zval_ptr_dtor(&res);
         }
-    }else if(!key){
+    }else if( !key||ZSTR_LEN(key)<=1 ){
         zval zvalue;
         ZVAL_STR(&zvalue,value);
         while (lsentity_check_bool_with_0_params(object,"valid")){
@@ -146,29 +149,31 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
             if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&arr,&zvalue);
-                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
-                zend_hash_next_index_insert(Z_ARR(result),&arr);
-                zval_ptr_dtor(&arr);
+                zval tmp;
+                ZVAL_DUP(&tmp,&arr);
+				Z_REFCOUNTED(tmp)&&Z_ADDREF(tmp);
+                zend_hash_next_index_insert(Z_ARR(result),&tmp);
+                zval_ptr_dtor(&tmp);
+				zval_ptr_dtor(&arr);
             } else{
                 ZVAL_NULL(&arr);
-                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
+				Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
                 zend_hash_next_index_insert(Z_ARR(result),&arr);
-                zval_ptr_dtor(&arr);
+				zval_ptr_dtor(&arr);
             }
+			zval_ptr_dtor(&res);
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
-            zval_ptr_dtor(&res);
         }
         zval_ptr_dtor(&zvalue);
-    }else if(!value){
+    }else if( !value||ZSTR_LEN(value)<=1  ){
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,arr;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
             if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
                 zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
                 zval * val=zend_hash_find(Z_ARR(arr),key);
-                convert_to_string(val);
                 Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
-                zend_hash_add(Z_ARR(result),Z_STR_P(val),&arr);
+                add_assoc_zval(&result,Z_STRVAL_P(val),&arr);
                 zval_ptr_dtor(&arr);
             }
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
@@ -185,8 +190,8 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rkey,&zkey);
                 zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rvalue,&zvalue);
                 convert_to_string(&rkey);
-                Z_REFCOUNTED(zvalue)&&Z_ADDREF(zvalue);
-                zend_hash_add(Z_ARR(result),Z_STR(rkey),&zvalue);
+                Z_REFCOUNTED(rvalue)&&Z_ADDREF(rvalue);
+                add_assoc_zval(&result,Z_STRVAL(rkey),&rvalue);
                 zval_ptr_dtor(&rkey);
                 zval_ptr_dtor(&zvalue);
             }

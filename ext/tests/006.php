@@ -10,7 +10,7 @@ $c=new LSYS\Entity\EntityColumnSet(["id","name"],[
     (new LSYS\Entity\Column("bbb"))->setDefault("iiii"),
 ]);
 var_dump($c);
-var_dump($c->isCustom());
+var_dump($c->notCustom());
 var_dump($c->asColumnSet(new LSYS\Entity\ColumnSet([
     (new LSYS\Entity\Column("id"))->setComment("dddd"),
 ]),true));

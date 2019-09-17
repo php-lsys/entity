@@ -1,5 +1,6 @@
 <?php
 namespace LSYS\Entity;
+// @codeCoverageIgnoreStart
 if (!interface_exists(Database::class)){
     interface Database{
     	/**
@@ -36,3 +37,4 @@ if (!interface_exists(Database::class)){
     	public function insertId();
     }
 }
+// @codeCoverageIgnoreEnd

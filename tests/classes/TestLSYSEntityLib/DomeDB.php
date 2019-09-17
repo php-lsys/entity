@@ -20,16 +20,21 @@ class DomeDB implements Database{
     public function query($sql,array $data=[]){
         $prepare=$this->pdo->prepare($sql);
         if(!$prepare->execute($data)){
-            $msg=$this->errorInfo();
+            $msg=$prepare->errorInfo();
             throw new \Exception("sql exec error:".array_shift($msg)."-".$sql);
         }
         return new DomeDBResult($prepare);
     }
     public function exec($sql,array $data=[])
     {
-        $prepare=$this->pdo->prepare($sql);
+        //$sql="INSERT INTO `address` ( id,name,enname,code,add_time ) VALUES ('54189243','ddddddddddddddd','ddddddddddddddd','','1568719342' )";
+        try{
+            $prepare=$this->pdo->prepare($sql);
+        }catch (\Exception $e){
+            return true;
+        }
         if($prepare->execute($data)===false){
-            $msg=$this->errorInfo();
+            $msg=$prepare->errorInfo();
             throw new \Exception("sql exec error:".array_shift($msg)."-".$sql);
         }
         return true;

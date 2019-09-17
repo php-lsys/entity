@@ -1,5 +1,6 @@
 <?php
 namespace LSYS\Entity;
+// @codeCoverageIgnoreStart
 if (!interface_exists(Table::class)){
     interface Table {
         /**
@@ -24,3 +25,4 @@ if (!interface_exists(Table::class)){
     	public function primaryKey();
     }
 }
+// @codeCoverageIgnoreEnd

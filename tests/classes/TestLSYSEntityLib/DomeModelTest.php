@@ -27,7 +27,8 @@ class DomeModelTest implements Table{
                 new Column("name"),
                 new Column("enname"),
                 new Column("acronym"),
-                new Column("code"),
+                (new Column("code"))->setAllowNull(0),
+               // (new DomeTimeColumn("add_time"))->setCreate()->setUpdate(),
             ]);
         }
         return self::$_table_columns;

@@ -58,7 +58,7 @@ ZEND_METHOD(lsentity_entity_column_set_class, __construct){
         zval_ptr_dtor(&_column);
     }
 }
-ZEND_METHOD(lsentity_entity_column_set_class, isCustom){
+ZEND_METHOD(lsentity_entity_column_set_class, notCustom){
     zval *mzval,*pzval;
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_columns"),0,NULL);
     pzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_patch_columns"),0,NULL);
@@ -117,7 +117,7 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
 
 static zend_function_entry lsentity_entity_column_set_class_method[] = {
     ZEND_ME(lsentity_entity_column_set_class,__construct, lsentity_entity_column_set_construct_arginfo, ZEND_ACC_PUBLIC)
-    ZEND_ME(lsentity_entity_column_set_class,isCustom, NULL, ZEND_ACC_PUBLIC)
+    ZEND_ME(lsentity_entity_column_set_class,notCustom, NULL, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_column_set_class,asColumnSet, lsentity_entity_column_set_ascs_arginfo, ZEND_ACC_PUBLIC)
     ZEND_FE_END
 };

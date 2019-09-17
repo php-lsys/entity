@@ -176,6 +176,7 @@ ZEND_METHOD(lsentity_column_set_class, asArray){
                 ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(columnarr),ckey,cval) {
                         zval tmp;
                         zend_call_method_with_0_params(cval,Z_OBJCE_P(cval), NULL, "getdefault", &tmp);
+                        Z_REFCOUNTED(tmp)&&Z_ADDREF(tmp);
                         zend_hash_add(Z_ARR_P(return_value),ckey,&tmp);
                         zval_ptr_dtor(&tmp);
                 } ZEND_HASH_FOREACH_END();

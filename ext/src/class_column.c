@@ -60,7 +60,10 @@ ZEND_METHOD(lsentity_column_class, __construct){
 }
 
 ZEND_METHOD(lsentity_column_class, name){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 
 ZEND_METHOD(lsentity_column_class, setComment){
@@ -69,16 +72,20 @@ ZEND_METHOD(lsentity_column_class, setComment){
             Z_PARAM_STR(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
     zend_update_property_str(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),val);
-
     RETURN_ZVAL(getThis(),1,0);
-
 }
 ZEND_METHOD(lsentity_column_class, comment){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_comment"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 
 ZEND_METHOD(lsentity_column_class, useDefault){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_default"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_column_class, setDefault){
     zend_string *val;
@@ -94,7 +101,10 @@ ZEND_METHOD(lsentity_column_class, setDefault){
 
 }
 ZEND_METHOD(lsentity_column_class, getDefault){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL),0,0);
+	zval *def=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
+	zval tmp;
+	ZVAL_DUP(&tmp,def);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_column_class, setType){
     zend_string *val;
@@ -105,10 +115,13 @@ ZEND_METHOD(lsentity_column_class, setType){
     RETURN_ZVAL(getThis(),1,0);
 }
 ZEND_METHOD(lsentity_column_class, getType){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL),0,0);
+	zval *type=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),1,NULL);
+	zval tmp;
+	ZVAL_DUP(&tmp,type);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_column_class, setAllowNull){
-    zend_bool val;
+    zend_bool val=0;
     ZEND_PARSE_PARAMETERS_START(1, 1)
         Z_PARAM_BOOL(val)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
@@ -127,7 +140,10 @@ ZEND_METHOD(lsentity_column_class, setAllowNull){
     RETURN_ZVAL(getThis(),1,0);
 }
 ZEND_METHOD(lsentity_column_class, isAllowNull){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL),0,0);
+	zval *isnull=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL);
+	zval tmp;
+	ZVAL_DUP(&tmp,isnull);
+    RETURN_ZVAL(&tmp,1,1);
 }
 
 ZEND_METHOD(lsentity_column_class, read){
@@ -138,26 +154,41 @@ ZEND_METHOD(lsentity_column_class, read){
     RETURN_ZVAL(val,1,0);
 }
 ZEND_METHOD(lsentity_column_class, __toString){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_column_class, asArray){
-
     zval temp_array;
     array_init(&temp_array);
-
     zval *mzval;
     //zend_hash_str_add 比较坑 有些版本是宏　有些版本时函数
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_name"),0,NULL);
-    zend_hash_str_add(Z_ARR(temp_array),"name",sizeof("name")-1,mzval);
+    zval name;
+    ZVAL_DUP(&name,mzval);
+    Z_REFCOUNTED(name)&&Z_ADDREF_P(&name);
+    zend_hash_str_add(Z_ARR(temp_array),"name",sizeof("name")-1,&name);
+    zval_ptr_dtor(&name);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_type"),0,NULL);
-    zend_hash_str_add(Z_ARR(temp_array),"type",sizeof("type")-1,mzval);
+    zval type;
+    ZVAL_DUP(&type,mzval);
+    Z_REFCOUNTED(type)&&Z_ADDREF_P(&type);
+    zend_hash_str_add(Z_ARR(temp_array),"type",sizeof("type")-1,&type);
+    zval_ptr_dtor(&type);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_default"),0,NULL);
-    zend_hash_str_add(Z_ARR(temp_array),"default",sizeof("default")-1,mzval);
+    zval def;
+    ZVAL_DUP(&def,mzval);
+    Z_REFCOUNTED(def)&&Z_ADDREF_P(&def);
+    zend_hash_str_add(Z_ARR(temp_array),"default",sizeof("default")-1,&def);
+    zval_ptr_dtor(&def);
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_is_nullable"),0,NULL);
-    zend_hash_str_add(Z_ARR(temp_array),"allowNull",sizeof("allowNull")-1,mzval);
-
+    zval isnull;
+    ZVAL_DUP(&isnull,mzval);
+    Z_REFCOUNTED(isnull)&&Z_ADDREF_P(&isnull);
+    zend_hash_str_add(Z_ARR(temp_array),"allowNull",sizeof("allowNull")-1,&isnull);
+    zval_ptr_dtor(&isnull);
     RETURN_ZVAL(&temp_array,1,1);
-
 }
 ZEND_METHOD(lsentity_column_class, compare){
     zval *old_val,*new_val;

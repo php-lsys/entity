@@ -1,5 +1,6 @@
 <?php
 namespace LSYS\Entity\Database;
+// @codeCoverageIgnoreStart
 if (!interface_exists(Result::class)){
     interface Result extends \Iterator{
         /**
@@ -28,3 +29,4 @@ if (!interface_exists(Result::class)){
         public function fetchCount($iterator=false);
     }
 }
+// @codeCoverageIgnoreEnd

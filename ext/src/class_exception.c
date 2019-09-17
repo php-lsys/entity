@@ -52,8 +52,11 @@ ZEND_METHOD(lsentity_exception_class, setValidationError){
     smart_str err = {0};
     smart_str_append(&err, Z_STR_P(msg));
     smart_str_appends(&err, " : ");
+    int start=1;
     ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(val), entry) {
         if(Z_TYPE_P(entry)==IS_STRING){
+            if(!start)smart_str_appends(&err, ";");
+            if(start)start=0;
             smart_str_append(&err, Z_STR_P(entry));
             smart_str_append(&err,glue);
         }

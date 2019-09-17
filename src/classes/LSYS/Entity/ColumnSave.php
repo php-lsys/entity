@@ -1,6 +1,7 @@
 <?php
 namespace LSYS\Entity;
 use LSYS\Entity;
+// @codeCoverageIgnoreStart
 if (!interface_exists(ColumnSave::class)){
     /**
      * 保存时回调字段
@@ -20,3 +21,4 @@ if (!interface_exists(ColumnSave::class)){
        public function create(Entity $entity,$column);
     }
 }
+// @codeCoverageIgnoreEnd

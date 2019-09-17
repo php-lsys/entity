@@ -30,10 +30,6 @@ class DomeDBResult implements \LSYS\Entity\Database\Result {
         $this->fetch_free=true;
         return $this;
     }
-    /**
-     * {@inheritDoc}
-     * @see \LSYS\Database\Result::__destruct()
-     */
     public function __destruct()
     {
         if ($this->result instanceof \PDOStatement){
