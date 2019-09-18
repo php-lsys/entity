@@ -78,7 +78,7 @@ ZEND_METHOD(lsentity_column_set_class, getType){
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_NULL());
     object=getThis();
     zval _name;
-    ZVAL_STR(&_name,name);
+    ZVAL_STR_COPY(&_name,name);
     if(lsentity_check_bool_with_1_params(object,"offsetexists",&_name)){
         zval column,type;
         zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "offsetget",&column,&_name);
@@ -231,19 +231,14 @@ ZEND_METHOD(lsentity_column_set_class, offsetGet){
     object=getThis();
     zval *columnarr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),1,NULL);
     zval* oldval;
-
-
     if (EXPECTED(columnarr && Z_TYPE_P(columnarr) == IS_ARRAY)) {
         if ((oldval = zend_hash_find(Z_ARRVAL_P(columnarr), name)) != NULL) {
-            RETURN_ZVAL(oldval, 1, 0);
+            zval tmp;
+            ZVAL_DUP(&tmp,oldval);
+            RETURN_ZVAL(&tmp, 1, 1);
         }
     }
-
     RETURN_NULL();
-//    zval* oldval=zend_hash_find(Z_ARR_P(columnarr),name);
-//    if(!oldval) RETURN_NULL();
-//    //Z_ADDREF(*oldval);
-//    RETURN_ZVAL(oldval,1,0);
 }
 ZEND_METHOD(lsentity_column_set_class, offsetSet){
     zend_string *name;

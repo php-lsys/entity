@@ -106,26 +106,29 @@ class LSYSEntity extends TestCase
         $this->expectException(\LSYS\Entity\Exception::class);
         $e->id_bad_columns;
     }
-//     public function testEntityPkArrChange()
-//     {
-//         $model1=new DomeModelTestPkArr();
-//         $e=new Entity($model1);
-//         $e->id="11111121212";
-//         $e->code="fasdfasd";
-//         $e->name="ddddddddddddddd";
-//         $e->enname="ddddddddddddddd";
-//         $e->save();
-//         $this->assertTrue($e->saved());
-//         $e->enname="dddddddddd";
-//         $e->save();
-//         $this->assertTrue($e->saved());
-//     }
+    public function testEntityPkArrChange()
+    {
+        $model1=new DomeModelTestPkArr();
+        $e=new Entity($model1);
+        $e->id=rand(300,5000);
+        $e->code=uniqid("code_");
+        $e->name="ddddddddddddddd";
+        $e->enname="ddddddddddddddd";
+        $e->save();
+        $this->assertTrue($e->saved());
+        $e->enname="dddddddddd";
+        $e->save();
+        $this->assertTrue($e->saved());
+    }
     public function testEntityPkArr()
     {
         $model1=new DomeModelTestPkArr();
         $e=new Entity($model1);
         $this->assertTrue(is_array($e->pk()));
         $e->loadData(["id"=>1,"code"=>"code"],null,true);
+        $pk=$e->pk();
+        $this->assertArrayHasKey("id", $pk);
+        $this->assertArrayHasKey("code", $pk);
         $this->assertTrue($e->loaded());
         $e->id=2;
         $this->assertFalse($e->loaded());
