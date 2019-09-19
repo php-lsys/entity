@@ -10,7 +10,7 @@ class DomeDB implements Database{
     }
     protected $pdo;
     public function __construct() {
-        $this->pdo=new \PDO('mysql:host=127.0.0.1;dbname=test','root','');
+        $this->pdo=new \PDO('mysql:host=mysql-host;dbname=test','root','');
         $this->pdo->exec('SET NAMES "utf8"');
     }
     /**
