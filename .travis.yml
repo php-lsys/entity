@@ -13,10 +13,11 @@ before_install:
   
 before_script:
   - composer install --dev
-  - cd tests
+  
 script: 
+  - cd tests
+  - ../vendor/bin/phpunit -v
   - cd ..
-  - ./vendor/bin/phpunit -v
   - travis_retry vendor/bin/php-coveralls -x tests/report/clover.xml -o tests/report/coveralls.json -v
   - cd ext && phpize && ./configure && make && make install && cd ..
   - echo "extension=entity.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
