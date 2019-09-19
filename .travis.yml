@@ -21,7 +21,8 @@ script:
   - travis_retry vendor/bin/php-coveralls -x tests/report/clover.xml -o tests/report/coveralls.json -v
   - cd ext && phpize && ./configure && make && make install && cd ..
   - echo "extension=entity.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - ./vendor/bin/phpunit -v
+  - cd tests
+  - ../vendor/bin/phpunit -v
   
   
   
