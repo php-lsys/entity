@@ -139,11 +139,11 @@ ZEND_METHOD(lsentity_filter_class, rules){
 }
 ZEND_METHOD(lsentity_filter_class, runFilter){
 
-    zval *value,*object;
+    zval *filter_value,*object;
     zend_string *field;
     ZEND_PARSE_PARAMETERS_START(2, 2)
             Z_PARAM_STR(field)
-            Z_PARAM_ZVAL(value)
+            Z_PARAM_ZVAL(filter_value)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
     object = getThis();
@@ -166,13 +166,13 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     }
     zval *entity = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_entity"),0,NULL);
     zval *entry;
-    zval rvalue;
-    ZVAL_COPY_VALUE(&rvalue, value);
-
+    zval valuecopy;
+    ZVAL_DUP(&valuecopy, filter_value);
+    zval *value=&valuecopy;
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
 
                 zval _value;
-                ZVAL_COPY_VALUE(&_value, &rvalue);
+                ZVAL_DUP(&_value,value);
 
                 zend_fcall_info fci;
                 zval retval;
@@ -223,14 +223,14 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                 }
 
 
-                ZVAL_DUP(&rvalue, &retval);
+                ZVAL_DUP(value, &retval);
 
                 zval_ptr_dtor(&retval);
 
 
     } ZEND_HASH_FOREACH_END();
     zval_ptr_dtor(&rules);
-    RETURN_ZVAL(&rvalue,1,1);
+    RETURN_ZVAL(value,1,1);
 }
 ZEND_METHOD(lsentity_filter_class, allowCache){
     zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_allow_cache"),0,NULL);
