@@ -162,7 +162,10 @@ ZEND_METHOD(lsentity_validation_class, __construct){
     }
 }
 ZEND_METHOD(lsentity_validation_class, allowCache){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_allow_cache"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_allow_cache"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_validation_class, label){
     zval *object;

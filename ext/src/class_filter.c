@@ -233,7 +233,10 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     RETURN_ZVAL(&rvalue,1,1);
 }
 ZEND_METHOD(lsentity_filter_class, allowCache){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_allow_cache"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_allow_cache"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 
 static zend_function_entry lsentity_filter_class_method[] = {

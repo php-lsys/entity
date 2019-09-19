@@ -74,10 +74,16 @@ ZEND_METHOD(lsentity_exception_class, setValidationError){
 
 }
 ZEND_METHOD(lsentity_exception_class, getErrorSql){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_error_sql"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_error_sql"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_exception_class, getValidationError){
-    RETURN_ZVAL(zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_validation_error"),0,NULL),0,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_validation_error"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 
 
