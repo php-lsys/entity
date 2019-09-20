@@ -1,0 +1,11 @@
+version: '2.0'
+services:
+  entity:
+    container_name: entity_dev
+    image: shanliu/phpentity:latest
+    build:
+      context: ./
+    volumes:
+      - ./:/root/php/ext/entity
+    cap_add:
+    - SYS_PTRACE
