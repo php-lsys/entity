@@ -3,7 +3,9 @@
 #include "zend_API.h"
 #include "zend_interfaces.h"
 #include "zend_exceptions.h"
-
+#if PHP_VERSION_ID<70200
+#include "ext/spl/spl_iterators.h"
+#endif
 #include "entity.h"
 #include "utils.h"
 #include "class_column_set.h"
@@ -392,7 +394,12 @@ void lsentity_column_set_class_init(){
     zend_class_entry ce;
     INIT_NS_CLASS_ENTRY(ce,LSENTITY_NS,"ColumnSet",lsentity_column_set_class_method);
     lsentity_column_set_ce_ptr = zend_register_internal_class(&ce);
+    #if PHP_VERSION_ID<70200
+
+    zend_class_implements(lsentity_column_set_ce_ptr,3, zend_ce_iterator,spl_ce_Countable,zend_ce_arrayaccess);
+    #else
     zend_class_implements(lsentity_column_set_ce_ptr,3, zend_ce_iterator,zend_ce_countable,zend_ce_arrayaccess);
+    #endif
     zend_declare_property_null(lsentity_column_set_ce_ptr,ZEND_STRL("_columns"), ZEND_ACC_PROTECTED);
     zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_FIELD"),LSENTITY_COLUMN_SET_TYPE_FIELD);
     zend_declare_class_constant_long(lsentity_column_set_ce_ptr,ZEND_STRL("TYPE_ARRAY"),LSENTITY_COLUMN_SET_TYPE_ARRAY);
