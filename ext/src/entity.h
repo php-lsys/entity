@@ -29,7 +29,7 @@
                     { #name, LSENTITY_NS, IS_OBJECT, pass_by_ref, allow_null, 0 },
 
     #define ZEND_ARG_OBJ_INFO_ENTITYNS(pass_by_ref, name, classname, allow_null) \
-                    { #name, LSENTITY_NS""#classname, IS_OBJECT, pass_by_ref, allow_null, 0 },
+                    { #name, LSENTITY_NS"\\"#classname, IS_OBJECT, pass_by_ref, allow_null, 0 },
 
     #define ZEND_ARG_OBJ_INFO_ENTITYDBNS(pass_by_ref, name, classname, allow_null) \
                     { #name, LSENTITY_NS"\\Database\\"#classname, IS_OBJECT, pass_by_ref, allow_null, 0 },
