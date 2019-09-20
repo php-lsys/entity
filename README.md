@@ -11,7 +11,7 @@
 
 1. 默认使用 composer require lsys/entity 进行php 源码版本安装
 
-2. 如果追求最高执行效率,可以使用php扩展版本`只支持linux,php>=7.2`,git clone 后如下安装并在php.ini添加引入:
+2. 如果追求最高执行效率,可以使用php扩展版本`只支持linux,php>=7.1`,git clone 后如下安装并在php.ini添加引入:
 ```
 cd ext
 phpize && ./configure 
