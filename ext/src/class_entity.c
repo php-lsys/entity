@@ -5,7 +5,6 @@
 #include "zend_hash.h"
 #include "php.h"
 #include "zend_API.h"
-#include "zend_API.h"
 #include "Zend/zend_interfaces.h"
 #include "Zend/zend_exceptions.h"
 #include "ext/standard/php_array.h"
@@ -27,6 +26,7 @@
 #ifdef HAVE_JSON
 #include "ext/json/php_json.h"
 #endif
+
 
 ZEND_API zend_class_entry *lsentity_entity_ce_ptr;
 
@@ -1512,10 +1512,20 @@ ZEND_METHOD(lsentity_entity_class, check){
     zval ex, tmp,tmpc;
     object_init_ex(&ex, lsentity_exception_ce_ptr);
     ZVAL_STRING(&tmp, "validation data fail");
-    zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_MESSAGE), &tmp);
+    #if PHP_VERSION_ID<70200
+        zend_update_property_ex(lsentity_exception_ce_ptr, &ex, CG(known_strings)[ZEND_STR_MESSAGE], &tmp);
+    #else
+        zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_MESSAGE), &tmp);
+    #endif
+
     zval_ptr_dtor(&tmp);
     ZVAL_LONG(&tmpc, 2);
+    #if PHP_VERSION_ID<70200
+    zend_update_property_ex(lsentity_exception_ce_ptr, &ex, CG(known_strings)[ZEND_STR_MESSAGE], &tmp);
+    #else
     zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_CODE), &tmpc);
+    #endif
+
     zval_ptr_dtor(&tmpc);
     zval errdata;
     zend_call_method_with_0_params(valid_ok,Z_OBJCE_P(valid_ok),NULL,"errors",&errdata);
