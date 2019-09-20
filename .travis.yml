@@ -25,6 +25,7 @@ script:
   - echo "extension=entity.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - cd tests
   - ../vendor/bin/phpunit -v
+  - cd ..
   
   
   
