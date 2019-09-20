@@ -222,7 +222,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                     }
                 }
 
-
+                zval_ptr_dtor(value);
                 ZVAL_DUP(value, &retval);
 
                 zval_ptr_dtor(&retval);
