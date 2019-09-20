@@ -18,7 +18,8 @@ script:
   - ../vendor/bin/phpunit -v
   - cd ..
   - travis_retry vendor/bin/php-coveralls -x tests/report/clover.xml -o tests/report/coveralls.json -v
-  - set ig71=$(php -v | grep "PHP 7.1"); && if [ ! -z "$ig71" ]; then exit; fi
+  - set ig71=$(php -v | grep "PHP 7.1");
+  - if [ ! -z "$ig71" ]; then exit; fi
   - cd ext && phpize && ./configure && make && make install && cd ..
   - echo "extension=entity.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - cd tests
