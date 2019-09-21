@@ -53,7 +53,7 @@ class LSYSEntity extends TestCase
 //         $this->assertFalse($e->saved());
 //         $e->clear();
         //$this->assertFalse($e->loaded());
-        $e->name="fff";
+//         $e->name="fff";
         //$this->assertTrue((new EntityColumnSet())->notCustom());
        // $ecs=new EntityColumnSet(["id","name"]);
        // $this->assertFalse($ecs->notCustom());
@@ -61,10 +61,10 @@ class LSYSEntity extends TestCase
         //$this->assertNotEmpty(json_encode($e));
         //unset($e->id);
        // $this->assertFalse($e->loaded());
-//         $e->values(array(
-//             "id"=>"11",
-//             "name"=>"temp"
-//         ));
+        $e->values(array(
+            "id"=>"11",
+            "name"=>"temp"
+        ));
         $this->assertArrayHasKey("name", $e->asArray());
 //         $this->assertFalse($e->loaded());
       //  $this->assertEquals($e,$e->check());
