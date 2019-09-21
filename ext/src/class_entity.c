@@ -1574,7 +1574,7 @@ ZEND_METHOD(lsentity_entity_class, asArray){
         zval_ptr_dtor(&columns);
         RETURN_ZVAL(&arr,1,1);
     }
-    RETVAL_ZVAL(data,1,0);
+    RETURN_ZVAL(data,1,0);
 }
 
 ZEND_METHOD(lsentity_entity_class, jsonSerialize){
