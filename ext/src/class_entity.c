@@ -260,7 +260,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     }
     zval_ptr_dtor(&zval_column);
 
-
+    RETURN_NULL();
     int loaded=lsentity_check_bool_with_0_params(object,"loaded");
 
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
@@ -318,7 +318,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval_ptr_dtor(value);
         RETURN_NULL();
     }
-    RETURN_NULL();
+
     zval zcolumn;
     ZVAL_STR(&zcolumn,column);
     if(comp_pkkey(&pk,&zcolumn)==0){
