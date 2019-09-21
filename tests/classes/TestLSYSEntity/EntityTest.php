@@ -51,24 +51,24 @@ class LSYSEntity extends TestCase
         $this->assertArrayHasKey("name", $e->changed());
         $this->assertTrue(isset($e->id));
         $this->assertFalse($e->saved());
-//         $e->clear();
-//         $this->assertFalse($e->loaded());
-//         $e->name="fff";
-//         $this->assertTrue((new EntityColumnSet())->notCustom());
-//         $ecs=new EntityColumnSet(["id","name"]);
-//         $this->assertFalse($ecs->notCustom());
-//         $e->loadData($data,$ecs,true);
-//         $this->assertNotEmpty(json_encode($e));
-//         unset($e->id);
-//         $this->assertFalse($e->loaded());
-//         $e->values(array(
-//             "id"=>"11",
-//             "name"=>"temp"
-//         ));
-//         $this->assertArrayHasKey("name", $e->asArray());
-//         $this->assertFalse($e->loaded());
-//         $this->assertEquals($e,$e->check());
-//         $this->assertEquals($e->pk(),strval($e));
+        $e->clear();
+        $this->assertFalse($e->loaded());
+        $e->name="fff";
+        $this->assertTrue((new EntityColumnSet())->notCustom());
+        $ecs=new EntityColumnSet(["id","name"]);
+        $this->assertFalse($ecs->notCustom());
+        $e->loadData($data,$ecs,true);
+        $this->assertNotEmpty(json_encode($e));
+        unset($e->id);
+        $this->assertFalse($e->loaded());
+        $e->values(array(
+            "id"=>"11",
+            "name"=>"temp"
+        ));
+        $this->assertArrayHasKey("name", $e->asArray());
+        $this->assertFalse($e->loaded());
+        $this->assertEquals($e,$e->check());
+        $this->assertEquals($e->pk(),strval($e));
 //         $e->clear();
 //         $e->loadData($data,null,true);
 //         $e->id=11;
