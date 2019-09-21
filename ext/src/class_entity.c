@@ -235,7 +235,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         Z_PARAM_STR(column)
         Z_PARAM_ZVAL(set_value)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
-    RETURN_NULL();
+
     zval *object=getThis();
     zval valuecopy;
     ZVAL_DUP(&valuecopy,set_value);
@@ -250,7 +250,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval_ptr_dtor(value);
         RETURN_NULL();
     }
-
+    RETURN_NULL();
     zval filter,filterval;
     if(get_filter(object,&filter)){
         zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&filterval,&zval_column,value);
