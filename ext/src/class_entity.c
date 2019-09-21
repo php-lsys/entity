@@ -259,6 +259,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
        zval_ptr_dtor(&valuecopy);
         value=&filterval;
     }
+    RETURN_NULL();
     zval_ptr_dtor(&zval_column);
 
 
