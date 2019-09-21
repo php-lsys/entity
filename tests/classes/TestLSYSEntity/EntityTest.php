@@ -54,7 +54,7 @@ class LSYSEntity extends TestCase
 //         $e->clear();
         //$this->assertFalse($e->loaded());
         $e->name="fff";
-        $this->assertTrue((new EntityColumnSet())->notCustom());
+        //$this->assertTrue((new EntityColumnSet())->notCustom());
         $ecs=new EntityColumnSet(["id","name"]);
        // $this->assertFalse($ecs->notCustom());
         $e->loadData($data,$ecs,true);
