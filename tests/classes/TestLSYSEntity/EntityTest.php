@@ -80,9 +80,8 @@ class LSYSEntity extends TestCase
     {
         $model1=new DomeModelTest();
         $e=new Entity($model1);
-       // $e->name="fff";
+        $e->name="fff";
         $e->values(array(
-            // "id"=>"11",
             "name"=>"temp"
         ));
         $e->asArray();
