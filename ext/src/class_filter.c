@@ -168,8 +168,8 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     zval *entry;
     zval valuecopy;
     ZVAL_DUP(&valuecopy, filter_value);
-    
     zval *value=&valuecopy;
+    RETURN_ZVAL(value,1,1);
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
 
                 zend_fcall_info fci;
@@ -220,7 +220,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                     }
                 }
 
-               // zval_ptr_dtor(value);
+                zval_ptr_dtor(value);
                 ZVAL_DUP(value, &retval);
                 zval_ptr_dtor(&retval);
     } ZEND_HASH_FOREACH_END();
