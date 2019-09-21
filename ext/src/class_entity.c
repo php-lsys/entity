@@ -244,7 +244,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     zval columns;
     if(!get_columns(object,&columns,1)) RETURN_NULL();
     zval zval_column;
-    ZVAL_STR(&zval_column,column);
+    ZVAL_STR_COPY(&zval_column,column);
     if(!lsentity_check_bool_with_1_params(&columns,"offsetexists",&zval_column)){
         zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "the %s property does not exist", ZSTR_VAL(column));
         zval_ptr_dtor(value);
@@ -258,7 +258,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
        zval_ptr_dtor(&valuecopy);
         value=&filterval;
     }
-    RETURN_NULL();
+
     zval_ptr_dtor(&zval_column);
 
 
