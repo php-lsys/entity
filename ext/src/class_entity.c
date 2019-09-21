@@ -280,6 +280,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
                 zend_hash_update(Z_ARR_P(data),column,value);
                 zval_ptr_dtor(&columns);
                 zval_ptr_dtor(&columnobj);
+				zval_ptr_dtor(value);
                 RETURN_NULL();
             }
         }
