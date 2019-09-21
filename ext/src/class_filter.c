@@ -151,8 +151,9 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
 
     object = getThis();
     zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
-    zval *grs=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
     RETURN_ZVAL(value,1,1);
+    zval *grs=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
+
 
     zval *rule=zend_hash_find(Z_ARR_P(gr),field);
 
