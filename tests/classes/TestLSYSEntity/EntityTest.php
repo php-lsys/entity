@@ -85,7 +85,7 @@ class LSYSEntity extends TestCase
            // "id"=>"11",
             "name"=>"temp"
         ));
-        $e->asArray();
+     //   $e->asArray();
         
      //   $this->expectException(\LSYS\Entity\Exception::class);
       //  $sql="select sleep(1)";
