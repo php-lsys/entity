@@ -148,7 +148,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     zval valuecopy;
     ZVAL_DUP(&valuecopy, filter_value);
     zval *value=&valuecopy;
-
+    RETURN_ZVAL(value,1,1);
     object = getThis();
     zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
     zval *grs=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);

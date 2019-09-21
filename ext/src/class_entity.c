@@ -250,10 +250,11 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval_ptr_dtor(value);
         RETURN_NULL();
     }
-    RETURN_NULL();
+
     zval filter,filterval;
     if(get_filter(object,&filter)){
         zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&filterval,&zval_column,value);
+        RETURN_NULL();
         zval_ptr_dtor(&filter);
        zval_ptr_dtor(&valuecopy);
         value=&filterval;
