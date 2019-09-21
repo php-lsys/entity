@@ -251,13 +251,13 @@ ZEND_METHOD(lsentity_entity_class, __set){
         RETURN_NULL();
     }
 
-//    zval filter,filterval;
-//    if(get_filter(object,&filter)){
-//        zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&filterval,&zval_column,value);
-//        zval_ptr_dtor(&filter);
-//       zval_ptr_dtor(&valuecopy);
-//        value=&filterval;
-//    }
+    zval filter,filterval;
+    if(get_filter(object,&filter)){
+        zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&filterval,&zval_column,value);
+        zval_ptr_dtor(&filter);
+       zval_ptr_dtor(&valuecopy);
+        value=&filterval;
+    }
     zval_ptr_dtor(&zval_column);
 
 
@@ -1378,61 +1378,61 @@ ZEND_METHOD(lsentity_entity_class, delete){
     RETURN_ZVAL(&status,1,1);
 }
 ZEND_METHOD(lsentity_entity_class, values){
-    zval *set_values,*expected=NULL;
-    ZEND_PARSE_PARAMETERS_START(1, 2)
-            Z_PARAM_ARRAY(set_values)
-            Z_PARAM_OPTIONAL
-            Z_PARAM_ARRAY(expected)
-    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
-    zval *object=getThis();
-    zval arr;
-    array_init(&arr);
-    zval valuecopy;
-    ZVAL_DUP(&valuecopy,set_values);
-    zval *value=&valuecopy;
-    if (expected&&Z_TYPE_P(expected)==IS_ARRAY) {
-        php_array_merge(Z_ARR(arr), Z_ARR_P(value));
-    }else{
-        zval columns;
-        if(get_columns(object,&columns,1)){
-            zval param1,defarr;
-            ZVAL_LONG(&param1,LSENTITY_COLUMN_SET_TYPE_FIELD);
-            zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
-            php_array_merge(Z_ARR(arr),Z_ARR(defarr));
-            zval_ptr_dtor(&defarr);
-            zval_ptr_dtor(&param1);
-            zval_ptr_dtor(&columns);
-        }
-        zval table,pk;
-        if(get_table(object,&table)){
-            if(get_table_pk(&table,&pk)){
-                if(Z_TYPE(pk)==IS_ARRAY){
-                    zval *col;
-                    ZEND_HASH_FOREACH_VAL(Z_ARR(pk),col) {
-                        zval* oldval=zend_hash_find(Z_ARR_P(value),Z_STR_P(col));
-                        if(oldval){
-                            zend_hash_del(Z_ARR_P(value),Z_STR_P(col));
-                        }
-                    } ZEND_HASH_FOREACH_END();
-                }else{
-                    convert_to_string(&pk);
-                    zend_hash_del(Z_ARR_P(value),Z_STR(pk));
-                }
-                zval_ptr_dtor(&pk);
-            }
-            zval_ptr_dtor(&table);
-        }
-    }
-    zval *col;
-    ZEND_HASH_FOREACH_VAL(Z_ARR(arr),col) {
-        zval* val=zend_hash_find(Z_ARR_P(value),Z_STR_P(col));
-        if(val){
-            zend_call_method_with_2_params(object,Z_OBJCE_P(object),&Z_OBJCE_P(object)->__set, "__set", NULL,col,val);
-        }
-    } ZEND_HASH_FOREACH_END();
-    zval_ptr_dtor(&arr);
-    zval_ptr_dtor(value);
-    RETURN_ZVAL(object,1,0);
+//    zval *set_values,*expected=NULL;
+//    ZEND_PARSE_PARAMETERS_START(1, 2)
+//            Z_PARAM_ARRAY(set_values)
+//            Z_PARAM_OPTIONAL
+//            Z_PARAM_ARRAY(expected)
+//    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+//    zval *object=getThis();
+//    zval arr;
+//    array_init(&arr);
+//    zval valuecopy;
+//    ZVAL_DUP(&valuecopy,set_values);
+//    zval *value=&valuecopy;
+//    if (expected&&Z_TYPE_P(expected)==IS_ARRAY) {
+//        php_array_merge(Z_ARR(arr), Z_ARR_P(value));
+//    }else{
+//        zval columns;
+//        if(get_columns(object,&columns,1)){
+//            zval param1,defarr;
+//            ZVAL_LONG(&param1,LSENTITY_COLUMN_SET_TYPE_FIELD);
+//            zend_call_method_with_1_params(&columns,Z_OBJCE(columns), NULL, "asarray", &defarr,&param1);
+//            php_array_merge(Z_ARR(arr),Z_ARR(defarr));
+//            zval_ptr_dtor(&defarr);
+//            zval_ptr_dtor(&param1);
+//            zval_ptr_dtor(&columns);
+//        }
+//        zval table,pk;
+//        if(get_table(object,&table)){
+//            if(get_table_pk(&table,&pk)){
+//                if(Z_TYPE(pk)==IS_ARRAY){
+//                    zval *col;
+//                    ZEND_HASH_FOREACH_VAL(Z_ARR(pk),col) {
+//                        zval* oldval=zend_hash_find(Z_ARR_P(value),Z_STR_P(col));
+//                        if(oldval){
+//                            zend_hash_del(Z_ARR_P(value),Z_STR_P(col));
+//                        }
+//                    } ZEND_HASH_FOREACH_END();
+//                }else{
+//                    convert_to_string(&pk);
+//                    zend_hash_del(Z_ARR_P(value),Z_STR(pk));
+//                }
+//                zval_ptr_dtor(&pk);
+//            }
+//            zval_ptr_dtor(&table);
+//        }
+//    }
+//    zval *col;
+//    ZEND_HASH_FOREACH_VAL(Z_ARR(arr),col) {
+//        zval* val=zend_hash_find(Z_ARR_P(value),Z_STR_P(col));
+//        if(val){
+//            zend_call_method_with_2_params(object,Z_OBJCE_P(object),&Z_OBJCE_P(object)->__set, "__set", NULL,col,val);
+//        }
+//    } ZEND_HASH_FOREACH_END();
+//    zval_ptr_dtor(&arr);
+//    zval_ptr_dtor(value);
+//    RETURN_ZVAL(object,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, save){
     zval *valid_object=NULL,*object;
