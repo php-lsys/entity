@@ -21,8 +21,8 @@ class LSYSEntity extends TestCase
             ;
         }catch(\LSYS\Entity\Exception $e){
             $this->assertEquals($sql, $e->getErrorSql());
-            //$this->assertEquals($err, $e->getValidationError());
-           // $this->assertNotEmpty($e->getMessage());
+           $this->assertEquals($err, $e->getValidationError());
+            $this->assertNotEmpty($e->getMessage());
             throw $e;
         }
     }
