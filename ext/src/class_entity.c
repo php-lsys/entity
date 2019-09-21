@@ -258,7 +258,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
        zval_ptr_dtor(&valuecopy);
         value=&filterval;
     }
-    RETURN_NULL();
+
     zval_ptr_dtor(&zval_column);
 
 
@@ -271,6 +271,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     	zval_ptr_dtor(value);
     	RETURN_NULL();
 	}
+    RETURN_NULL();
     if (loaded){
         if (zend_symtable_exists_ind(Z_ARR_P(data), column)) {
             zval* oldval=zend_hash_find(Z_ARR_P(data),column);
