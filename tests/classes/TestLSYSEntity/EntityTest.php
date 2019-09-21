@@ -39,7 +39,7 @@ class LSYSEntity extends TestCase
 //         $this->assertNull($e->validation());
 //         $e->id=1;
 //         $this->assertEquals($e->pk(), 1);
-        $data=["id"=>10,"name"=>"ttt","unkown"=>"temp"];
+      //  $data=["id"=>10,"name"=>"ttt","unkown"=>"temp"];
 //         $e->loadData($data,null,true);
 //         $this->assertEquals($e->name, "ttt");
 //         $this->assertTrue($e->loaded());
@@ -67,7 +67,7 @@ class LSYSEntity extends TestCase
         ));
         $this->assertArrayHasKey("name", $e->asArray());
 //         $this->assertFalse($e->loaded());
-        $this->assertEquals($e,$e->check());
+      //  $this->assertEquals($e,$e->check());
 //         $this->assertEquals($e->pk(),strval($e));
 //         $e->clear();
 //         $e->loadData($data,null,true);
