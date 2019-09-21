@@ -145,7 +145,10 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
             Z_PARAM_STR(field)
             Z_PARAM_ZVAL(filter_value)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
-
+    zval valuecopy;
+    ZVAL_DUP(&valuecopy, filter_value);
+    zval *value=&valuecopy;
+    RETURN_ZVAL(value,1,1);
     object = getThis();
     zval *gr=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_rules"),0,NULL);
     zval *grs=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_global_rules"),0,NULL);
@@ -166,10 +169,8 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     }
     zval *entity = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_entity"),0,NULL);
     zval *entry;
-    zval valuecopy;
-    ZVAL_DUP(&valuecopy, filter_value);
-    zval *value=&valuecopy;
-    RETURN_ZVAL(value,1,1);
+
+
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
 
                 zend_fcall_info fci;
