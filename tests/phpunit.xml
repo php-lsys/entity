@@ -2,7 +2,7 @@
 <phpunit bootstrap="autoload.php">
     <testsuites>
         <testsuite name="LSYS Tests">
-            <directory suffix="Test.php">./classes/TestLSYSEntity</directory>
+            <directory suffix="Test71.php">./classes/TestLSYSEntity</directory>
         </testsuite>
     </testsuites>
     <filter>
