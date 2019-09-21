@@ -12,15 +12,15 @@ class LSYSEntity extends TestCase
     public function testEx()
     {
         $this->expectException(\LSYS\Entity\Exception::class);
-      //  $sql="select sleep(1)";
-      //  $err=array("error1","error2");
+        $sql="select sleep(1)";
+        $err=array("error1","error2");
         try{
             throw (new \LSYS\Entity\Exception(""))
-            //->setErrorSql($sql)
+            ->setErrorSql($sql)
             //->setValidationError($err)
             ;
         }catch(\LSYS\Entity\Exception $e){
-            //$this->assertEquals($sql, $e->getErrorSql());
+            $this->assertEquals($sql, $e->getErrorSql());
             //$this->assertEquals($err, $e->getValidationError());
             $this->assertNotEmpty($e->getMessage());
             throw $e;
@@ -93,7 +93,21 @@ class LSYSEntity extends TestCase
 //         $e->id=10;
 //         $this->assertTrue($e->loaded());
 //     }
-    
+//     public function testEx()
+//     {
+//         $this->expectException(\LSYS\Entity\Exception::class);
+//         $sql="select sleep(1)";
+//         $err=array("error1","error2");
+//         try{
+//             throw (new \LSYS\Entity\Exception(""))->setErrorSql($sql)
+//             ->setValidationError($err);
+//         }catch(\LSYS\Entity\Exception $e){
+//             $this->assertEquals($sql, $e->getErrorSql());
+//             $this->assertEquals($err, $e->getValidationError());
+//             $this->assertNotEmpty($e->getMessage());
+//             throw $e;
+//         }
+//     }
 //     public function testEntitySetEx1()
 //     {
 //         $model1=new DomeModelTest();
