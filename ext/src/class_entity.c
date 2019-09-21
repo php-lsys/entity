@@ -263,7 +263,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
 
     int loaded=lsentity_check_bool_with_0_params(object,"loaded");
-
+    RETURN_NULL();
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval columnobj;
     if(!get_column(&columns,column,&columnobj,1)){
@@ -271,7 +271,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     	zval_ptr_dtor(value);
     	RETURN_NULL();
 	}
-    RETURN_NULL();
+
     if (loaded){
         if (zend_symtable_exists_ind(Z_ARR_P(data), column)) {
             zval* oldval=zend_hash_find(Z_ARR_P(data),column);
