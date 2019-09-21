@@ -235,7 +235,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         Z_PARAM_STR(column)
         Z_PARAM_ZVAL(set_value)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
-
+    RETURN_NULL();
     zval *object=getThis();
     zval valuecopy;
     ZVAL_DUP(&valuecopy,set_value);
@@ -260,7 +260,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     }
     zval_ptr_dtor(&zval_column);
 
-    RETURN_NULL();
+
     int loaded=lsentity_check_bool_with_0_params(object,"loaded");
 
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
