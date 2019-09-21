@@ -258,7 +258,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
        zval_ptr_dtor(&valuecopy);
         value=&filterval;
     }
-
+    RETURN_NULL();
     zval_ptr_dtor(&zval_column);
 
 
@@ -286,7 +286,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
             }
         }
     }
-    RETURN_NULL();
+
 
     zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
 
