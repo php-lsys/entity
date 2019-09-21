@@ -168,12 +168,9 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     zval *entry;
     zval valuecopy;
     ZVAL_DUP(&valuecopy, filter_value);
-    RETURN_ZVAL(&valuecopy,1,1);
+    
     zval *value=&valuecopy;
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
-
-                zval _value;
-                ZVAL_DUP(&_value,value);
 
                 zend_fcall_info fci;
                 zval retval;
@@ -182,9 +179,9 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                 zval tfield;
                 ZVAL_STR(&tfield,field);
 
-                ZVAL_COPY_VALUE(&params[0], entity);
-                ZVAL_COPY_VALUE(&params[1], &_value);
-                ZVAL_COPY_VALUE(&params[2], &tfield);
+                ZVAL_DUP(&params[0], entity);
+                ZVAL_DUP(&params[1], value);
+                ZVAL_DUP(&params[2], &tfield);
                 zval_ptr_dtor(&tfield);
 
                 fci.size = sizeof(fci);
@@ -193,7 +190,6 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                 fci.param_count = 3;
                 fci.params = params;
                 fci.no_separation = 1;
-
 
                 zend_fcall_info_cache fcic;
                 ZVAL_UNDEF(&fci.function_name); /* Unused */
@@ -207,6 +203,8 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                         function_table, ZEND_STRL("filter"));
                 if (fcic.function_handler == NULL) {
                     /* error at c-level */
+                    zval_ptr_dtor(&rules);
+                    zval_ptr_dtor(value);
                     zend_error_noreturn(E_CORE_ERROR, "Couldn't find implementation for method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "filter");
                     RETURN_NULL();
                 }
@@ -214,9 +212,8 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                 fcic.object = Z_OBJ_P(entry);
                 int _result = zend_call_function(&fci, &fcic);
 
-                zval_ptr_dtor(&_value);
-
                 if (_result == FAILURE) {
+                    zval_ptr_dtor(value);
                     if (!EG(exception)) {
                         zend_error_noreturn(E_CORE_ERROR, "Couldn't execute method %s%s%s", obj_ce ? ZSTR_VAL(obj_ce->name) : "", obj_ce ? "::" : "", "filter");
                         break;
@@ -225,10 +222,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
 
                 zval_ptr_dtor(value);
                 ZVAL_DUP(value, &retval);
-
                 zval_ptr_dtor(&retval);
-
-
     } ZEND_HASH_FOREACH_END();
     zval_ptr_dtor(&rules);
     RETURN_ZVAL(value,1,1);
