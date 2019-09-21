@@ -323,7 +323,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval* oldval=zend_hash_find(Z_ARR_P(change),column);
         zval nullval;
         if(!oldval)ZVAL_NULL(&nullval);
-        int is_change=!lsentity_check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,value);
+        int is_change=1;//!lsentity_check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,value);
         if(Z_TYPE(pk)==IS_ARRAY){
             zval _pk;
             ZVAL_DUP(&_pk,&pk);
