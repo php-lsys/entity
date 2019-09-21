@@ -9,24 +9,24 @@ use TestLSYSEntityLib\DomeModelTestPkArr;
 use LSYS\Entity\Column;
 class LSYSEntity extends TestCase
 {
-    public function testColumn(){
-        $c=new Column("a");
-        $c->setAllowNull(true);
-        $this->assertTrue($c->isAllowNull());
-        $c->setComment("aa");
-        $this->assertEquals("aa", $c->comment());
-        $c->setAllowNull(false);
-        $this->assertEquals($c->getDefault(), '');
-        $c->setDefault(1);
-        $this->assertEquals($c->getDefault(), 1);
-        $c->setType("int");
-        $this->assertEquals($c->getType(), 'int');
-        $this->assertEquals(strval($c),"a");
-        $b=new Column("b");
-        $b->copy($c);
-        $this->assertEquals($b->getType(),"int");
-        $this->assertEquals($b->getDefault(), 1);
-    }
+//     public function testColumn(){
+//         $c=new Column("a");
+//         $c->setAllowNull(true);
+//         $this->assertTrue($c->isAllowNull());
+//         $c->setComment("aa");
+//         $this->assertEquals("aa", $c->comment());
+//         $c->setAllowNull(false);
+//         $this->assertEquals($c->getDefault(), '');
+//         $c->setDefault(1);
+//         $this->assertEquals($c->getDefault(), 1);
+//         $c->setType("int");
+//         $this->assertEquals($c->getType(), 'int');
+//         $this->assertEquals(strval($c),"a");
+//         $b=new Column("b");
+//         $b->copy($c);
+//         $this->assertEquals($b->getType(),"int");
+//         $this->assertEquals($b->getDefault(), 1);
+//     }
     public function testEntity()
     {
         $model1=new DomeModelTest();
