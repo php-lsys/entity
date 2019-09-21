@@ -250,7 +250,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval_ptr_dtor(value);
         RETURN_NULL();
     }
-    RETURN_NULL();
+
     zval filter,filterval;
     if(get_filter(object,&filter)){
         zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&filterval,&zval_column,value);
@@ -259,7 +259,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         value=&filterval;
     }
     zval_ptr_dtor(&zval_column);
-
+    RETURN_NULL();
 
     int loaded=lsentity_check_bool_with_0_params(object,"loaded");
 
