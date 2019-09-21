@@ -1522,7 +1522,7 @@ ZEND_METHOD(lsentity_entity_class, check){
     zval_ptr_dtor(&tmp);
     ZVAL_LONG(&tmpc, 2);
     #if PHP_VERSION_ID<70200
-    zend_update_property_ex(lsentity_exception_ce_ptr, &ex, CG(known_strings)[ZEND_STR_MESSAGE], &tmp);
+    zend_update_property_ex(lsentity_exception_ce_ptr, &ex, CG(known_strings)[ZEND_STR_CODE], &tmpc);
     #else
     zend_update_property_ex(lsentity_exception_ce_ptr, &ex, ZSTR_KNOWN(ZEND_STR_CODE), &tmpc);
     #endif
