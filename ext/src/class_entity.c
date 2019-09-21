@@ -258,12 +258,12 @@ ZEND_METHOD(lsentity_entity_class, __set){
        zval_ptr_dtor(&valuecopy);
         value=&filterval;
     }
-
+    RETURN_NULL();
     zval_ptr_dtor(&zval_column);
 
 
     int loaded=lsentity_check_bool_with_0_params(object,"loaded");
-    RETURN_NULL();
+
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval columnobj;
     if(!get_column(&columns,column,&columnobj,1)){
