@@ -318,7 +318,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval_ptr_dtor(value);
         RETURN_NULL();
     }
-
+    RETURN_NULL();
     zval zcolumn;
     ZVAL_STR(&zcolumn,column);
     if(comp_pkkey(&pk,&zcolumn)==0){
