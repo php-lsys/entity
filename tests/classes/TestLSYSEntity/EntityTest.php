@@ -82,19 +82,19 @@ class LSYSEntity extends TestCase
         $e=new Entity($model1);
         $e->name="fff";
         $e->values(array(
-            "id"=>"11",
+           // "id"=>"11",
             "name"=>"temp"
         ));
         $e->asArray();
         
-      //  $this->expectException(\LSYS\Entity\Exception::class);
+     //   $this->expectException(\LSYS\Entity\Exception::class);
       //  $sql="select sleep(1)";
       //  $err=array("error1","error2");
        // try{
-          //  throw (new \LSYS\Entity\Exception(""))
+   //         throw (new \LSYS\Entity\Exception(""))
             //->setErrorSql($sql)
           //  ->setValidationError($err)
-       //     ;
+            ;
       //  }catch(\LSYS\Entity\Exception $e){
             //$this->assertEquals($sql, $e->getErrorSql());
            // $this->assertEquals($err, $e->getValidationError());
