@@ -61,10 +61,10 @@ class LSYSEntity extends TestCase
         //$this->assertNotEmpty(json_encode($e));
         //unset($e->id);
        // $this->assertFalse($e->loaded());
-        $e->values(array(
-            "id"=>"11",
-            "name"=>"temp"
-        ));
+//         $e->values(array(
+//             "id"=>"11",
+//             "name"=>"temp"
+//         ));
         $this->assertArrayHasKey("name", $e->asArray());
 //         $this->assertFalse($e->loaded());
       //  $this->assertEquals($e,$e->check());
