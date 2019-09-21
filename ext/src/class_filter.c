@@ -161,6 +161,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
         php_array_merge(Z_ARR(rules),Z_ARR(tmp));
         zval_ptr_dtor(&tmp);
     }
+    RETURN_ZVAL(value,1,1);
     if(Z_TYPE_P(grs)==IS_ARRAY){
         zval tmp;
         ZVAL_DUP(&tmp,grs);
@@ -169,7 +170,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     }
     zval *entity = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_entity"),0,NULL);
     zval *entry;
-    RETURN_ZVAL(value,1,1);
+
 
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
 
