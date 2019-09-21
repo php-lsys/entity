@@ -293,7 +293,10 @@ ZEND_METHOD(lsentity_entity_class, __set){
     if (!zend_symtable_exists_ind(Z_ARR_P(change), column)) {
         zval* oldval=zend_hash_find(Z_ARR_P(data),column);
         zval nullval;
-        if(oldval)ZVAL_DUP(&nullval,oldval);
+        if(oldval){
+            ZVAL_DUP(&nullval,oldval);
+            Z_REFCOUNTED(nullval)&&Z_ADDREF(nullval);
+        }
         else ZVAL_NULL(&nullval);
         zend_hash_add(Z_ARR_P(change),column,&nullval);
         if(oldval)zval_ptr_dtor(&nullval);
@@ -323,7 +326,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         zval* oldval=zend_hash_find(Z_ARR_P(change),column);
         zval nullval;
         if(!oldval)ZVAL_NULL(&nullval);
-        int is_change=1;//!lsentity_check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,value);
+        int is_change=!lsentity_check_bool_with_2_params(&columnobj,"compare",oldval?oldval:&nullval,value);
         if(Z_TYPE(pk)==IS_ARRAY){
             zval _pk;
             ZVAL_DUP(&_pk,&pk);
@@ -371,6 +374,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
                         //Z_ADDREF_P(val);
                         zval tmp;
                         ZVAL_DUP(&tmp,val);
+                        Z_REFCOUNTED(tmp)&&Z_ADDREF(tmp);
                         zend_hash_update(Z_ARR_P(change), key, &tmp);
                         zval_ptr_dtor(&tmp);
                     }
