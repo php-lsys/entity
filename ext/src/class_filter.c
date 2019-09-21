@@ -169,7 +169,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
     zval valuecopy;
     ZVAL_DUP(&valuecopy, filter_value);
     zval *value=&valuecopy;
-    RETURN_ZVAL(value,1,1);
+    
     ZEND_HASH_FOREACH_VAL(Z_ARR(rules),entry) {
 
                 zend_fcall_info fci;
