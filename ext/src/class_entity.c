@@ -1127,7 +1127,7 @@ ZEND_METHOD(lsentity_entity_class, create){
             RETURN_NULL();
         }
     }
-RETURN_NULL();
+
     zval field,sdata;
     array_init(&field);
     array_init(&sdata);
@@ -1182,7 +1182,7 @@ RETURN_NULL();
     } ZEND_HASH_FOREACH_END();
 
     zval_ptr_dtor(&save_data);
-
+RETURN_NULL();
     zval str_field;
     zend_string *glue = zend_string_init(ZEND_STRL(","), 0);
     php_implode(glue, &field, &str_field);
