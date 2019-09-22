@@ -1,4 +1,4 @@
-数据记录映射对象
+表记录映射对象
 ========
 
 
@@ -11,7 +11,7 @@
 
 1. 默认使用 composer require lsys/entity 进行php 源码版本安装
 
-2. 如果追求最高执行效率,可以使用php扩展版本`只支持linux,php>=7.2(7.1兼容实现中)`,git clone 后如下安装并在php.ini添加引入:
+2. 如果追求最高执行效率,可以使用php扩展版本`只支持linux,建议使用php>=7.2(官方7.1测试通过,travis-ci的PHP7.1段错误)`,git clone 后如下安装并在php.ini添加引入:
 ```
 cd ext
 phpize && ./configure 
