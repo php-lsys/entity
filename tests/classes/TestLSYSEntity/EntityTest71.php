@@ -3,6 +3,7 @@ namespace TestLSYSEntity;
 use PHPUnit\Framework\TestCase;
 use TestLSYSEntityLib\DomeModelTest;
 use LSYS\Entity;
+use TestLSYSEntityLib\DomeModelTestPkArr;
 class EntityTest71 extends TestCase
 {
      public function testEntityPkArrChange()
