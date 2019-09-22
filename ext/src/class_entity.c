@@ -1190,9 +1190,9 @@ ZEND_METHOD(lsentity_entity_class, create){
     php_implode(glue, &sdata, &str_data);
 
     zend_string_release(glue);
-RETURN_NULL();
-    zval_ptr_dtor(&sdata);
 
+    zval_ptr_dtor(&sdata);
+RETURN_NULL();
     zval_ptr_dtor(&field);
 
 
