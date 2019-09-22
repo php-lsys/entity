@@ -1182,7 +1182,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     } ZEND_HASH_FOREACH_END();
 
     zval_ptr_dtor(&save_data);
-RETURN_NULL();
+
     zval str_field;
     zend_string *glue = zend_string_init(ZEND_STRL(","), 0);
     php_implode(glue, &field, &str_field);
@@ -1217,7 +1217,7 @@ RETURN_NULL();
     zval_ptr_dtor(&str_data);
     zval_ptr_dtor(&zsql);
 
-
+RETURN_NULL();
     zval temp_array;
     array_init(&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
