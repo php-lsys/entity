@@ -1152,8 +1152,8 @@ ZEND_METHOD(lsentity_entity_class, create){
             zval_ptr_dtor(&_field);
             RETURN_NULL();
         }
-        Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
-        zend_hash_next_index_insert(Z_ARR(field),&_field);
+        //Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
+        zend_hash_next_index_insert_new(Z_ARR(field),&_field);
         zval _type;
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&_type,&key);
         zval _sdata;
@@ -1194,8 +1194,8 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval_ptr_dtor(&sdata);
 
     zval_ptr_dtor(&field);
-RETURN_NULL();
 
+    RETURN_NULL();
 
     smart_str sql = {0};
     smart_str_appends(&sql, " INSERT INTO ");
