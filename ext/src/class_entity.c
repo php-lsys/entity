@@ -1192,9 +1192,9 @@ ZEND_METHOD(lsentity_entity_class, create){
     zend_string_release(glue);
 
     zval_ptr_dtor(&sdata);
-RETURN_NULL();
-    zval_ptr_dtor(&field);
 
+    zval_ptr_dtor(&field);
+RETURN_NULL();
 
 
     smart_str sql = {0};
