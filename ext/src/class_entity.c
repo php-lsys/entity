@@ -1207,7 +1207,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
     zval status;
-
+RETURN_NULL();
     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
 
     smart_str_free(&sql);
@@ -1217,7 +1217,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval_ptr_dtor(&str_data);
     zval_ptr_dtor(&zsql);
 
-RETURN_NULL();
+
     zval temp_array;
     array_init(&temp_array);
     zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
