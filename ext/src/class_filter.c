@@ -65,7 +65,7 @@ ZEND_METHOD(lsentity_filter_class, __construct){
         ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(rule_group), num_idx, str_idx, entry) {
             if(Z_TYPE_P(entry)==IS_ARRAY&&str_idx){
                 zval ret;
-                ZVAL_STR(&ret,str_idx);
+                ZVAL_STR_COPY(&ret,str_idx);
                 zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rules",NULL,entry,&ret);
                 zval_ptr_dtor(&ret);
             }
@@ -125,7 +125,7 @@ ZEND_METHOD(lsentity_filter_class, rules){
 
         if(field) {
             zval ret;
-            ZVAL_STR(&ret, field);
+            ZVAL_STR_COPY(&ret, field);
             zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,entry,&ret);
             zval_ptr_dtor(&ret);
         }else{
@@ -184,7 +184,7 @@ ZEND_METHOD(lsentity_filter_class, runFilter){
                 zval params[3];
 
                 zval tfield;
-                ZVAL_STR(&tfield,field);
+                ZVAL_STR_COPY(&tfield,field);
 
                 ZVAL_DUP(&params[0], entity);
                 ZVAL_DUP(&params[1], value);

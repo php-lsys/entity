@@ -137,8 +137,9 @@ static int get_columns(zval *object,zval *columns,int patch){
 }
 static int get_column(zval *columns,zend_string *column_str,zval *column,int throw){
     zval param;
-    ZVAL_STR(&param,column_str);
+    ZVAL_STR_COPY(&param,column_str);
     zend_call_method_with_1_params(columns,Z_OBJCE_P(columns), NULL, "offsetget",column,&param);
+    zval_ptr_dtor(&param);
     return lsentity_obj_check(lsentity_column_ce_ptr,column,throw,1);
 }
 
@@ -216,7 +217,7 @@ ZEND_METHOD(lsentity_entity_class, __unset){
         RETURN_NULL();
     }
     zval zcolumn;
-    ZVAL_STR(&zcolumn,column);
+    ZVAL_STR_COPY(&zcolumn,column);
     if(comp_pkkey(&pk,&zcolumn)==0){
         zend_update_property_null(Z_OBJCE_P(object),object,ZEND_STRL("_change_pk"));
         zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),0);
@@ -322,7 +323,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     }
 
     zval zcolumn;
-    ZVAL_STR(&zcolumn,column);
+    ZVAL_STR_COPY(&zcolumn,column);
     if(comp_pkkey(&pk,&zcolumn)==0){
 
         zval* oldval=zend_hash_find(Z_ARR_P(change),column);
@@ -410,6 +411,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
         }
     }
 
+    zval_ptr_dtor(&zcolumn);
     zval_ptr_dtor(&pk);
     zval_ptr_dtor(&table);
     zval_ptr_dtor(&columns);
@@ -858,7 +860,7 @@ ZEND_METHOD(lsentity_entity_class, update){
     ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(save_data),dkey,dval) {
                 zval _field;
                 zval key;
-                ZVAL_STR(&key,dkey);
+                ZVAL_STR_COPY(&key,dkey);
                 zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&_field,&key);
                 zval _type;
                 zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&_type,&key);
@@ -1139,7 +1141,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR(save_data),dkey,dval) {
         zval _field;
         zval key;
-        ZVAL_STR(&key,dkey);
+        ZVAL_STR_COPY(&key,dkey);
         zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&_field,&key);
         if(Z_TYPE(_field)!=IS_STRING){
             zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "obj %s quoteColumn method return not a string,param[%s]",ZSTR_VAL(Z_OBJCE(db)->name),ZSTR_VAL(Z_STR(key)));
@@ -1374,7 +1376,6 @@ ZEND_METHOD(lsentity_entity_class, delete){
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
     smart_str_free(&sql);
-    //ZVAL_STR(&zsql,sql.s);
 
     zval status;
     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);

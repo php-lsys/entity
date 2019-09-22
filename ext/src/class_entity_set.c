@@ -143,7 +143,7 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
         }
     }else if( !key||ZSTR_LEN(key)<=1 ){
         zval zvalue;
-        ZVAL_STR(&zvalue,value);
+        ZVAL_STR_COPY(&zvalue,value);
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,arr;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
@@ -181,8 +181,8 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
         }
     }else{
         zval zkey,zvalue;
-        ZVAL_STR(&zkey,key);
-        ZVAL_STR(&zvalue,value);
+        ZVAL_STR_COPY(&zkey,key);
+        ZVAL_STR_COPY(&zvalue,value);
         while (lsentity_check_bool_with_0_params(object,"valid")){
             zval res,rkey,rvalue;
             zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);

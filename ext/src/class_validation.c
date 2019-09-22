@@ -154,7 +154,7 @@ ZEND_METHOD(lsentity_validation_class, __construct){
         ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(rule_group), num_idx, str_idx, entry) {
             if(Z_TYPE_P(entry)==IS_ARRAY&&str_idx){
                 zval ret;
-                ZVAL_STR(&ret,str_idx);
+                ZVAL_STR_COPY(&ret,str_idx);
                 zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rules",NULL,entry,&ret);
                 zval_ptr_dtor(&ret);
             }
@@ -185,7 +185,7 @@ ZEND_METHOD(lsentity_validation_class, label){
     labels=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_labels"),0,NULL);
     zval *old=zend_hash_find(Z_ARR_P(labels),field);
     zval labelval;
-    ZVAL_STR(&labelval,label);
+    ZVAL_STR_COPY(&labelval,label);
     Z_REFCOUNTED(labelval)&&Z_ADDREF(labelval);
     if(!old)zend_hash_add(Z_ARR_P(labels),field,&labelval);
     else zend_hash_update(Z_ARR_P(labels),field,&labelval);
@@ -243,7 +243,7 @@ ZEND_METHOD(lsentity_validation_class, rule){
         zval *old=zend_hash_find(Z_ARR_P(labels),field);
         if(!old){
             zval zfield;
-            ZVAL_STR(&zfield,field);
+            ZVAL_STR_COPY(&zfield,field);
             Z_REFCOUNTED(zfield)&&Z_ADDREF(zfield);
             zend_hash_add(Z_ARR_P(labels),field,&zfield);
             zval_ptr_dtor(&zfield);
@@ -286,7 +286,7 @@ ZEND_METHOD(lsentity_validation_class, rules){
 
                 if(field){
                     zval ret;
-                    ZVAL_STR(&ret,field);
+                    ZVAL_STR_COPY(&ret,field);
                     zend_call_method_with_2_params(object,Z_OBJCE_P(object),NULL,"rule",NULL,entry,&ret);
                     zval_ptr_dtor(&ret);
                 }else{
@@ -416,7 +416,7 @@ ZEND_METHOD(lsentity_validation_class, valid){
             zval params[6];
 
             zval tfield;
-            ZVAL_STR(&tfield,fieldkey);
+            ZVAL_STR_COPY(&tfield,fieldkey);
 
             ZVAL_COPY_VALUE(&params[0], getThis());
             ZVAL_COPY_VALUE(&params[1], &tfield);
