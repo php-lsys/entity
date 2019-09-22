@@ -697,14 +697,16 @@ ZEND_METHOD(lsentity_entity_class, columns){
 }
 
 ZEND_METHOD(lsentity_entity_class, saved){
-    zval *object=getThis();
-    zval *loaded=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_saved"),1,NULL);
-    RETURN_ZVAL(loaded,1,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_saved"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_entity_class, loaded){
-    zval *object=getThis();
-    zval *loaded=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),1,NULL);
-    RETURN_ZVAL(loaded,1,0);
+    zval *val=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_loaded"),0,NULL);
+    zval tmp;
+    ZVAL_DUP(&tmp,val);
+    RETURN_ZVAL(&tmp,1,1);
 }
 ZEND_METHOD(lsentity_entity_class, update){
     zval *valid_object=NULL,*object;
@@ -1152,10 +1154,8 @@ ZEND_METHOD(lsentity_entity_class, create){
             zval_ptr_dtor(&_field);
             RETURN_NULL();
         }
-        //Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
-        zval tmp;
-        ZVAL_STRING(&tmp,"name");
-        zend_hash_next_index_insert(Z_ARR(field),&tmp);
+        Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
+        zend_hash_next_index_insert(Z_ARR(field),&_field);
         zval _type;
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&_type,&key);
         zval _sdata;
@@ -1197,7 +1197,7 @@ ZEND_METHOD(lsentity_entity_class, create){
 
     zval_ptr_dtor(&field);
 
-    RETURN_NULL();
+
 
     smart_str sql = {0};
     smart_str_appends(&sql, " INSERT INTO ");
