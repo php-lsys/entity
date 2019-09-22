@@ -1127,7 +1127,7 @@ ZEND_METHOD(lsentity_entity_class, create){
             RETURN_NULL();
         }
     }
-
+RETURN_NULL();
     zval field,sdata;
     array_init(&field);
     array_init(&sdata);
