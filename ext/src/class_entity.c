@@ -1193,7 +1193,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval_ptr_dtor(&sdata);
     zval_ptr_dtor(&field);
 
-
+RETURN_NULL();
 
     smart_str sql = {0};
     smart_str_appends(&sql, " INSERT INTO ");
@@ -1207,7 +1207,7 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
     zval status;
-RETURN_NULL();
+
     zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
 
     smart_str_free(&sql);
