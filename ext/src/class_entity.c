@@ -1190,10 +1190,12 @@ ZEND_METHOD(lsentity_entity_class, create){
     php_implode(glue, &sdata, &str_data);
 
     zend_string_release(glue);
+RETURN_NULL();
     zval_ptr_dtor(&sdata);
+
     zval_ptr_dtor(&field);
 
-RETURN_NULL();
+
 
     smart_str sql = {0};
     smart_str_appends(&sql, " INSERT INTO ");
