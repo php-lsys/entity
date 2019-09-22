@@ -1153,7 +1153,9 @@ ZEND_METHOD(lsentity_entity_class, create){
             RETURN_NULL();
         }
         //Z_REFCOUNTED(_field)&&Z_ADDREF(_field);
-        //zend_hash_next_index_insert_new(Z_ARR(field),&_field);
+        zval tmp;
+        ZVAL_STRING(&tmp,"name");
+        zend_hash_next_index_insert(Z_ARR(field),&tmp);
         zval _type;
         zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"gettype",&_type,&key);
         zval _sdata;
