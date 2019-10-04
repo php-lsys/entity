@@ -28,11 +28,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_update_arginfo, 0, 0, 2)
     ZEND_ARG_ARRAY_INFO(0,records,0)
     ZEND_ARG_INFO(0,where)
-    ZEND_ARG_TYPE_INFO(0,limit,IS_LONG,1)
 ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_delete_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0,where)
-    ZEND_ARG_TYPE_INFO(0,limit,IS_LONG,1)
 ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_insert_arginfo, 0, 0, 1)
     ZEND_ARG_ARRAY_INFO(0,records,0)
@@ -394,12 +392,9 @@ ZEND_METHOD(lsentity_db_builder_class, __construct){
 ZEND_METHOD(lsentity_db_builder_class, update){
     zval *records = NULL;
     zval *where = NULL;
-    zend_long limit;
-    ZEND_PARSE_PARAMETERS_START(2, 3)
+    ZEND_PARSE_PARAMETERS_START(2, 2)
             Z_PARAM_ARRAY(records)
             Z_PARAM_ZVAL(where)
-            Z_PARAM_OPTIONAL
-            Z_PARAM_LONG(limit)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
     if(zend_array_count(Z_ARR_P(records))==0){
@@ -497,10 +492,6 @@ ZEND_METHOD(lsentity_db_builder_class, update){
     smart_str_appends(&sql, " WHERE ");
     smart_str_append(&sql, Z_STR(strwhere));
 
-    if (limit>0){
-        smart_str_appends(&sql, " LIMIT ");
-        smart_str_append_long(&sql,limit);
-    }
 
     smart_str_0(&sql);
 
@@ -523,11 +514,9 @@ ZEND_METHOD(lsentity_db_builder_class, update){
 }
 ZEND_METHOD(lsentity_db_builder_class, delete){
     zval *where = NULL;
-    zend_long limit;
-    ZEND_PARSE_PARAMETERS_START(1, 2)
+
+    ZEND_PARSE_PARAMETERS_START(1, 1)
             Z_PARAM_ZVAL(where)
-            Z_PARAM_OPTIONAL
-            Z_PARAM_LONG(limit)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
 
@@ -577,11 +566,6 @@ ZEND_METHOD(lsentity_db_builder_class, delete){
     smart_str_appends(&sql, " WHERE ");
 
     smart_str_append(&sql, Z_STR(strwhere));
-
-    if (limit>0) {
-        smart_str_appends(&sql, " LIMIT ");
-        smart_str_append_long(&sql,limit);
-    }
 
 
     smart_str_0(&sql);

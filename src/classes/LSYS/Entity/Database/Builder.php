@@ -22,7 +22,7 @@ if (!class_exists(Builder::class)){
          * @param mixed $where
          * @return boolean
          */
-        public function update(array $records,$where,$limit=null){
+        public function update(array $records,$where){
             if(count($records)==0)return true;
             $table=$this->table();
             $where=$this->buildWhere($where);
@@ -37,7 +37,6 @@ if (!class_exists(Builder::class)){
             }
             $str_set = implode ( ",", $sets );
             $sql = " UPDATE " . $table_name . " SET " . $str_set." WHERE " . $where;
-            if ($limit) $sql.=" LIMIT ".intval($limit);
             return $db->exec($sql);
         }
         /**
@@ -45,14 +44,13 @@ if (!class_exists(Builder::class)){
          * @param mixed $where
          * @return boolean
          */
-        public function delete($where,$limit=null){
+        public function delete($where){
             $table=$this->table();
             $where=$this->buildWhere($where);
             if($where===false)return false;
             $db=$table->db();
             $table_name=$db->quoteTable($table->tableName());
             $sql=" DELETE FROM ".$table_name." where ".$where;
-            if ($limit) $sql.=" LIMIT ".intval($limit);
             return $db->exec($sql);
         }
         /**
