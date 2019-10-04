@@ -8,4 +8,7 @@ int lsentity_check_bool_with_1_params(zval *object,const char* method,zval *para
 int lsentity_check_bool_with_2_params(zval *object,const char* method,zval *param1,zval *param2);
 int lsentity_obj_check(zend_class_entry * ce,zval *retobj,int throw,int drop);
 int lsentity_in_array(zval *array,zval *value);
+int lsentity_get_table_columns(zval *table,zval *table_columns);
+int lsentity_get_table_pk(zval *table,zval *pk);
+int lsentity_get_db(zval *object,zval *db);
 #endif

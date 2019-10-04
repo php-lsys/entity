@@ -19,6 +19,7 @@ use LSYS\Entity\EntitySet;
  */
 class DomeModelTest implements Table{
     protected static $_table_columns;
+    protected $_dbbuilder;
     public function tableColumns()
     {
         if (!self::$_table_columns) {
@@ -32,6 +33,13 @@ class DomeModelTest implements Table{
             ]);
         }
         return self::$_table_columns;
+    }
+    public function dbBuilder()
+    {
+        if (!$this->_dbbuilder) {
+            $this->_dbbuilder=new DomeDBBuilder($this);
+        }
+        return $this->_dbbuilder;
     }
     /**
      * @return DomeDB
@@ -48,7 +56,7 @@ class DomeModelTest implements Table{
     {
         return 'id';
     }
-    //以下非必须，根据你的业务实现方法
+    //根据你的业务实现方法
     private function columnSetAsStr($columns){
         if (!count($columns)) return "*";
         return implode(",", $columns->asArray(ColumnSet::TYPE_FIELD));

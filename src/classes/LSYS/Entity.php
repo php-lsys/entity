@@ -22,6 +22,10 @@ if (!class_exists(Entity::class)){
          */
         protected $_columns;
         /**
+         * @var ColumnSet
+         */
+        protected $_patch_columns;
+        /**
          * @var array
          */
         protected $_data= array ();
@@ -156,6 +160,7 @@ if (!class_exists(Entity::class)){
             $this->_change =array();
             $this->_loaded =false;
             $this->_columns =null;
+            $this->_patch_columns =null;
             $this->_query_column_set =null;
             return $this;
         }
@@ -167,6 +172,10 @@ if (!class_exists(Entity::class)){
         public function __isset($column){
             return array_key_exists($column,$this->_data);
         }
+        /**
+         * 删除已赋值的字段
+         * @param string $column
+         */
         public function __unset($column){
             $pkey=$this->table()->primaryKey();
             if((is_array($pkey)&&in_array($column,$pkey,true))
@@ -182,15 +191,16 @@ if (!class_exists(Entity::class)){
          * @return \LSYS\Entity\ColumnSet
          */
         public function columns($patch=false){
-            if (!$this->_columns) {
+            if ($patch?(!$this->_patch_columns):(!$this->_columns)) {
                 $table_columns=$this->table()->tableColumns();
                 if ($this->_query_column_set instanceof EntityColumnSet) {
-                    $this->_columns=$this->_query_column_set->asColumnSet($table_columns,$patch);
+                    $columns=$this->_query_column_set->asColumnSet($table_columns,$patch);
                 }else{
-                    $this->_columns=$table_columns;
+                    $columns=$table_columns;
                 }
+                $patch?($this->_patch_columns=$columns):($this->_columns=$columns);
             }
-            return $this->_columns;
+            return $patch?$this->_patch_columns:$this->_columns;
         }
         /**
          * 设置指定字段数据
@@ -317,70 +327,41 @@ if (!class_exists(Entity::class)){
          * @return static
          */
         public function update(Validation $validation=null){
-            $table=$this->table();
-            if ( ! $this->loaded()){
-                $msg=strtr('Cannot update :object model because it is not loaded.',array(":object"=>get_called_class()));
-                throw new Exception($msg);
+            if ( ! $this->_valid OR $validation)
+            {
+                $this->check($validation);
             }
-            $columns=$this->columns(false);
-            $save_data=array();
-            foreach ($columns as $v){
-                $name=$v->name();
-                if ($v instanceof ColumnSave){
-                    $v->update($this,$name);
-                }
-                if (!$v->isAllowNull()
-                    &&array_key_exists($name, $this->_data)
-                    &&is_null($this->_data[$name])) {
-                        $this->_data[$name]='';
-                }
-                if(array_key_exists($name, $this->_change)){
-                    $save_data[$name]=$this->_data[$name];
-                }
-            }
+            $save_data=$this->updateData();
             if (count($save_data)==0){
                 $this->_change=array();
                 $this->_change_pk=null;
                 $this->_saved=true;
                 return $this;
             }
-            if ( ! $this->_valid OR $validation)
-            {
-                $this->check($validation);
-            }
-            $db=$table->db();
-            $where=$this->_modify_where();
-            $table_name = $db->quoteTable( $table->tableName() );
-            $sets = array ();
-            foreach ( $save_data as $key => $value ) {
-                $set = $db->quoteColumn($key) . " = " . $db->quoteValue( $value,$columns->getType($key));
-                array_push ( $sets, $set );
-            }
-            $str_set = implode ( ",", $sets );
-            $sql = " UPDATE " . $table_name . " SET " . $str_set." WHERE " . $where;
-            $db->exec($sql);
+            $this->table()->dbBuilder()->update($save_data, $this);
             $this->_change=array();
             $this->_saved=true;
             $this->_change_pk=null;
             return $this;
         }
-        private function _modify_where(){
-            $table=$this->table();
-            $columns=$table->tableColumns();
-            $primary_key=$table->primaryKey();
-            $db=$table->db();
-            if (is_array($primary_key)){
-                $where = [];
-                foreach ($primary_key as $v){
-                    $pk=isset($this->_data[$v])?$this->_data[$v]:null;
-                    $where[] = $db->quoteColumn($v) . '=' . $db->quoteValue($pk,$columns->getType($v));
-                }
-                $where = implode(" and ", $where);
-            }else{
-                $pk=isset($this->_data[$primary_key])?$this->_data[$primary_key]:null;
-                $where = $db->quoteColumn($primary_key) . '=' . $db->quoteValue($pk,$columns->getType($primary_key));
+        /**
+         * 得到需要更新数据
+         * @throws Exception
+         */
+        public function updateData(){
+            if ( ! $this->loaded()){
+                $msg=strtr('Cannot update :object model because it is not loaded.',array(":object"=>get_called_class()));
+                throw new Exception($msg);
             }
-            return $where;
+            $table_column=$this->table()->tableColumns();
+            $save_data=array();
+            foreach ($table_column as $v){
+                $name=$v->name();
+                if(array_key_exists($name, $this->_change)){
+                    $save_data[$name]=$this->_data[$name];
+                }
+            }
+            return $save_data;
         }
         /**
          * 新增数据
@@ -388,58 +369,42 @@ if (!class_exists(Entity::class)){
          * @throws Exception
          * @return static
          */
-        public function create(Validation $validation=null){
-            $table=$this->table();
-            if ($this->loaded()){
-                $msg=strtr('Cannot create :object model because it is already loaded.',array(":object"=>get_called_class()));
-                throw new Exception ( $msg);
-            }
-            
-            $table_column=$table->tableColumns();
-            $save_data=array();
-            foreach ($table_column as $v){
-                $name=$v->name();
-                if ($v instanceof ColumnSave) $v->create($this, $name);
-                if(!array_key_exists($name, $this->_data)&&$v->useDefault()){
-                    $this->_data[$name]=$v->getDefault();
-                }
-                if (!$v->isAllowNull()
-                    &&array_key_exists($name, $this->_data)
-                    &&is_null($this->_data[$name])) {
-                    $this->_data[$name]='';
-                }
-                if(array_key_exists($name, $this->_data)){
-                    $save_data[$name]=$this->_data[$name];
-                }
-            }
-            
+        public function create(Validation $validation=null,$unique_replace=false){
             if ( ! $this->_valid OR $validation)
             {
                 $this->check($validation);
             }
-            
-            $field=array();
-            $data=array();
+            $save_data=$this->createData();
+            $table=$this->table();
             $db=$table->db();
-            foreach ($save_data as $key=>$value)
-            {
-                array_push($field, $db->quoteColumn($key));
-                array_push($data, $db->quoteValue($value,$table_column->getType($key)));
-            }
-            $str_field=implode(",",$field);
-            $str_data='('.implode(",", $data).')';
-            
-            $table_name=$db->quoteTable($table->tableName());
-            $sql=" INSERT INTO ".$table_name." (".$str_field.")VALUES {$str_data}";
-            $db->exec( $sql );
+            $table->dbBuilder()->insert([$save_data],$unique_replace);
             $this->_change=array();
             $this->_saved=$this->_loaded=true;
             $this->_change_pk=null;
             $primary_key=$table->primaryKey();
-            if (!is_array($primary_key)&&! array_key_exists ( $primary_key, $data )) {
-                if(!is_null($db->insertId())) $this->_data[$primary_key]=$db->insertId();
+            if (!is_array($primary_key)&&! array_key_exists ( $primary_key, $save_data )) {
+                if(!is_null($table->db()->insertId())) $this->_data[$primary_key]=$db->insertId();
             }
             return $this;
+        }
+        /**
+         * 得到需要创建数据
+         * @throws Exception
+         */
+        public function createData() {
+            if ($this->loaded()){
+                $msg=strtr('Cannot create :object model because it is already loaded.',array(":object"=>get_called_class()));
+                throw new Exception ( $msg);
+            }
+            $table_column=$this->table()->tableColumns();
+            $save_data=array();
+            foreach ($table_column as $v){
+                $name=$v->name();
+                if(array_key_exists($name, $this->_data)){
+                    $save_data[$name]=$this->_data[$name];
+                }
+            }
+            return $save_data;
         }
         /**
          * 删除数据并清空当前对象
@@ -451,12 +416,7 @@ if (!class_exists(Entity::class)){
                 $msg=strtr('Cannot delete :object model because it is not loaded.',array(":object"=>get_called_class()));
                 throw new Exception ($msg);
             }
-            $table=$this->table();
-            $db=$table->db();
-            $table_name=$db->quoteTable($table->tableName());
-            $where=$this->_modify_where();
-            $sql=" DELETE FROM ".$table_name." where ".$where;
-            $db->exec($sql);
+            $this->table()->dbBuilder()->delete($this);
             return $this->clear();
         }
         /**
@@ -484,7 +444,34 @@ if (!class_exists(Entity::class)){
          * @return static
          */
         public function check(Validation $validation=null) {
-            //调用时候创建 或者在外部创建传入 不传参数每次调用check都创建一个新校验对象
+             $table=$this->table();
+             $table_column=$table->tableColumns();
+            if(!$this->loaded()){  
+                foreach ($table_column as $v){
+                    $name=$v->name();
+                    if ($v instanceof ColumnSave) $v->create($this, $name);
+                    if(!array_key_exists($name, $this->_data)&&$v->useDefault()){
+                        $this->_data[$name]=$v->getDefault();
+                    }
+                    if (!$v->isAllowNull()
+                        &&array_key_exists($name, $this->_data)
+                        &&is_null($this->_data[$name])) {
+                            $this->_data[$name]='';
+                        }
+                }
+            }else{
+                foreach ($table_column as $v){
+                    $name=$v->name();
+                    if ($v instanceof ColumnSave){
+                        $v->update($this,$name);
+                    }
+                    if (!$v->isAllowNull()
+                        &&array_key_exists($name, $this->_data)
+                        &&is_null($this->_data[$name])) {
+                        $this->_data[$name]='';
+                    }
+                }
+            }
             if (!$validation)$validation=$this->validation();
             if (!$validation)return $this;
             if (($this->_valid = $validation->valid($this->_data+$this->columns(true)->asArray(ColumnSet::TYPE_DEFAULT))) === FALSE)

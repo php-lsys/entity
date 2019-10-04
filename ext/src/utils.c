@@ -8,6 +8,8 @@
 #include "class_exception.h"
 #include "utils.h"
 #include "class_table.h"
+#include "class_column_set.h"
+#include "class_db.h"
 
 int lsentity_new_class(zend_class_entry *ce,zval *return_value,zval *params,int num_args){
     zend_class_entry *old_scope;
@@ -115,3 +117,49 @@ int lsentity_in_array(zval *array,zval *value){
     return 0;
 }
 
+
+
+
+int lsentity_get_table_columns(zval *table,zval *table_columns){
+    zend_call_method_with_0_params(table,Z_OBJCE_P(table), NULL, "tablecolumns", table_columns);
+    if(lsentity_obj_check(lsentity_column_set_ce_ptr,table_columns,0,1)){
+        return 1;
+    }
+    zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "return not a %s object of columns table::tableColumns()",ZSTR_VAL(lsentity_column_set_ce_ptr->name));
+    return 0;
+
+}
+
+
+int lsentity_get_table_pk(zval *table,zval *pk){
+    zend_call_method_with_0_params(table,Z_OBJCE_P(table), NULL, "primarykey", pk);
+    zend_bool  check=1;
+    if (Z_TYPE_P(pk)!=IS_STRING)check=0;
+    if(!check&&Z_TYPE_P(pk)==IS_ARRAY){
+        if(zend_array_count(Z_ARR_P(pk))==0)check=0;
+        else{
+            check=1;
+            zval *val;
+            ZEND_HASH_FOREACH_VAL(Z_ARR_P(pk),val) {
+                        if(Z_TYPE_P(val)!=IS_STRING){
+                            check=0;
+                            break;
+                        }
+                    } ZEND_HASH_FOREACH_END();
+        }
+    }
+
+    if(!check){
+        zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "the table::primaryKey method return not is: string,array string");
+        return 0;
+    }
+    return check;
+}
+
+
+int lsentity_get_db(zval *object,zval *db){
+    zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "db", db);
+    if(lsentity_obj_check(lsentity_db_ce_ptr,db,0,1))return 1;
+    zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "return not a %s object of table::db method",ZSTR_VAL(lsentity_db_ce_ptr->name));
+    return 0;
+}

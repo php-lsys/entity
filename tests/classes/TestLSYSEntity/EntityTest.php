@@ -9,7 +9,7 @@ use TestLSYSEntityLib\DomeModelTestPkArr;
 use LSYS\Entity\Column;
 class LSYSEntity extends TestCase
 {
-    public function testColumn(){
+   public function testColumn(){
         $c=new Column("a");
         $c->setAllowNull(true);
         $this->assertTrue($c->isAllowNull());
@@ -158,13 +158,14 @@ class LSYSEntity extends TestCase
         $this->assertTrue($entity->saved());
         $this->assertEmpty($entity->changed());
         $entity->update();
+
         sleep(1);//自动更新时间
         $entity->name="bbbbb";
         $this->assertArrayHasKey("name", $entity->changed());
         $entity->save();
         $this->assertArrayHasKey("id", $entity->asArray());
         $pk=$entity->pk();
-        
+
         $this->assertEquals($pk,strval($entity));
         $entity->clear();
         $this->assertFalse($entity->saved());
@@ -185,7 +186,7 @@ class LSYSEntity extends TestCase
         $this->assertEquals($tt[0],$key[0]);
         $ttt=$res->asArray("id","name");
         $this->assertEquals($ttt[$key[0]], $t[$key[0]]['name']);
-        
+
         $this->assertTrue($res->fetchCount(0)>0);
         
         $entity=$model1->findById($pk);
@@ -208,6 +209,11 @@ class LSYSEntity extends TestCase
         $this->expectException(\LSYS\Entity\Exception::class);
         $e=$model1->findById(-11);
         $e->delete();
+    }
+    public function testEntityDeleteRes(){
+        $model1=new DomeModelTest();
+        $res=$model1->findByWhere("id<1000000000",3);
+        $this->assertTrue($model1->dbBuilder()->delete($res,2));
     }
     public function testEntityCreateEx(){
         $model1=new DomeModelTest();
