@@ -213,7 +213,7 @@ class LSYSEntity extends TestCase
     public function testEntityDeleteRes(){
         $model1=new DomeModelTest();
         $res=$model1->findByWhere("id<1000000000",3);
-        $this->assertTrue($model1->dbBuilder()->delete($res,2));
+        $this->assertTrue($model1->dbBuilder()->delete($res));
     }
     public function testEntityCreateEx(){
         $model1=new DomeModelTest();
