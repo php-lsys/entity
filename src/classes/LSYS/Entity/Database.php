@@ -39,7 +39,7 @@ if (!interface_exists(Database::class)){
     	 * DB操作构造器
     	 * @return \LSYS\Entity\Database\Builder
     	 */
-    	public function builder();
+    	public function builder(Table $table);
     }
 }
 // @codeCoverageIgnoreEnd

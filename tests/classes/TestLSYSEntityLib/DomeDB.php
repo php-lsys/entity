@@ -1,6 +1,7 @@
 <?php
 namespace TestLSYSEntityLib;
 use LSYS\Entity\Database;
+use LSYS\Entity\Table;
 //一般框架都带自己的数据库实现,可基于框架自带的数据库实现以下Database接口,以下是基于PDO简易实现
 class DomeDB implements Database{
     protected static $obj;
@@ -8,18 +9,19 @@ class DomeDB implements Database{
         if(!self::$obj)self::$obj=new static();
         return self::$obj;
     }
-    protected $_dbbuilder;
+    protected $_dbbuilder=[];
     protected $pdo;
     public function __construct() {
         $this->pdo=new \PDO('mysql:host=127.0.0.1;dbname=test','root','');
         $this->pdo->exec('SET NAMES "utf8"');
     }
-    public function builder()
+    public function builder(Table $table)
     {
-        if (!$this->_dbbuilder) {
-            $this->_dbbuilder=new DomeDBBuilder($this);
+        $tablename=$table->tableName();
+        if (!isset($this->_dbbuilder[$tablename])) {
+            $this->_dbbuilder[$tablename]=new DomeDBBuilder($table);
         }
-        return $this->_dbbuilder;
+        return $this->_dbbuilder[$tablename];
     }
     /**
      * @param string $sql
