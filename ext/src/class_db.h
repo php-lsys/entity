@@ -2,6 +2,8 @@
 #ifndef PHP_LSENTITY_DB_H
 #define PHP_LSENTITY_DB_H
 #include "zend_API.h"
+#include "entity.h"
+
 
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_quote_table_arginfo, 0, 0, 1)
