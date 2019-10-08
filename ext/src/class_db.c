@@ -13,10 +13,12 @@ ZEND_API zend_class_entry *lsentity_db_ce_ptr;
 
 static zend_function_entry lsentity_db_class_method[] = {
     ZEND_ABSTRACT_ME(lsentity_db_class,quoteTable, lsentity_db_quote_table_arginfo)
+    ZEND_ABSTRACT_ME(lsentity_db_class,quoteTable, lsentity_db_quote_table_arginfo)
     ZEND_ABSTRACT_ME(lsentity_db_class,quoteColumn, lsentity_db_quote_column_arginfo)
     ZEND_ABSTRACT_ME(lsentity_db_class,quoteValue, lsentity_db_quote_value_arginfo)
     ZEND_ABSTRACT_ME(lsentity_db_class,exec, lsentity_db_exec_arginfo)
     ZEND_ABSTRACT_ME(lsentity_db_class,insertId, NULL)
+    ZEND_ABSTRACT_ME(lsentity_table_class,builder, NULL)
     ZEND_FE_END
 };
 

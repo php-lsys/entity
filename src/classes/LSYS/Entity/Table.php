@@ -3,11 +3,6 @@ namespace LSYS\Entity;
 // @codeCoverageIgnoreStart
 if (!interface_exists(Table::class)){
     interface Table {
-        /**
-         * DB操作构造器
-         * @return \LSYS\Entity\Database\Builder
-         */
-        public function dbBuilder();
     	/**
     	 * 数据库操作对象
     	 * @return \LSYS\Entity\Database

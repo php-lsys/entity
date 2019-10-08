@@ -497,19 +497,19 @@ ZEND_METHOD(lsentity_db_builder_class, update){
 
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
-    zval status;
-    zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
+    //zval status;
+    //zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
     smart_str_free(&sql);
 
     zval_ptr_dtor(&str_set);
-    zval_ptr_dtor(&zsql);
+    //zval_ptr_dtor(&zsql);
 
     zval_ptr_dtor(&strwhere);
     zval_ptr_dtor(&table_name);
     zval_ptr_dtor(&db);
     zval_ptr_dtor(&columns);
 
-    RETURN_ZVAL(&status,1,1);
+    RETURN_ZVAL(&zsql,1,1);
 
 }
 ZEND_METHOD(lsentity_db_builder_class, delete){
@@ -572,15 +572,15 @@ ZEND_METHOD(lsentity_db_builder_class, delete){
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
     smart_str_free(&sql);
-    zval status;
-    zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
+    //zval status;
+    //zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
     smart_str_free(&sql);
 
     zval_ptr_dtor(&db);
     zval_ptr_dtor(&table_name);
-    zval_ptr_dtor(&zsql);
+    //zval_ptr_dtor(&zsql);
 
-    RETURN_ZVAL(&status,1,1);
+    RETURN_ZVAL(&zsql,1,1);
 
 }
 ZEND_METHOD(lsentity_db_builder_class, insert){
@@ -777,8 +777,8 @@ ZEND_METHOD(lsentity_db_builder_class, insert){
     smart_str_0(&sql);
     zval zsql;
     ZVAL_STR_COPY(&zsql,sql.s);
-    zval status;
-    zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
+    //zval status;
+    //zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
     smart_str_free(&sql);
 
     zval_ptr_dtor(&table_name);
@@ -787,7 +787,7 @@ ZEND_METHOD(lsentity_db_builder_class, insert){
 
     zval_ptr_dtor(&db);
 
-    RETURN_ZVAL(&status,1,1);
+    RETURN_ZVAL(&zsql,1,1);
 
 
 }

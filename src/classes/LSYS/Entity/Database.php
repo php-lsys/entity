@@ -35,6 +35,11 @@ if (!interface_exists(Database::class)){
     	 * @return int
     	 */
     	public function insertId();
+    	/**
+    	 * DB操作构造器
+    	 * @return \LSYS\Entity\Database\Builder
+    	 */
+    	public function builder();
     }
 }
 // @codeCoverageIgnoreEnd

@@ -8,10 +8,18 @@ class DomeDB implements Database{
         if(!self::$obj)self::$obj=new static();
         return self::$obj;
     }
+    protected $_dbbuilder;
     protected $pdo;
     public function __construct() {
         $this->pdo=new \PDO('mysql:host=127.0.0.1;dbname=test','root','');
         $this->pdo->exec('SET NAMES "utf8"');
+    }
+    public function dbBuilder()
+    {
+        if (!$this->_dbbuilder) {
+            $this->_dbbuilder=new DomeDBBuilder($this);
+        }
+        return $this->_dbbuilder;
     }
     /**
      * @param string $sql

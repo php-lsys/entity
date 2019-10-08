@@ -101,7 +101,7 @@ if (!class_exists(Entity::class)){
         }
         /**
          * 返回当前实体关联的ORM对象
-         * @return Table 
+         * @return Table
          */
         public function table(){
             return $this->_table;
@@ -179,9 +179,9 @@ if (!class_exists(Entity::class)){
         public function __unset($column){
             $pkey=$this->table()->primaryKey();
             if((is_array($pkey)&&in_array($column,$pkey,true))
-              ||$pkey==$column){
-                $this->_change_pk=null;
-                $this->_loaded=false;
+                ||$pkey==$column){
+                    $this->_change_pk=null;
+                    $this->_loaded=false;
             }
             unset($this->_data[$column]);
         }
@@ -236,8 +236,8 @@ if (!class_exists(Entity::class)){
                 //更改主键值
                 if (is_array($primaryKey)){
                     $change=!$columns->offsetGet($column)->compare($this->_change[$column],$value);
-					$_key_=array_search($column, $primaryKey);
-					if($_key_!==false)unset($primaryKey[$_key_],$_key_);
+                    $_key_=array_search($column, $primaryKey);
+                    if($_key_!==false)unset($primaryKey[$_key_],$_key_);
                     if(!$change)foreach ($primaryKey as $v){
                         if(isset($this->_change[$v])){
                             $data=isset($this->_data[$v])?$this->_data[$v]:null;
@@ -338,7 +338,9 @@ if (!class_exists(Entity::class)){
                 $this->_saved=true;
                 return $this;
             }
-            $this->table()->dbBuilder()->update($save_data, $this);
+            $db=$this->table()->db();
+            $sql=$db->builder()->update($save_data, $this);
+            $db->exec($sql);
             $this->_change=array();
             $this->_saved=true;
             $this->_change_pk=null;
@@ -377,7 +379,8 @@ if (!class_exists(Entity::class)){
             $save_data=$this->createData();
             $table=$this->table();
             $db=$table->db();
-            $table->dbBuilder()->insert([$save_data],$unique_replace);
+            $sql=$db->builder()->insert([$save_data],$unique_replace);
+            $db->exec($sql);
             $this->_change=array();
             $this->_saved=$this->_loaded=true;
             $this->_change_pk=null;
@@ -416,7 +419,9 @@ if (!class_exists(Entity::class)){
                 $msg=strtr('Cannot delete :object model because it is not loaded.',array(":object"=>get_called_class()));
                 throw new Exception ($msg);
             }
-            $this->table()->dbBuilder()->delete($this);
+            $db=$this->table()->db();
+            $sql=$db->builder()->delete($this);
+            $db->exec($sql);
             return $this->clear();
         }
         /**
@@ -434,8 +439,8 @@ if (!class_exists(Entity::class)){
          * @return int|NULL
          */
         public function __toString(){
-    		$pk=$this->pk();
-    		$pk=is_array($pk)?implode(",",$pk):$pk;
+            $pk=$this->pk();
+            $pk=is_array($pk)?implode(",",$pk):$pk;
             return strval($pk);
         }
         /**
@@ -444,12 +449,18 @@ if (!class_exists(Entity::class)){
          * @return static
          */
         public function check(Validation $validation=null) {
-             $table=$this->table();
-             $table_column=$table->tableColumns();
-            if(!$this->loaded()){  
+            $table=$this->table();
+            $table_column=$table->tableColumns();
+            $pk=$this->table()->primaryKey();
+            if(!$this->loaded()){
                 foreach ($table_column as $v){
                     $name=$v->name();
-                    if ($v instanceof ColumnSave) $v->create($this, $name);
+                    if ($v instanceof ColumnSave){
+                        $v->create($this, $name);
+                    }
+                    
+                    if((is_array($pk)&&in_array($name, $pk))||$pk==$name)continue;
+                    
                     if(!array_key_exists($name, $this->_data)&&$v->useDefault()){
                         $this->_data[$name]=$v->getDefault();
                     }
@@ -465,11 +476,12 @@ if (!class_exists(Entity::class)){
                     if ($v instanceof ColumnSave){
                         $v->update($this,$name);
                     }
+                    if((is_array($pk)&&in_array($name, $pk))||$pk==$name)continue;
                     if (!$v->isAllowNull()
                         &&array_key_exists($name, $this->_data)
                         &&is_null($this->_data[$name])) {
-                        $this->_data[$name]='';
-                    }
+                            $this->_data[$name]='';
+                        }
                 }
             }
             if (!$validation)$validation=$this->validation();

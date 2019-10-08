@@ -36,8 +36,7 @@ if (!class_exists(Builder::class)){
                 array_push ( $sets, $set );
             }
             $str_set = implode ( ",", $sets );
-            $sql = " UPDATE " . $table_name . " SET " . $str_set." WHERE " . $where;
-            return $db->exec($sql);
+            return " UPDATE " . $table_name . " SET " . $str_set." WHERE " . $where;
         }
         /**
          * 按条件删除
@@ -50,8 +49,7 @@ if (!class_exists(Builder::class)){
             if($where===false)return false;
             $db=$table->db();
             $table_name=$db->quoteTable($table->tableName());
-            $sql=" DELETE FROM ".$table_name." where ".$where;
-            return $db->exec($sql);
+            return " DELETE FROM ".$table_name." where ".$where;
         }
         /**
          * 插入结果集
@@ -98,8 +96,7 @@ if (!class_exists(Builder::class)){
             }
             $str_field=implode(",",$field);
             $str_data=implode(",", $values);
-            $sql=" INSERT INTO ".$table_name." (".$str_field.")VALUES {$str_data}";
-            return $db->exec( $sql );
+            return " INSERT INTO ".$table_name." (".$str_field.")VALUES {$str_data}";
         }
         /**
          * 编译where条件
