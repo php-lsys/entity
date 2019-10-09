@@ -419,8 +419,11 @@ if (!class_exists(Entity::class)){
                 $msg=strtr('Cannot delete :object model because it is not loaded.',array(":object"=>get_called_class()));
                 throw new Exception ($msg);
             }
-            $db=$this->table()->db();
-            $sql=$db->builder($this->table())->delete($this);
+            $table=$this->table();
+            $db=$table->db();
+            print_r($table);
+            print_r($table->primaryKey());
+            $sql=$db->builder($table)->delete($this);
             $db->exec($sql);
             return $this->clear();
         }
