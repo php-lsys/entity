@@ -4,6 +4,7 @@ use LSYS\Entity\Table;
 use LSYS\Entity\ColumnSet;
 use LSYS\Entity\Column;
 use LSYS\Entity\Database;
+use LSYS\Entity\Database\Builder;
 ?>
 --TEST--
 check entity
@@ -26,6 +27,10 @@ class mytestdb implements Database{
     }
     public function insertId(){
         return 1;
+    }
+    public function builder(Table $table)
+    {
+        return new Builder($table);
     }
 }
 

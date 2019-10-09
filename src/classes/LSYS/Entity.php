@@ -421,8 +421,6 @@ if (!class_exists(Entity::class)){
             }
             $table=$this->table();
             $db=$table->db();
-            print_r($table);
-            print_r($table->primaryKey());
             $sql=$db->builder($table)->delete($this);
             $db->exec($sql);
             return $this->clear();

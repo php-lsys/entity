@@ -9,7 +9,6 @@ class DomeDB implements Database{
         if(!self::$obj)self::$obj=new static();
         return self::$obj;
     }
-    protected $_dbbuilder=[];
     protected $pdo;
     public function __construct() {
         $this->pdo=new \PDO('mysql:host=127.0.0.1;dbname=test','root','');
@@ -17,11 +16,7 @@ class DomeDB implements Database{
     }
     public function builder(Table $table)
     {
-        $tablename=$table->tableName();
-        if (!isset($this->_dbbuilder[$tablename])) {
-            $this->_dbbuilder[$tablename]=new DomeDBBuilder($table);
-        }
-        return $this->_dbbuilder[$tablename];
+        return new DomeDBBuilder($table);
     }
     /**
      * @param string $sql

@@ -6,6 +6,7 @@ use LSYS\Entity\Database;
 use LSYS\Entity;
 use LSYS\Entity\FilterRule;
 use LSYS\Entity\Filter;
+use LSYS\Entity\Database\Builder;
 ?>
 --TEST--
 check entity
@@ -29,6 +30,11 @@ class mytestdb implements Database{
     public function insertId(){
         return 1;
     }
+    public function builder(Table $table)
+    {
+        return new Builder($table);
+    }
+
 }
 
 class mddtest implements Table{
