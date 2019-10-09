@@ -677,7 +677,7 @@ ZEND_METHOD(lsentity_db_builder_class, insert){
             }else{
                 zval_ptr_dtor(&find);
                 zval_ptr_dtor(&ktmp);
-                zend_error(E_USER_NOTICE, "%s", "The %s property does not exist in the %s table:",ZSTR_VAL(kval),Z_STRVAL(_table_name));
+                zend_error(E_USER_NOTICE, "The %s property does not exist in the %s table:",ZSTR_VAL(kval),Z_STRVAL(_table_name));
             }
         }ZEND_HASH_FOREACH_END();
     } ZEND_HASH_FOREACH_END();
