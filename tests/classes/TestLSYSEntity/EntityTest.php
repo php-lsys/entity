@@ -191,6 +191,8 @@ class LSYSEntity extends TestCase
         
         $entity=$model1->findById($pk);
         $this->assertTrue($entity->loaded());
+        print_r($entity);
+        print_r($model1);
         $entity->delete();
         $this->assertFalse($entity->loaded());
         $entity=$model1->findById($pk);
