@@ -10,6 +10,7 @@
 
 #include "entity.h"
 #include "class_db.h"
+#include "class_db_sqlruner.h"
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlruner_construct_arginfo, 0, 0, 1)
     ZEND_ARG_OBJ_INFO_ENTITYDBNS(0, db, Database, 0)
