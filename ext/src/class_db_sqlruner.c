@@ -21,13 +21,14 @@ ZEND_API zend_class_entry *lsentity_db_runer_ce_ptr;
 ZEND_METHOD(lsentity_db_sqlruner_class, __construct){
     zval *db;
     zend_string *sql;
+    zval *object;
     ZEND_PARSE_PARAMETERS_START(2,2)
     Z_PARAM_OBJECT_OF_CLASS(db, lsentity_db_ce_ptr)
     Z_PARAM_STR(sql)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
-    zend_update_property(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_db"),db);
-    zend_update_property_str(lsentity_entity_set_ce_ptr,object,ZEND_STRL("_sql"),sql);
+    zend_update_property(lsentity_db_sqlruner_ce_ptr,object,ZEND_STRL("_db"),db);
+    zend_update_property_str(lsentity_db_sqlruner_ce_ptr,object,ZEND_STRL("_sql"),sql);
 }
 ZEND_METHOD(lsentity_db_sqlruner_class, exec){
     zval *object=getThis();
