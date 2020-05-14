@@ -12,9 +12,6 @@
 #include "class_db.h"
 #include "class_db_sqlruner.h"
 
-
-ZEND_API zend_class_entry *lsentity_db_sqlbuilder_ce_ptr;
-
 ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlruner_construct_arginfo, 0, 0, 1)
     ZEND_ARG_OBJ_INFO_ENTITYDBNS(0, db, Database, 0)
     ZEND_ARG_INFO(0, sql)
