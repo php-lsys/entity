@@ -5,7 +5,7 @@ use LSYS\Entity\Column;
 use LSYS\Entity\Database;
 use LSYS\Entity;
 use LSYS\Entity\EntitySet;
-use LSYS\Entity\Database\Builder;
+use LSYS\Entity\Database\SQLBuilder;
 ?>
 --TEST--
 check entity
@@ -29,9 +29,9 @@ class mytestdb implements Database{
     public function insertId(){
         return 1;
     }
-    public function builder(Table $table)
+    public function SQLBuilder(Table $table)
     {
-        return new Builder($table);
+        return new SQLBuilder($table);
     }
 }
 class mddtest implements Table{

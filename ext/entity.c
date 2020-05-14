@@ -32,7 +32,8 @@
 #include "src/class_column_set.h"
 #include "src/class_db.h"
 #include "src/class_db_result.h"
-#include "src/class_db_builder.h"
+#include "src/class_db_sqlbuilder.h"
+#include "src/class_db_sqlruner.h"
 #include "src/class_entity.h"
 #include "src/class_entity_column_set.h"
 #include "src/class_entity_set.h"
@@ -109,7 +110,7 @@ PHP_MINIT_FUNCTION(entity)
 	lsentity_column_set_class_init();
 	lsentity_db_class_init();
 	lsentity_db_result_class_init();
-	lsentity_db_builder_class_init();
+	lsentity_db_sqlbuilder_class_init();
 	lsentity_entity_class_init();
 	lsentity_entity_column_set_class_init();
 	lsentity_entity_set_class_init();

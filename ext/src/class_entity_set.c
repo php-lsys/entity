@@ -227,7 +227,7 @@ ZEND_METHOD(lsentity_entity_set_class, current){
     table = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),0,NULL);
 
     zval param[]={
-            *table
+        *table
     };
     lsentity_new_class(ce,return_value,param,1);
 

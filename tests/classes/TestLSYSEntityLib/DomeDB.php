@@ -14,7 +14,7 @@ class DomeDB implements Database{
         $this->pdo=new \PDO('mysql:host=127.0.0.1;dbname=test','root','');
         $this->pdo->exec('SET NAMES "utf8"');
     }
-    public function builder(Table $table)
+    public function SQLBuilder(Table $table)
     {
         return new DomeDBBuilder($table);
     }

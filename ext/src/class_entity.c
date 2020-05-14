@@ -19,7 +19,7 @@
 #include "class_exception.h"
 #include "class_column_save.h"
 #include "class_db.h"
-#include "class_db_builder.h"
+#include "class_db_sqlbuilder.h"
 
 #ifdef HAVE_JSON
 #include "ext/json/php_json.h"
@@ -74,10 +74,10 @@ static int get_table(zval *object,zval *table){
     zend_call_method_with_0_params(object,Z_OBJCE_P(object), NULL, "table", table);
     return lsentity_obj_check(lsentity_table_ce_ptr,table,1,1);
 }
-static int get_db_builder(zval *object,zval *tobject,zval *db_builder){
-    zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "builder", db_builder,tobject);
-    if(lsentity_obj_check(lsentity_db_builder_ce_ptr,db_builder,0,1))return 1;
-    zend_throw_exception_ex(lsentity_db_builder_ce_ptr, 1, "return not a %s object of table::dbBuilder method",ZSTR_VAL(lsentity_db_builder_ce_ptr->name));
+static int get_db_sqlbuilder(zval *object,zval *tobject,zval *db_sqlbuilder){
+    zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "sqlbuilder", db_sqlbuilder,tobject);
+    if(lsentity_obj_check(lsentity_db_sqlbuilder_ce_ptr,db_sqlbuilder,0,1))return 1;
+    zend_throw_exception_ex(lsentity_db_sqlbuilder_ce_ptr, 1, "return not a %s object of table::SQLBuilder method",ZSTR_VAL(lsentity_db_sqlbuilder_ce_ptr->name));
     return 0;
 }
 static int get_filter(zval *object,zval *filter){
@@ -879,7 +879,7 @@ ZEND_METHOD(lsentity_entity_class, update){
         zval_ptr_dtor(&table);
         RETURN_NULL();
     }
-    if(!get_db_builder(&db,&table,&dbbuilder)){
+    if(!get_db_sqlbuilder(&db,&table,&dbbuilder)){
         zval_ptr_dtor(&csave_data);
         zval_ptr_dtor(&table);
         zval_ptr_dtor(&db);
@@ -898,12 +898,17 @@ ZEND_METHOD(lsentity_entity_class, update){
         goto iterator_done;
     }
 
-    zval sql;
-    if(zend_call_method_with_2_params(&dbbuilder,Z_OBJCE(dbbuilder),NULL,"update",&sql,&csave_data,object)){
-        zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",NULL,&sql);
-        zval_ptr_dtor(&sql);
+    zval runer;
+    if(zend_call_method_with_2_params(&dbbuilder,Z_OBJCE(dbbuilder),NULL,"update",&runer,&csave_data,object)){
+        if(Z_TYPE(runer)!=IS_OBJECT||!zend_object_is_true(&runer)){
+            goto iterator_done;
+        }
+        zend_call_method_with_0_params(&runer,Z_OBJCE(runer),NULL,"exec",NULL);
+        zval_ptr_dtor(&runer);
+        if (EG(exception)){
+            goto iterator_done;
+        }
     }
-
 
     zval temp_array;
     array_init(&temp_array);
@@ -962,7 +967,7 @@ ZEND_METHOD(lsentity_entity_class, create){
         zval_ptr_dtor(&table);
         RETURN_NULL();
     }
-    if(!get_db_builder(&db,&table,&dbbuilder)){
+    if(!get_db_sqlbuilder(&db,&table,&dbbuilder)){
         zval_ptr_dtor(&csave_data);
         zval_ptr_dtor(&table);
         zval_ptr_dtor(&db);
@@ -976,13 +981,19 @@ ZEND_METHOD(lsentity_entity_class, create){
     zval zunique_replace;
     ZVAL_BOOL(&zunique_replace,unique_replace);
 
-    zval sql;
 
-    if(zend_call_method_with_2_params(&dbbuilder,Z_OBJCE(dbbuilder),NULL,"insert",&sql,&save_arr,&zunique_replace)){
-        zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",NULL,&sql);
-        zval_ptr_dtor(&sql);
+
+    zval runer;
+    if(zend_call_method_with_2_params(&dbbuilder,Z_OBJCE(dbbuilder),NULL,"insert",&runer,&save_arr,&zunique_replace)){
+        if(Z_TYPE(runer)!=IS_OBJECT||!zend_object_is_true(&runer)){
+            goto end_done;
+        }
+        zend_call_method_with_0_params(&runer,Z_OBJCE(runer),NULL,"exec",NULL);
+        zval_ptr_dtor(&runer);
+        if (EG(exception)){
+            goto end_done;
+        }
     }
-
 
     zval_ptr_dtor(&zunique_replace);
     zval_ptr_dtor(&save_arr);
@@ -1035,27 +1046,32 @@ ZEND_METHOD(lsentity_entity_class, delete){
         RETURN_NULL();
     }
     zval dbbuilder;
-    if(!get_db_builder(&db,&table,&dbbuilder)){
+    if(!get_db_sqlbuilder(&db,&table,&dbbuilder)){
         zval_ptr_dtor(&table);
         zval_ptr_dtor(&db);
         RETURN_NULL();
     }
 
-    zval sql;
-    if(zend_call_method_with_1_params(&dbbuilder,Z_OBJCE(dbbuilder),NULL,"delete",&sql,object)){
-        zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",NULL,&sql);
-        zval_ptr_dtor(&sql);
+    zval runer;
+    if(zend_call_method_with_1_params(&dbbuilder,Z_OBJCE(dbbuilder),NULL,"delete",&runer,object)){
+        if(Z_TYPE(runer)!=IS_OBJECT||!zend_object_is_true(&runer)){
+            zval_ptr_dtor(&runer);
+            goto end;
+        }
+        zend_call_method_with_0_params(&runer,Z_OBJCE(runer),NULL,"exec",NULL);
+        zval_ptr_dtor(&runer);
+        if (EG(exception)){
+            goto end;
+        }
     }
 
-
-
+    end:
+    zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"clear",NULL);
     zval_ptr_dtor(&dbbuilder);
     zval_ptr_dtor(&db);
     zval_ptr_dtor(&table);
 
-    zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"clear",NULL);
     RETURN_ZVAL(object,1,0);
-
 }
 ZEND_METHOD(lsentity_entity_class, values){
     zval *set_values,*expected=NULL;

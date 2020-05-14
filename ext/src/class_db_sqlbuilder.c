@@ -14,30 +14,42 @@
 #include "entity.h"
 #include "class_db.h"
 #include "class_table.h"
-#include "class_db_builder.h"
+#include "class_db_sqlbuilder.h"
+#include "class_db_sqlruner.h"
 #include "utils.h"
 #include "class_entity.h"
 #include "class_entity_set.h"
 #include "class_exception.h"
 #include "class_column_set.h"
 
-ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_construct_arginfo, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlbuilder_construct_arginfo, 0, 0, 1)
     ZEND_ARG_OBJ_INFO_ENTITYNS(0, table, Table, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_update_arginfo, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlbuilder_update_arginfo, 0, 0, 2)
     ZEND_ARG_ARRAY_INFO(0,records,0)
     ZEND_ARG_INFO(0,where)
 ZEND_END_ARG_INFO()
-ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_delete_arginfo, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlbuilder_delete_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0,where)
 ZEND_END_ARG_INFO()
-ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_insert_arginfo, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlbuilder_insert_arginfo, 0, 0, 1)
     ZEND_ARG_ARRAY_INFO(0,records,0)
     ZEND_ARG_INFO(0,unique_replace)
 ZEND_END_ARG_INFO()
 
 
+
+void create_null_sqlruner(zval *db,zval *return_value){
+    zval nullval;
+    ZVAL_NULL(&nullval);
+    zval param[]={
+        *db,
+        nullval
+    };
+    lsentity_new_class(lsentity_db_sqlruner_ce_ptr,return_value,param,2);
+    zval_ptr_dtor(&nullval);
+}
 
 
 static int build_where(zval *table,zval* where,zval* where_string){
@@ -376,10 +388,10 @@ static int build_where(zval *table,zval* where,zval* where_string){
 
 
 
-ZEND_API zend_class_entry *lsentity_db_builder_ce_ptr;
+ZEND_API zend_class_entry *lsentity_db_sqlbuilder_ce_ptr;
 
 
-ZEND_METHOD(lsentity_db_builder_class, __construct){
+ZEND_METHOD(lsentity_db_sqlbuilder_class, __construct){
     zval *table_object = NULL, *object;
     ZEND_PARSE_PARAMETERS_START(1, 1)
             Z_PARAM_OBJECT_OF_CLASS_EX(table_object, lsentity_table_ce_ptr, 0, 0)
@@ -389,7 +401,7 @@ ZEND_METHOD(lsentity_db_builder_class, __construct){
         zend_update_property(Z_OBJCE_P(object), object, ZEND_STRL("_table"), table_object);
     }
 }
-ZEND_METHOD(lsentity_db_builder_class, update){
+ZEND_METHOD(lsentity_db_sqlbuilder_class, update){
     zval *records = NULL;
     zval *where = NULL;
     ZEND_PARSE_PARAMETERS_START(2, 2)
@@ -397,22 +409,30 @@ ZEND_METHOD(lsentity_db_builder_class, update){
             Z_PARAM_ZVAL(where)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
-    if(zend_array_count(Z_ARR_P(records))==0){
-        RETURN_TRUE;
-    }
-
     zval *object=getThis();
     zval *table = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),1,NULL);
-    zval strwhere;
-    if(!build_where(table,where,&strwhere)){
-        RETURN_FALSE;
-    }
-
 
     zval db;
     if(!lsentity_get_db(table,&db)){
-        zval_ptr_dtor(&strwhere);
         RETURN_FALSE;
+    }
+
+    if(zend_array_count(Z_ARR_P(records))==0){
+        create_null_sqlruner(&db,return_value);
+        zval_ptr_dtor(&db);
+        return ;
+    }
+
+    zval strwhere;
+    if(!build_where(table,where,&strwhere)){
+        create_null_sqlruner(&db,return_value);
+        zval_ptr_dtor(&db);
+        return ;
+    }
+
+    if (EG(exception)) {
+        zval_ptr_dtor(&db);
+        return ;
     }
 
     zval _table_name;
@@ -421,8 +441,9 @@ ZEND_METHOD(lsentity_db_builder_class, update){
     if(Z_TYPE(_table_name)!=IS_STRING){
         zval_ptr_dtor(&strwhere);
         zval_ptr_dtor(&_table_name);
+        create_null_sqlruner(&db,return_value);
         zval_ptr_dtor(&db);
-        RETURN_FALSE;
+        return ;
     }
 
     zval table_name;
@@ -431,8 +452,9 @@ ZEND_METHOD(lsentity_db_builder_class, update){
     if(Z_TYPE(table_name)!=IS_STRING){
         zval_ptr_dtor(&strwhere);
         zval_ptr_dtor(&table_name);
+        create_null_sqlruner(&db,return_value);
         zval_ptr_dtor(&db);
-        RETURN_FALSE;
+        return ;
     }
 
 
@@ -440,9 +462,10 @@ ZEND_METHOD(lsentity_db_builder_class, update){
     if(!lsentity_get_table_columns(table,&columns)){
         zval_ptr_dtor(&strwhere);
         zval_ptr_dtor(&table_name);
-        zval_ptr_dtor(&db);
         zval_ptr_dtor(&columns);
-        RETURN_FALSE;
+        create_null_sqlruner(&db,return_value);
+        zval_ptr_dtor(&db);
+        return ;
     }
 
 
@@ -506,13 +529,21 @@ ZEND_METHOD(lsentity_db_builder_class, update){
 
     zval_ptr_dtor(&strwhere);
     zval_ptr_dtor(&table_name);
-    zval_ptr_dtor(&db);
+
     zval_ptr_dtor(&columns);
 
-    RETURN_ZVAL(&zsql,1,1);
+    zval param[]={
+        db,
+        zsql
+    };
+    lsentity_new_class(lsentity_db_sqlruner_ce_ptr,return_value,param,2);
+    zval_ptr_dtor(&db);
+    zval_ptr_dtor(&zsql);
+
+   // RETURN_ZVAL(&zsql,1,1);
 
 }
-ZEND_METHOD(lsentity_db_builder_class, delete){
+ZEND_METHOD(lsentity_db_sqlbuilder_class, delete){
     zval *where = NULL;
 
     ZEND_PARSE_PARAMETERS_START(1, 1)
@@ -523,20 +554,24 @@ ZEND_METHOD(lsentity_db_builder_class, delete){
 
     zval *object=getThis();
     zval *table = zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),1,NULL);
-    zval strwhere;
-
-    if(!build_where(table,where,&strwhere)){
-        RETURN_FALSE;
-    }
-    if (EG(exception)) {
-        RETURN_FALSE;
-    }
 
     zval db;
     if(!lsentity_get_db(table,&db)){
-        zval_ptr_dtor(&strwhere);
         RETURN_FALSE;
     }
+
+    zval strwhere;
+
+    if(!build_where(table,where,&strwhere)){
+        create_null_sqlruner(&db,return_value);
+        zval_ptr_dtor(&db);
+        return ;
+    }
+    if (EG(exception)) {
+        zval_ptr_dtor(&db);
+        return ;
+    }
+
 
     zval _table_name;
     zend_call_method_with_0_params(table,Z_OBJCE_P(table),NULL,"tablename",&_table_name);
@@ -544,8 +579,9 @@ ZEND_METHOD(lsentity_db_builder_class, delete){
     if(Z_TYPE(_table_name)!=IS_STRING){
         zval_ptr_dtor(&strwhere);
         zval_ptr_dtor(&_table_name);
+        create_null_sqlruner(&db,return_value);
         zval_ptr_dtor(&db);
-        RETURN_FALSE;
+        return ;
     }
 
     zval table_name;
@@ -554,8 +590,9 @@ ZEND_METHOD(lsentity_db_builder_class, delete){
     if(Z_TYPE(table_name)!=IS_STRING){
         zval_ptr_dtor(&strwhere);
         zval_ptr_dtor(&table_name);
+        create_null_sqlruner(&db,return_value);
         zval_ptr_dtor(&db);
-        RETURN_FALSE;
+        return ;
     }
 
 
@@ -576,14 +613,24 @@ ZEND_METHOD(lsentity_db_builder_class, delete){
     //zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"exec",&status,&zsql);
     smart_str_free(&sql);
 
-    zval_ptr_dtor(&db);
+
     zval_ptr_dtor(&table_name);
     //zval_ptr_dtor(&zsql);
 
-    RETURN_ZVAL(&zsql,1,1);
+
+    zval param[]={
+        db,
+        zsql
+    };
+    lsentity_new_class(lsentity_db_sqlruner_ce_ptr,return_value,param,2);
+    zval_ptr_dtor(&db);
+    zval_ptr_dtor(&zsql);
+
+
+  //  RETURN_ZVAL(&zsql,1,1);
 
 }
-ZEND_METHOD(lsentity_db_builder_class, insert){
+ZEND_METHOD(lsentity_db_sqlbuilder_class, insert){
     zval *records = NULL;
     zend_bool unique_replace=0;
     ZEND_PARSE_PARAMETERS_START(1, 2)
@@ -607,8 +654,9 @@ ZEND_METHOD(lsentity_db_builder_class, insert){
 
     if(Z_TYPE(_table_name)!=IS_STRING){
         zval_ptr_dtor(&_table_name);
+        create_null_sqlruner(&db,return_value);
         zval_ptr_dtor(&db);
-        RETURN_FALSE;
+        return ;
     }
 
     zval table_name;
@@ -616,17 +664,19 @@ ZEND_METHOD(lsentity_db_builder_class, insert){
 
     if(Z_TYPE(table_name)!=IS_STRING){
         zval_ptr_dtor(&table_name);
+        create_null_sqlruner(&db,return_value);
         zval_ptr_dtor(&db);
-        RETURN_FALSE;
+        return ;
     }
 
     zval columns;
     if(!lsentity_get_table_columns(table,&columns)){
         zval_ptr_dtor(&table_name);
         zval_ptr_dtor(&_table_name);
-        zval_ptr_dtor(&db);
         zval_ptr_dtor(&columns);
-        RETURN_FALSE;
+        create_null_sqlruner(&db,return_value);
+        zval_ptr_dtor(&db);
+        return ;
     }
 
 
@@ -785,34 +835,44 @@ ZEND_METHOD(lsentity_db_builder_class, insert){
     zval_ptr_dtor(&_table_name);
     zval_ptr_dtor(&columns);
 
-    zval_ptr_dtor(&db);
 
-    RETURN_ZVAL(&zsql,1,1);
+
+
+    zval param[]={
+            db,
+            zsql
+    };
+    lsentity_new_class(lsentity_db_sqlruner_ce_ptr,return_value,param,2);
+    zval_ptr_dtor(&db);
+    zval_ptr_dtor(&zsql);
+
+    //zval_ptr_dtor(&db);
+    //RETURN_ZVAL(&zsql,1,1);
 
 
 }
 
-ZEND_METHOD(lsentity_db_builder_class, table){
+ZEND_METHOD(lsentity_db_sqlbuilder_class, table){
     zval *object=getThis();
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),1,NULL);
     RETURN_ZVAL(valid,1,0);
 }
 
-static zend_function_entry lsentity_db_builder_class_method[] = {
-        ZEND_ME(lsentity_db_builder_class,__construct, lsentity_db_builder_construct_arginfo, ZEND_ACC_PUBLIC)
-        ZEND_ME(lsentity_db_builder_class,update, lsentity_db_builder_update_arginfo, ZEND_ACC_PUBLIC)
-        ZEND_ME(lsentity_db_builder_class,table, NULL, ZEND_ACC_PUBLIC)
-        ZEND_ME(lsentity_db_builder_class,delete, lsentity_db_builder_delete_arginfo, ZEND_ACC_PUBLIC)
-        ZEND_ME(lsentity_db_builder_class,insert, lsentity_db_builder_insert_arginfo, ZEND_ACC_PUBLIC)
+static zend_function_entry lsentity_db_sqlbuilder_class_method[] = {
+        ZEND_ME(lsentity_db_sqlbuilder_class,__construct, lsentity_db_sqlbuilder_construct_arginfo, ZEND_ACC_PUBLIC)
+        ZEND_ME(lsentity_db_sqlbuilder_class,update, lsentity_db_sqlbuilder_update_arginfo, ZEND_ACC_PUBLIC)
+        ZEND_ME(lsentity_db_sqlbuilder_class,table, NULL, ZEND_ACC_PUBLIC)
+        ZEND_ME(lsentity_db_sqlbuilder_class,delete, lsentity_db_sqlbuilder_delete_arginfo, ZEND_ACC_PUBLIC)
+        ZEND_ME(lsentity_db_sqlbuilder_class,insert, lsentity_db_sqlbuilder_insert_arginfo, ZEND_ACC_PUBLIC)
         ZEND_FE_END
 };
 
 
 
 
-void lsentity_db_builder_class_init(){
+void lsentity_db_sqlbuilder_class_init(){
     zend_class_entry ce;
-    INIT_NS_CLASS_ENTRY(ce,LSENTITY_DB_NS,"Builder",lsentity_db_builder_class_method);
-    lsentity_db_builder_ce_ptr = zend_register_internal_class(&ce);
-    zend_declare_property_null(lsentity_db_builder_ce_ptr,ZEND_STRL("_table"), ZEND_ACC_PRIVATE );
+    INIT_NS_CLASS_ENTRY(ce,LSENTITY_DB_NS,"SQLBuilder",lsentity_db_sqlbuilder_class_method);
+    lsentity_db_sqlbuilder_ce_ptr = zend_register_internal_class(&ce);
+    zend_declare_property_null(lsentity_db_sqlbuilder_ce_ptr,ZEND_STRL("_table"), ZEND_ACC_PRIVATE );
 }

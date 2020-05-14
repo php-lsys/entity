@@ -19,7 +19,7 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_db_quote_value_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, column_type)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(lsentity_db_builder_value_arginfo, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlbuilder_value_arginfo, 0, 0, 1)
     ZEND_ARG_OBJ_INFO_ENTITYNS(0, table, Table, 0)
 ZEND_END_ARG_INFO()
 

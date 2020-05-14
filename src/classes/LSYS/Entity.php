@@ -339,8 +339,8 @@ if (!class_exists(Entity::class)){
                 return $this;
             }
             $db=$this->table()->db();
-            $sql=$db->builder($this->table())->update($save_data, $this);
-            $db->exec($sql);
+            $res=$db->SQLBuilder($this->table())->update($save_data, $this);
+            if(is_object($res))$res->exec();
             $this->_change=array();
             $this->_saved=true;
             $this->_change_pk=null;
@@ -379,8 +379,8 @@ if (!class_exists(Entity::class)){
             $save_data=$this->createData();
             $table=$this->table();
             $db=$table->db();
-            $sql=$db->builder($table)->insert([$save_data],$unique_replace);
-            $db->exec($sql);
+            $res=$db->SQLBuilder($table)->insert([$save_data],$unique_replace);
+            if(is_object($res))$res->exec();
             $this->_change=array();
             $this->_saved=$this->_loaded=true;
             $this->_change_pk=null;
@@ -421,8 +421,8 @@ if (!class_exists(Entity::class)){
             }
             $table=$this->table();
             $db=$table->db();
-            $sql=$db->builder($table)->delete($this);
-            $db->exec($sql);
+            $res=$db->SQLBuilder($table)->delete($this);
+            if (is_object($res))$res->exec();
             return $this->clear();
         }
         /**

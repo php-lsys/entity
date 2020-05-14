@@ -37,9 +37,9 @@ if (!interface_exists(Database::class)){
     	public function insertId();
     	/**
     	 * DB操作构造器
-    	 * @return \LSYS\Entity\Database\Builder
+    	 * @return \LSYS\Entity\Database\SQLBuilder
     	 */
-    	public function builder(Table $table);
+    	public function SQLBuilder(Table $table);
     }
 }
 // @codeCoverageIgnoreEnd

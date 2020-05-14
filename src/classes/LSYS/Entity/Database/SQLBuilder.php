@@ -3,8 +3,8 @@ namespace LSYS\Entity\Database;
 use LSYS\Entity;
 use LSYS\Entity\Table;
 use LSYS\Entity\EntitySet;
-if (!class_exists(Builder::class)){
-    class Builder{
+if (!class_exists(SQLBuilder::class)){
+    class SQLBuilder{
         private $_table;
         public function __construct(Table $table) {
             $this->_table=$table;
@@ -20,14 +20,18 @@ if (!class_exists(Builder::class)){
          * 按条件更新
          * @param array $save_data
          * @param mixed $where
-         * @return boolean
+         * @return SQLRuner
          */
         public function update(array $records,$where){
-            if(count($records)==0)return true;
             $table=$this->table();
-            $where=$this->buildWhere($where);
-            if($where===false)return false;
             $db=$table->db();
+            if(count($records)==0){
+                return new SQLRuner($db,NULL);
+            }
+            $where=$this->buildWhere($where);
+            if($where===false){
+                return new SQLRuner($db,NULL);
+            }
             $table_name = $db->quoteTable( $table->tableName() );
             $table_column=$table->tableColumns();
             $sets = array ();
@@ -36,25 +40,27 @@ if (!class_exists(Builder::class)){
                 array_push ( $sets, $set );
             }
             $str_set = implode ( ",", $sets );
-            return " UPDATE " . $table_name . " SET " . $str_set." WHERE " . $where;
+            return new SQLRuner($db," UPDATE " . $table_name . " SET " . $str_set." WHERE " . $where);
         }
         /**
          * 按条件删除
          * @param mixed $where
-         * @return boolean
+         * @return SQLRuner
          */
         public function delete($where){
             $table=$this->table();
             $where=$this->buildWhere($where);
-            if($where===false)return false;
             $db=$table->db();
+            if($where===false){
+                return new SQLRuner($db,NULL);
+            }
             $table_name=$db->quoteTable($table->tableName());
-            return " DELETE FROM ".$table_name." where ".$where;
+            return new SQLRuner($db," DELETE FROM ".$table_name." where ".$where);
         }
         /**
          * 插入结果集
          * @param array $records
-         * @return boolean
+         * @return SQLRuner
          */
         public function insert(array $records,$unique_replace=false){
             $table=$this->table();
@@ -96,7 +102,7 @@ if (!class_exists(Builder::class)){
             }
             $str_field=implode(",",$field);
             $str_data=implode(",", $values);
-            return " INSERT INTO ".$table_name." (".$str_field.")VALUES {$str_data}";
+            return new SQLRuner($db," INSERT INTO ".$table_name." (".$str_field.")VALUES {$str_data}");
         }
         /**
          * 编译where条件
