@@ -1,6 +1,6 @@
 
-#ifndef PHP_LSENTITY_DB_BUILDER_H
-#define PHP_LSENTITY_DB_BUILDER_H
+#ifndef PHP_LSENTITY_DB_RUNER_H
+#define PHP_LSENTITY_DB_RUNER_H
 
 #include "zend_API.h"
 
