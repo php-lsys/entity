@@ -38,7 +38,9 @@ ZEND_METHOD(lsentity_db_sqlruner_class, exec){
     if(!zend_is_true(sql)){
         RETURN_NULL();
     }
-    zend_call_method_with_1_params(db,Z_OBJCE_P(db),NULL,"exec",NULL,sql);
+    zval valobj;
+    zend_call_method_with_1_params(db,Z_OBJCE_P(db),NULL,"exec",&valobj,sql);
+    RETURN_ZVAL(&valobj, 1, 1);
 }
 ZEND_METHOD(lsentity_db_sqlruner_class, __toString){
     zval *object=getThis();
