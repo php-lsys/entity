@@ -110,6 +110,7 @@ PHP_MINIT_FUNCTION(entity)
 	lsentity_column_set_class_init();
 	lsentity_db_class_init();
 	lsentity_db_result_class_init();
+    lsentity_db_sqlruner_class_init();
 	lsentity_db_sqlbuilder_class_init();
 	lsentity_entity_class_init();
 	lsentity_entity_column_set_class_init();
