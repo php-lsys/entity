@@ -39,6 +39,8 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlbuilder_insert_arginfo, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 
+ZEND_API zend_class_entry *lsentity_db_sqlruner_ce_ptr;
+
 
 void create_null_sqlruner(zval *db,zval *return_value){
     zval nullval;
