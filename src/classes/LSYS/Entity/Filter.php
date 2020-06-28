@@ -19,7 +19,7 @@ if (!class_exists(Filter::class)){
          * @var bool
          */
         protected $_allow_cache;
-        public function __construct(Entity $entity,array $rule_gruop=[],$allow_cache=true){
+        public function __construct(Entity $entity,array $rule_gruop=[],bool $allow_cache=true){
             $this->_entity=$entity;
             $this->_allow_cache=$allow_cache;
             foreach ($rule_gruop as $field=>$rules){
@@ -32,7 +32,7 @@ if (!class_exists(Filter::class)){
          * @param string $field
          * @return \LSYS\Entity\Filter
          */
-        public function rule(FilterRule $rule,$field=null){
+        public function rule(FilterRule $rule,?string $field=null){
             if ($field===null){
                 $this->_global_rules[]=$rule;
                 return $this;
@@ -46,7 +46,7 @@ if (!class_exists(Filter::class)){
          * @param string $field
          * @return \LSYS\Entity\Filter
          */
-        public function rules(array $rules,$field=null)
+        public function rules(array $rules,?string $field=null)
         {
             foreach ($rules as $rule)
             {
@@ -58,9 +58,9 @@ if (!class_exists(Filter::class)){
          * 执行过滤
          * @param string $field
          * @param mixed $value
-         * @return mixed
+         * @return mixed $value
          */
-        public function runFilter($field,$value) {
+        public function runFilter(string $field,$value) {
             $rule=isset($this->_rules[$field])?$this->_rules[$field]:[];
             $rule=array_merge($rule,$this->_global_rules);
             foreach ($rule as $v){
@@ -72,7 +72,7 @@ if (!class_exists(Filter::class)){
          * 是否可以缓存,当过滤规则不变时设置为真
          * @return boolean
          */
-        public function allowCache() {
+        public function allowCache():bool {
             return $this->_allow_cache;
         }
     }

@@ -18,7 +18,7 @@ if (!class_exists(Validation::class)){
     	 * @param array $rule_group
     	 * @param boolean $allow_cache
     	 */
-    	public function __construct(Entity $entity,array $rule_group=array(),$allow_cache=true)
+    	public function __construct(Entity $entity,array $rule_group=array(),bool $allow_cache=true)
     	{
     	    $this->_entity=$entity;
     	    $this->_allow_cache=$allow_cache;
@@ -33,7 +33,7 @@ if (!class_exists(Validation::class)){
     	 * 是否可以缓存校验对象
     	 * @return boolean
     	 */
-    	public function allowCache() {
+    	public function allowCache():bool {
     	    return $this->_allow_cache;
     	}
     	/**
@@ -42,7 +42,7 @@ if (!class_exists(Validation::class)){
     	 * @param string $label
     	 * @return \LSYS\Entity\Validation
     	 */
-    	public function label($field, $label)
+    	public function label(string $field, string $label)
     	{
     		$this->_labels[$field] = $label;
     		return $this;
@@ -63,7 +63,7 @@ if (!class_exists(Validation::class)){
     	 * @param string $field 设置为null为全局校验
     	 * @return \LSYS\Entity\Validation
     	 */
-    	public function rule(ValidRule $rule,$field=null)
+    	public function rule(ValidRule $rule,?string $field=null)
     	 {
     	     if ($field===null) {
     	        $this->_global_rules[]=$rule;
@@ -82,7 +82,7 @@ if (!class_exists(Validation::class)){
     	  * @param string $field
     	  * @return \LSYS\Entity\Validation
     	  */
-    	 public function rules(array $rules,$field=null)
+    	 public function rules(array $rules,?string $field=null)
     	 {
     	 	foreach ($rules as $rule)
     	 	{
@@ -95,7 +95,7 @@ if (!class_exists(Validation::class)){
     	  * @param array $check_data
     	  * @return bool
     	  */
-    	 public function valid(array $check_data)
+    	 public function valid(array $check_data):bool
     	  {
     	  	$this->_errors = array();
     	  	$expected=array_keys($check_data);
@@ -130,7 +130,7 @@ if (!class_exists(Validation::class)){
     	   * @param string $error
     	   * @return \LSYS\Entity\Validation
     	   */
-    	  public function error($field, $error)
+    	  public function error(string $field, string $error)
     	  {
     	  	$this->_errors[$field] = $error;
     	  	return $this;
@@ -139,7 +139,7 @@ if (!class_exists(Validation::class)){
     	   * 得到校验错误
     	   * @return array
     	   */
-    	  public function errors()
+    	  public function errors():array
     	  {
       		 return $this->_errors;
     	  }

@@ -30,7 +30,7 @@ if (!class_exists(EntityColumnSet::class)){
          * 当返回为true时表示当前字段集合等于表映射的字段集合,否则可能不等于也可能等于
          * @return boolean
          */
-        public function notCustom() {
+        public function notCustom():bool {
             return (!is_array($this->_columns))&&empty($this->_patch_columns);
         }
         /**
@@ -39,7 +39,7 @@ if (!class_exists(EntityColumnSet::class)){
          * @param boolean $patch
          * @return \LSYS\Entity\ColumnSet
          */
-        public function asColumnSet(ColumnSet $table_columns,$patch=false) {
+        public function asColumnSet(ColumnSet $table_columns,bool $patch=false) {
             if (!is_array($this->_columns)) return $table_columns;
             $columntype=[];
             foreach ($this->_columns as $v){

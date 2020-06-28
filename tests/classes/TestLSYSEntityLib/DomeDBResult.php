@@ -99,7 +99,7 @@ class DomeDBResult implements \LSYS\Entity\Database\Result {
     {
         return $this->index;
     }
-    public function fetchCount($iterator = false)
+    public function fetchCount(bool $iterator = false)
     {
         $this->init();
         if(!$iterator||!$this->fetch_free){
@@ -108,7 +108,7 @@ class DomeDBResult implements \LSYS\Entity\Database\Result {
             $this->total_rows+=count($this->result->fetchAll());
         }
     }
-    public function get($name, $default = NULL)
+    public function get(string $name, $default = NULL)
     {
         return $this->current()[$name]??$default;
     }

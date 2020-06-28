@@ -9,8 +9,9 @@ if (!interface_exists(FilterRule::class)){
          * @param Entity $entity
          * @param mixed $value
          * @param string $field
+         * @return mixed $value
          */
-        public function filter(Entity $entity,$value,$field);
+        public function filter(Entity $entity,$value,string $field);
     }
 }
 // @codeCoverageIgnoreEnd

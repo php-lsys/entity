@@ -8,16 +8,17 @@ if (!interface_exists(ValidRule::class)){
          * 是否可以为空
          * @return bool
          */
-        public function allowEmpty();
+        public function allowEmpty():bool;
         /**
          * 检测 有问题使用 $validation->error();设置错误
          * @param Validation $validation
+         * @param string $field
          * @param mixed $value
          * @param string $label
          * @param Entity $entity
          * @param array $check_data
          */
-        public function check(Validation $validation,$field,$value,$label,Entity $entity,array $check_data);
+        public function check(Validation $validation,string $field,$value,string  $label,Entity $entity,array $check_data);
     }
 }
 // @codeCoverageIgnoreEnd

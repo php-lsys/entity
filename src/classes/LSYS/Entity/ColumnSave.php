@@ -12,13 +12,13 @@ if (!interface_exists(ColumnSave::class)){
          * @param Entity $entity
          * @param string $column
          */
-       public function update(Entity $entity,$column);
+       public function update(Entity $entity,string $column);
        /**
         * 创建时回调
         * @param Entity $entity
         * @param string $column
         */
-       public function create(Entity $entity,$column);
+       public function create(Entity $entity,string $column);
     }
 }
 // @codeCoverageIgnoreEnd

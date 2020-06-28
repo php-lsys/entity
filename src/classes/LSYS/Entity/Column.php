@@ -30,7 +30,7 @@ if (!class_exists(Column::class)){
          * 字段
          * @param string $name
          */
-        public function __construct($name){
+        public function __construct(string $name){
             $this->_name=$name;
             $this->_default=NULL;
             $this->_type=NULL;
@@ -39,9 +39,9 @@ if (!class_exists(Column::class)){
         }
         /**
          * 获取名
-         * @return string|$this
+         * @return string
          */
-        public function name(){
+        public function name():string{
             return $this->_name;
         }
         public function __toString() {
@@ -49,10 +49,10 @@ if (!class_exists(Column::class)){
         }
         /**
          * 设置注释
-         * @param string $val
+         * @param string $comment
          * @return $this
          */
-        public function setComment($comment){
+        public function setComment(?string $comment){
             $this->_comment=$comment;
             return $this;
         }
@@ -60,19 +60,19 @@ if (!class_exists(Column::class)){
          * 获取字段注释
          * @return string
          */
-        public function comment(){
+        public function comment():?string{
             return $this->_comment;
         }
         /**
          * 是否使用默认值(创建时)
          * @return mixed
          */
-        public function useDefault(){
+        public function useDefault():bool{
             return $this->_is_default;
         }
         /**
          * 设置默认值
-         * @param string $val
+         * @param mixed $default
          * @return $this
          */
         public function setDefault($default){
@@ -107,7 +107,7 @@ if (!class_exists(Column::class)){
          * 设置是否可为空
          * @return $this
          */
-        public function setAllowNull($set_allow_nullable){
+        public function setAllowNull(bool $set_allow_nullable){
             $this->_is_nullable=$set_allow_nullable;
             if ($set_allow_nullable) {
                 if($this->_default==='')$this->_default=null;
@@ -120,7 +120,7 @@ if (!class_exists(Column::class)){
          * 得到是否允许为空
          * @return boolean
          */
-        public function isAllowNull(){
+        public function isAllowNull():bool{
             return $this->_is_nullable;
         }
         /**
@@ -139,14 +139,14 @@ if (!class_exists(Column::class)){
          * @param string $val
          * @return mixed
          */
-        public function read($val){
+        public function read(string $val){
             return $val;
         }
         /**
          * 转换为数组
          * @return array
          */
-        public function asArray(){
+        public function asArray():array{
             return array(
               'name'=>$this->_name,
               'type'=>$this->_type,
