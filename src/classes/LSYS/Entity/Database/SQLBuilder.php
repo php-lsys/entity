@@ -62,7 +62,7 @@ if (!class_exists(SQLBuilder::class)){
          * @param array $records
          * @return SQLRuner
          */
-        public function insert(array $records,bool $unique_replace=false){
+        public function insert(array $records,$unique_replace=false){
             $table=$this->table();
             $db=$table->db();
             $table_name=$db->quoteTable($table->tableName());

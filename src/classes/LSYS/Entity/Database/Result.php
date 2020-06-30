@@ -9,7 +9,7 @@ if (!interface_exists(Result::class)){
          * @param mixed $default
          * @return mixed
          */
-        public function get(string $name, $default = NULL);
+        public function get($name, $default = NULL);
         /**
          * 迭代时,是否对已迭代结果进行释放
          * 调用次函数后,迭代只需要保证一次正常执行
@@ -26,7 +26,7 @@ if (!interface_exists(Result::class)){
          * @param bool $iterator 是否强制完成迭代
          * @return int
          */
-        public function fetchCount(bool $iterator=false):int;
+        public function fetchCount($iterator=false);
     }
 }
 // @codeCoverageIgnoreEnd

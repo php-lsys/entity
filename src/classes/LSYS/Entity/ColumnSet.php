@@ -28,7 +28,7 @@ if (!class_exists(ColumnSet::class)){
          * @param string $name
          * @return mixed|null
          */
-        public function getType(string $name){
+        public function getType($name){
             if ($this->offsetExists($name)) {
                 return $this->offsetGet($name)->getType();
             }
@@ -41,7 +41,7 @@ if (!class_exists(ColumnSet::class)){
          * @param bool $exist_copy 是否拷贝原有属性到新字段对象
          * @return \LSYS\Entity\ColumnSet
          */
-        public function add(Column $column,bool $exist_copy=false) {
+        public function add(Column $column,$exist_copy=false) {
             if($exist_copy&&isset($this->_columns[$column->name()])){
                 $column->copy($this->_columns[$column->name()]);
             }
@@ -53,7 +53,7 @@ if (!class_exists(ColumnSet::class)){
          * @param int $type
          * @return array
          */
-        public function asArray(int $type):array{
+        public function asArray($type){
             switch ($type) {
                 case self::TYPE_FIELD:
                     return array_keys($this->_columns);

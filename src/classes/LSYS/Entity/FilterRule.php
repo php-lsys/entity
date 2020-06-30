@@ -11,7 +11,7 @@ if (!interface_exists(FilterRule::class)){
          * @param string $field
          * @return mixed $value
          */
-        public function filter(Entity $entity,$value,string $field);
+        public function filter(Entity $entity,$value,$field);
     }
 }
 // @codeCoverageIgnoreEnd

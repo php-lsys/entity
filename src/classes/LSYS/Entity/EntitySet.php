@@ -8,18 +8,18 @@ if (!class_exists(EntitySet::class)){
         protected $_columns;
         protected $_table;
         protected $_entity;
-        public function __construct(Result $result,string $entity_name,EntityColumnSet $columns=null,Table $table=null)
+        public function __construct(Result $result,$entity_name,EntityColumnSet $columns=null,Table $table=null)
         {
             $this->_result = $result;
             $this->_table=$table;
-            $this->_entity=$entity_name;
+            $this->_entity=strval($entity_name);
             $this->_columns=$columns;
         }
         public function setFetchFree(){
             $this->_result->setFetchFree();
             return $this;
         }
-        public function fetchCount(bool $iterator=false):int{
+        public function fetchCount($iterator=false){
             return $this->_result->fetchCount($iterator);
         }
          public function key()
@@ -38,7 +38,7 @@ if (!class_exists(EntitySet::class)){
          {
              return $this->_result->valid();
          }
-         public function asArray(?string $key = NULL, ?string $value = NULL)
+         public function asArray( $key = NULL, $value = NULL)
          {
             $results = array();
             

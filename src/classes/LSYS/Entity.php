@@ -71,7 +71,7 @@ if (!class_exists(Entity::class)){
          * 字段注释
          * @return array
          */
-        public function labels():array{
+        public function labels(){
             return [];
         }
         /**
@@ -113,7 +113,7 @@ if (!class_exists(Entity::class)){
          * @param EntityColumnSet $query_column_set
          * @return static
          */
-        public function loadData(array $data,EntityColumnSet $query_column_set=null,bool $loaded=true){
+        public function loadData(array $data,EntityColumnSet $query_column_set=null,$loaded=true){
             $this->_query_column_set=$query_column_set;
             $columns=$this->columns(true);//因为设置时候保持一致,所以这里需要解析
             foreach ($data as $column=>$value){
@@ -138,14 +138,14 @@ if (!class_exists(Entity::class)){
          * 导出当前已装载数据
          * @return array
          */
-        public function exportData():array{
+        public function exportData(){
             return $this->_data;
         }
         /**
          * 返回已修改数据
          * @return array
          */
-        public function changed():array{
+        public function changed(){
             return array_intersect_key($this->_data,$this->_change);
         }
         /**
@@ -169,14 +169,14 @@ if (!class_exists(Entity::class)){
          * @param string $column
          * @return boolean
          */
-        public function __isset(string $column){
+        public function __isset($column){
             return array_key_exists($column,$this->_data);
         }
         /**
          * 删除已赋值的字段
          * @param string $column
          */
-        public function __unset(string $column){
+        public function __unset($column){
             $pkey=$this->table()->primaryKey();
             if((is_array($pkey)&&in_array($column,$pkey,true))
                 ||$pkey==$column){
@@ -190,7 +190,7 @@ if (!class_exists(Entity::class)){
          * @param boolean $patch
          * @return \LSYS\Entity\ColumnSet
          */
-        public function columns(bool $patch=false){
+        public function columns($patch=false){
             if ($patch?(!$this->_patch_columns):(!$this->_columns)) {
                 $table_columns=$this->table()->tableColumns();
                 if ($this->_query_column_set instanceof EntityColumnSet) {
@@ -210,7 +210,7 @@ if (!class_exists(Entity::class)){
          * @param mixed $value
          * @throws Exception
          */
-        public function __set(string $column,$value){
+        public function __set($column,$value){
             $columns=$this->columns(true);
             if (!$columns->offsetExists($column)){
                 $msg=strtr("The :column property does not exist in the :entity entity",array(
@@ -278,7 +278,7 @@ if (!class_exists(Entity::class)){
          * @throws Exception
          * @return mixed
          */
-        public function __get(string $column){
+        public function __get($column){
             if (array_key_exists($column, $this->_data)){
                 return $this->_data[$column];
             }
@@ -310,14 +310,14 @@ if (!class_exists(Entity::class)){
          * 当前实体是否已加载数据
          * @return boolean
          */
-        public function loaded():bool {
+        public function loaded() {
             return $this->_loaded;
         }
         /**
          * 当前实体是否已进行数据保存
          * @return boolean
          */
-        public function saved():bool {
+        public function saved() {
             return $this->_saved;
         }
         /**
@@ -350,7 +350,7 @@ if (!class_exists(Entity::class)){
          * 得到需要更新数据
          * @throws Exception
          */
-        public function updateData():array{
+        public function updateData(){
             if ( ! $this->loaded()){
                 $msg=strtr('Cannot update :object model because it is not loaded.',array(":object"=>get_called_class()));
                 throw new Exception($msg);
@@ -371,7 +371,7 @@ if (!class_exists(Entity::class)){
          * @throws Exception
          * @return static
          */
-        public function create(Validation $validation=null,bool $unique_replace=false){
+        public function create(Validation $validation=null,$unique_replace=false){
             if ( ! $this->_valid OR $validation)
             {
                 $this->check($validation);
@@ -394,7 +394,7 @@ if (!class_exists(Entity::class)){
          * 得到需要创建数据
          * @throws Exception
          */
-        public function createData():array{
+        public function createData(){
             if ($this->loaded()){
                 $msg=strtr('Cannot create :object model because it is already loaded.',array(":object"=>get_called_class()));
                 throw new Exception ( $msg);
@@ -516,7 +516,7 @@ if (!class_exists(Entity::class)){
          * 装数据转换为数组
          * @return array
          */
-        public function asArray():array {
+        public function asArray() {
             return $this->_data+$this->columns(true)->asArray(ColumnSet::TYPE_DEFAULT);
         }
         /**

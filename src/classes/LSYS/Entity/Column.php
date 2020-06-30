@@ -30,7 +30,7 @@ if (!class_exists(Column::class)){
          * 字段
          * @param string $name
          */
-        public function __construct(string $name){
+        public function __construct($name){
             $this->_name=$name;
             $this->_default=NULL;
             $this->_type=NULL;
@@ -41,7 +41,7 @@ if (!class_exists(Column::class)){
          * 获取名
          * @return string
          */
-        public function name():string{
+        public function name(){
             return $this->_name;
         }
         public function __toString() {
@@ -52,7 +52,7 @@ if (!class_exists(Column::class)){
          * @param string $comment
          * @return $this
          */
-        public function setComment(?string $comment){
+        public function setComment($comment){
             $this->_comment=$comment;
             return $this;
         }
@@ -60,14 +60,14 @@ if (!class_exists(Column::class)){
          * 获取字段注释
          * @return string
          */
-        public function comment():?string{
+        public function comment(){
             return $this->_comment;
         }
         /**
          * 是否使用默认值(创建时)
          * @return mixed
          */
-        public function useDefault():bool{
+        public function useDefault(){
             return $this->_is_default;
         }
         /**
@@ -107,7 +107,7 @@ if (!class_exists(Column::class)){
          * 设置是否可为空
          * @return $this
          */
-        public function setAllowNull(bool $set_allow_nullable){
+        public function setAllowNull($set_allow_nullable){
             $this->_is_nullable=$set_allow_nullable;
             if ($set_allow_nullable) {
                 if($this->_default==='')$this->_default=null;
@@ -120,7 +120,7 @@ if (!class_exists(Column::class)){
          * 得到是否允许为空
          * @return boolean
          */
-        public function isAllowNull():bool{
+        public function isAllowNull(){
             return $this->_is_nullable;
         }
         /**
@@ -139,14 +139,14 @@ if (!class_exists(Column::class)){
          * @param string $val
          * @return mixed
          */
-        public function read(string $val){
+        public function read($val){
             return $val;
         }
         /**
          * 转换为数组
          * @return array
          */
-        public function asArray():array{
+        public function asArray(){
             return array(
               'name'=>$this->_name,
               'type'=>$this->_type,

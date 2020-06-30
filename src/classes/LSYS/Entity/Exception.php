@@ -2,7 +2,7 @@
 namespace LSYS\Entity;
 if (!class_exists(Exception::class)){
     class Exception extends \Exception{
-        public function __construct(?string $message, $code = 0, \Exception $previous = NULL)
+        public function __construct($message, $code = 0, \Exception $previous = NULL)
         {
             $message=strval($message);
             if (DIRECTORY_SEPARATOR === '\\'&&$this->_isGb2312($message)){
@@ -40,7 +40,7 @@ if (!class_exists(Exception::class)){
          * @param string $sql
          * @return static
          */
-        public function setErrorSql(string $sql){
+        public function setErrorSql($sql){
             $this->_error_sql=$sql;
             return $this;
         }
@@ -48,7 +48,7 @@ if (!class_exists(Exception::class)){
          * get error sql
          * @return string
          */
-        public function getErrorSql():?string{
+        public function getErrorSql(){
             return $this->_error_sql;
         }
         /**
@@ -73,7 +73,7 @@ if (!class_exists(Exception::class)){
          * get validateion message
          * @return array
          */
-        public function getValidationError():array{
+        public function getValidationError(){
             return $this->_validation_error;
         }
     }

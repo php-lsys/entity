@@ -22,7 +22,7 @@ class DomeDB implements Database{
      * @param string $sql
      * @return DomeDBResult
      */
-    public function query(string $sql,array $data=[]){
+    public function query($sql,array $data=[]){
         $prepare=$this->pdo->prepare($sql);
         if(!$prepare->execute($data)){
             $msg=$prepare->errorInfo();
@@ -30,7 +30,7 @@ class DomeDB implements Database{
         }
         return new DomeDBResult($prepare);
     }
-    public function exec(string $sql,array $data=[])
+    public function exec($sql,array $data=[])
     {
         $prepare=$this->pdo->prepare($sql);
         if($prepare->execute($data)===false){
@@ -39,11 +39,11 @@ class DomeDB implements Database{
         }
         return true;
     }
-    public function insertId():?int
+    public function insertId()
     {
         return $this->pdo->lastInsertId();
     }
-    public function quoteColumn($column):string
+    public function quoteColumn($column)
     {
         if(empty($column)) return '';
         $identifier='';
@@ -76,7 +76,7 @@ class DomeDB implements Database{
         }
         return $column;
     }
-    public function quoteTable($table):string
+    public function quoteTable($table)
     {
         $identifier='`';
         $escaped_identifier = $identifier . $identifier;
@@ -107,7 +107,7 @@ class DomeDB implements Database{
         }
         return $table;
     }
-    public function quoteValue($value, $column_type=null):string
+    public function quoteValue($value, $column_type=null)
     {
         try{
             if ($value === NULL) {

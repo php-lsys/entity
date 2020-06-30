@@ -5,7 +5,7 @@ if (!class_exists(SQLRuner::class)){
     class SQLRuner{
         private $_db;
         private $_sql;
-        public function __construct(Database $db,string $sql) {
+        public function __construct(Database $db,$sql) {
             $this->_db=$db;
             $this->_sql=$sql;
         }
@@ -13,7 +13,7 @@ if (!class_exists(SQLRuner::class)){
          * 返回SQL
          * @return string
          */
-        public function toSql():string {
+        public function toSql() {
             return $this->_sql;
         }
         /**
@@ -27,7 +27,7 @@ if (!class_exists(SQLRuner::class)){
          * 执行SQL
          * @return bool
          */
-        public function exec():bool {
+        public function exec() {
             if (empty($this->_sql))return true;
             return $this->_db->exec($this->_sql);
         }
