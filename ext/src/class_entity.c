@@ -134,6 +134,19 @@ static int arr_intersect_key(zval* retval,zval *data,zval *change){
     return 1;
 }
 
+static void init_property_arr(zval * object){
+    zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
+    zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
+    if (Z_TYPE_P(change)==IS_ARRAY&&Z_TYPE_P(data)==IS_ARRAY)return ;
+    zval temp_array;
+    array_init(&temp_array);
+    zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
+    zval_ptr_dtor(&temp_array);
+    array_init(&temp_array);
+    zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&temp_array);
+    zval_ptr_dtor(&temp_array);
+}
+
 ZEND_METHOD(lsentity_entity_class, __construct) {
     zval *table_object = NULL, *object;
     ZEND_PARSE_PARAMETERS_START(1, 1)
@@ -144,13 +157,7 @@ ZEND_METHOD(lsentity_entity_class, __construct) {
     if (table_object){
         zend_update_property(Z_OBJCE_P(object), object, ZEND_STRL("_table"), table_object);
     }
-    zval temp_array;
-    array_init(&temp_array);
-    zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),&temp_array);
-    zval_ptr_dtor(&temp_array);
-    array_init(&temp_array);
-    zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),&temp_array);
-    zval_ptr_dtor(&temp_array);
+    init_property_arr(object);
 
 }
 ZEND_METHOD(lsentity_entity_class, __isset){
@@ -159,6 +166,7 @@ ZEND_METHOD(lsentity_entity_class, __isset){
             Z_PARAM_STR(column)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     zval *object=getThis();
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     if (zend_symtable_exists_ind(Z_ARR_P(data), column)) {
         RETURN_TRUE;
@@ -184,6 +192,7 @@ ZEND_METHOD(lsentity_entity_class, __unset){
         zend_update_property_null(Z_OBJCE_P(object),object,ZEND_STRL("_change_pk"));
         zend_update_property_bool(Z_OBJCE_P(object),object,ZEND_STRL("_loaded"),0);
     }
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zend_hash_del(Z_ARR_P(data),column);
 
@@ -200,6 +209,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
     zval *object=getThis();
+
     zval valuecopy;
     ZVAL_DUP(&valuecopy,set_value);
     zval* value=&valuecopy;
@@ -226,7 +236,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
 
 
     int loaded=lsentity_check_bool_with_0_params(object,"loaded");
-
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval columnobj;
     if(!get_column(&columns,column,&columnobj,1)){
@@ -250,7 +260,6 @@ ZEND_METHOD(lsentity_entity_class, __set){
             }
         }
     }
-
 
     zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
 
@@ -396,6 +405,7 @@ ZEND_METHOD(lsentity_entity_class, __get){
         Z_PARAM_STR(column)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     zval *object=getThis();
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval* oldval=zend_hash_find(Z_ARR_P(data),column);
     if(oldval){
@@ -513,7 +523,7 @@ ZEND_METHOD(lsentity_entity_class, loadData){
     } ZEND_HASH_FOREACH_END();
 
     zval_ptr_dtor(&columns);
-
+    init_property_arr(object);
     zval *sdata=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
 
     zval mdata;
@@ -555,12 +565,14 @@ ZEND_METHOD(lsentity_entity_class, loadData){
 }
 ZEND_METHOD(lsentity_entity_class, exportData){
     zval *object=getThis();
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     RETURN_ZVAL(data,1,0);
 }
 ZEND_METHOD(lsentity_entity_class, createData){
 
     zval *object=getThis();
+    init_property_arr(object);
     if (lsentity_check_bool_with_0_params(object,"loaded")){
         zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "Cannot create %s model because it is already loaded",ZSTR_VAL(Z_OBJCE_P(object)->name));
         RETURN_NULL();
@@ -647,6 +659,9 @@ ZEND_METHOD(lsentity_entity_class, updateData){
         RETURN_NULL();
     }
 
+
+    init_property_arr(object);
+
     zval save_data;
     array_init(&save_data);
 
@@ -705,6 +720,7 @@ ZEND_METHOD(lsentity_entity_class, updateData){
 }
 ZEND_METHOD(lsentity_entity_class, changed){
     zval *object=getThis();
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval *change=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_change"),1,NULL);
     zval retval;
@@ -732,6 +748,7 @@ ZEND_METHOD(lsentity_entity_class, clear){
 ZEND_METHOD(lsentity_entity_class, pk){
     zval *object,table,pk;
     object=getThis();
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval out,*outp=NULL;
     ZVAL_NULL(&out);
@@ -848,7 +865,7 @@ ZEND_METHOD(lsentity_entity_class, update){
             Z_PARAM_OBJECT_OF_CLASS_EX(valid_object, lsentity_validation_ce_ptr, 1, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object=getThis();
-
+    init_property_arr(object);
 
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),1,NULL);
@@ -939,6 +956,7 @@ ZEND_METHOD(lsentity_entity_class, create){
             Z_PARAM_BOOL(unique_replace)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object=getThis();
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
     zval *valid=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_valid"),1,NULL);
     if(!zend_is_true(valid)|| valid_object){
@@ -978,6 +996,8 @@ ZEND_METHOD(lsentity_entity_class, create){
     array_init(&save_arr);
     Z_REFCOUNTED(csave_data)&&Z_ADDREF(csave_data);
     zend_hash_next_index_insert(Z_ARR(save_arr),&csave_data);
+    zval_ptr_dtor(&csave_data);
+
     zval zunique_replace;
     ZVAL_BOOL(&zunique_replace,unique_replace);
 
@@ -994,11 +1014,6 @@ ZEND_METHOD(lsentity_entity_class, create){
             goto end_done;
         }
     }
-
-    zval_ptr_dtor(&zunique_replace);
-    zval_ptr_dtor(&save_arr);
-    zval_ptr_dtor(&csave_data);
-
 
 
 
@@ -1026,7 +1041,8 @@ ZEND_METHOD(lsentity_entity_class, create){
     }
 
     end_done:
-
+    zval_ptr_dtor(&zunique_replace);
+    zval_ptr_dtor(&save_arr);
     zval_ptr_dtor(&table);
     zval_ptr_dtor(&db);
     zval_ptr_dtor(&dbbuilder);
@@ -1137,6 +1153,7 @@ ZEND_METHOD(lsentity_entity_class, save){
             Z_PARAM_OBJECT_OF_CLASS_EX(valid_object, lsentity_validation_ce_ptr, 1, 0)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object=getThis();
+
     zval _valid_object;
     ZVAL_NULL(&_valid_object);
     if(!valid_object)valid_object=&_valid_object;
@@ -1163,6 +1180,7 @@ ZEND_METHOD(lsentity_entity_class, check){
         zval_ptr_dtor(&table);
         RETURN_NULL();
     }
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
 
     zend_object_iterator   *iter;
@@ -1358,6 +1376,7 @@ ZEND_METHOD(lsentity_entity_class, check){
 
 ZEND_METHOD(lsentity_entity_class, asArray){
     zval *object=getThis();
+    init_property_arr(object);
     zval *data=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_data"),1,NULL);
 
     zval columns;

@@ -615,7 +615,7 @@ ZEND_METHOD(lsentity_db_sqlbuilder_class, delete){
 
     zval_ptr_dtor(&table_name);
     //zval_ptr_dtor(&zsql);
-
+    zval_ptr_dtor(&strwhere);
 
     zval param[]={
         db,
@@ -695,32 +695,31 @@ ZEND_METHOD(lsentity_db_sqlbuilder_class, insert){
             zval ktmp;
             ZVAL_STR_COPY(&ktmp,kval);
             zend_call_method_with_1_params(&columns,Z_OBJCE(columns),NULL,"offsetget",&find,&ktmp);
+            if(zend_is_true(&find)&&zend_object_is_true(&find)){
+                if(!lsentity_in_array(&keys,&ktmp)){
+                    zend_hash_next_index_insert(Z_ARR(keys),&ktmp);
+                    zval qtmp;
 
-            if(zend_is_true(&find)&&zend_object_is_true(&find)&&!lsentity_in_array(&keys,&find)){
+                    zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&qtmp,&find);
 
-                zend_hash_next_index_insert(Z_ARR(keys),&ktmp);
-                zval qtmp;
+                    if(Z_TYPE(qtmp)!=IS_STRING||EG(exception)){
+                        zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "obj %s quoteColumn method return not a string,param[%s]",ZSTR_VAL(Z_OBJCE(db)->name),ZSTR_VAL(Z_STR(qtmp)));
+                        zval_ptr_dtor(&find);
+                        zval_ptr_dtor(&qtmp);
+                        zval_ptr_dtor(&table_name);
+                        zval_ptr_dtor(&_table_name);
+                        zval_ptr_dtor(&columns);
 
-                zend_call_method_with_1_params(&db,Z_OBJCE(db),NULL,"quotecolumn",&qtmp,&find);
-
-                if(Z_TYPE(qtmp)!=IS_STRING||EG(exception)){
-                    zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "obj %s quoteColumn method return not a string,param[%s]",ZSTR_VAL(Z_OBJCE(db)->name),ZSTR_VAL(Z_STR(qtmp)));
-                    zval_ptr_dtor(&find);
+                        zval_ptr_dtor(&db);
+                        zval_ptr_dtor(&field);
+                        zval_ptr_dtor(&keys);
+                        RETURN_FALSE;
+                    }
+                    Z_REFCOUNTED(qtmp)&&Z_ADDREF(qtmp);
+                    zend_hash_next_index_insert(Z_ARR(field),&qtmp);
                     zval_ptr_dtor(&qtmp);
-                    zval_ptr_dtor(&table_name);
-                    zval_ptr_dtor(&_table_name);
-                    zval_ptr_dtor(&columns);
-
-                    zval_ptr_dtor(&db);
-                    zval_ptr_dtor(&field);
-                    zval_ptr_dtor(&keys);
-                    RETURN_FALSE;
                 }
-
-                Z_REFCOUNTED(qtmp)&&Z_ADDREF(qtmp);
-                zend_hash_next_index_insert(Z_ARR(field),&qtmp);
                 zval_ptr_dtor(&find);
-                zval_ptr_dtor(&qtmp);
                 zval_ptr_dtor(&ktmp);
 
             }else{
@@ -833,6 +832,8 @@ ZEND_METHOD(lsentity_db_sqlbuilder_class, insert){
     zval_ptr_dtor(&table_name);
     zval_ptr_dtor(&_table_name);
     zval_ptr_dtor(&columns);
+    zval_ptr_dtor(&str_field);
+    zval_ptr_dtor(&str_data);
 
 
 
