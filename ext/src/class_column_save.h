@@ -10,7 +10,7 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_column_save_arginfo, 0, 0, 2)
                 ZEND_ARG_INFO(0, column)
 ZEND_END_ARG_INFO()
 
-extern ZEND_API zend_class_entry *lsentity_column_save_ce_ptr;
+extern zend_class_entry *lsentity_column_save_ce_ptr;
 
 void lsentity_column_save_class_init();
 

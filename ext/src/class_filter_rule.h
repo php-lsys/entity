@@ -10,7 +10,7 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_filter_rule_filter_arginfo, 0, 0, 3)
     ZEND_ARG_INFO(0, field)
 ZEND_END_ARG_INFO()
 
-extern ZEND_API zend_class_entry *lsentity_filter_rule_ce_ptr;
+extern zend_class_entry *lsentity_filter_rule_ce_ptr;
 
 void lsentity_filter_rule_class_init();
 

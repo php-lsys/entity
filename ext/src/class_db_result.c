@@ -11,7 +11,7 @@
 #include "class_db_result.h"
 
 
-ZEND_API zend_class_entry *lsentity_db_result_ce_ptr;
+zend_class_entry *lsentity_db_result_ce_ptr;
 
 
 static zend_function_entry lsentity_db_result_class_method[] = {

@@ -14,7 +14,7 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_db_result_fetch_count_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 
-extern ZEND_API zend_class_entry *lsentity_db_result_ce_ptr;
+extern zend_class_entry *lsentity_db_result_ce_ptr;
 
 void lsentity_db_result_class_init();
 

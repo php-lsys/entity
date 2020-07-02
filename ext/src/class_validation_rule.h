@@ -15,7 +15,7 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_validation_rule_check_arginfo, 0, 0, 6)
                 ZEND_ARG_ARRAY_INFO(0, check_data,0)
 ZEND_END_ARG_INFO()
 
-extern ZEND_API zend_class_entry *lsentity_validation_rule_ce_ptr;
+extern zend_class_entry *lsentity_validation_rule_ce_ptr;
 
 void lsentity_validation_rule_class_init();
 

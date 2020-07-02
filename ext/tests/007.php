@@ -28,7 +28,7 @@ class mytestdb implements Database{
     public function insertId(){
         return 1;
     }
-    public function builder(Table $table)
+    public function SQLBuilder(Table $table)
     {
         return new SQLBuilder($table);
     }

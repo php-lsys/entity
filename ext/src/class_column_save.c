@@ -5,7 +5,7 @@
 #include "zend_API.h"
 #include "class_column_save.h"
 
-ZEND_API zend_class_entry *lsentity_column_save_ce_ptr;
+zend_class_entry *lsentity_column_save_ce_ptr;
 
 
 

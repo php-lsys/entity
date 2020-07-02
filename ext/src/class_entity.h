@@ -4,7 +4,7 @@
 
 #include "zend_API.h"
 
-extern ZEND_API zend_class_entry *lsentity_entity_ce_ptr;
+extern zend_class_entry *lsentity_entity_ce_ptr;
 
 void lsentity_entity_class_init();
 ZEND_METHOD(lsentity_entity_class, __construct);

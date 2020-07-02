@@ -387,7 +387,7 @@ static int build_where(zval *table,zval* where,zval* where_string){
 
 
 
-ZEND_API zend_class_entry *lsentity_db_sqlbuilder_ce_ptr;
+zend_class_entry *lsentity_db_sqlbuilder_ce_ptr;
 
 
 ZEND_METHOD(lsentity_db_sqlbuilder_class, __construct){

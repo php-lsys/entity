@@ -13,7 +13,7 @@
 #include "ext/standard/php_array.h"
 
 
-ZEND_API zend_class_entry *lsentity_validation_ce_ptr;
+zend_class_entry *lsentity_validation_ce_ptr;
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_validation_construct_arginfo, 0, 0, 1)
                 ZEND_ARG_OBJ_INFO_ENTITYCLASS(0, entity, 1)

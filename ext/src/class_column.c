@@ -8,7 +8,7 @@
 #include "entity.h"
 #include "class_column.h"
 
-ZEND_API zend_class_entry *lsentity_column_ce_ptr;
+zend_class_entry *lsentity_column_ce_ptr;
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_column_construct_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, name)

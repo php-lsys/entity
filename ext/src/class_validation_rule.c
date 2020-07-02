@@ -7,7 +7,7 @@
 #include "class_validation_rule.h"
 
 
-ZEND_API zend_class_entry *lsentity_validation_rule_ce_ptr;
+zend_class_entry *lsentity_validation_rule_ce_ptr;
 
 static zend_function_entry lsentity_validation_rule_class_method[] = {
         ZEND_ABSTRACT_ME(lsentity_validation_rule_rule_class,allowEmpty,NULL)

@@ -6,7 +6,7 @@
 
 #include "class_table.h"
 
-ZEND_API zend_class_entry *lsentity_table_ce_ptr;
+zend_class_entry *lsentity_table_ce_ptr;
 
 static zend_function_entry lsentity_table_class_method[] = {
     ZEND_ABSTRACT_ME(lsentity_table_class,db, NULL)

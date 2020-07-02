@@ -17,7 +17,7 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_db_sqlruner_construct_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, sql)
 ZEND_END_ARG_INFO()
 
-ZEND_API zend_class_entry *lsentity_db_sqlruner_ce_ptr;
+zend_class_entry *lsentity_db_sqlruner_ce_ptr;
 
 ZEND_METHOD(lsentity_db_sqlruner_class, __construct){
     zval *db;

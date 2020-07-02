@@ -1,13 +1,10 @@
 // $Id$
 // vim:ft=javascript
 
-// If your extension references something external, use ARG_WITH
-// ARG_WITH("entity", "for entity support", "no");
-
-// Otherwise, use ARG_ENABLE
 ARG_ENABLE("entity", "enable entity support", "no");
 
 if (PHP_ENTITY != "no") {
-	EXTENSION("entity", "entity.c", PHP_EXTNAME_SHARED, "/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1");
+	EXTENSION("entity", "entity.c", PHP_ENTITY_SHARED, " /DZEND_ENABLE_STATIC_TSRMLS_CACHE=1");
+	ADD_SOURCES(configure_module_dirname + "/src", "utils.c class_column.c class_column_save.c class_column_set.c    class_entity.c class_entity_column_set.c class_entity_set.c class_exception.c class_filter.c class_filter_rule.c class_table.c class_validation.c class_validation_rule.c class_db.c class_db_sqlbuilder.c class_db_sqlruner.c class_db_result.c", "entity");
 }
 

@@ -10,7 +10,7 @@
 
 #include "entity.h"
 #include "class_exception.h"
-ZEND_API zend_class_entry *lsentity_exception_ce_ptr;
+zend_class_entry *lsentity_exception_ce_ptr;
 
 
 ZEND_BEGIN_ARG_INFO_EX(lsentity_exception_errsql_arginfo, 0, 0, 1)

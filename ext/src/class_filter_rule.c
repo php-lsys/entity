@@ -6,7 +6,7 @@
 #include "entity.h"
 #include "class_filter_rule.h"
 
-ZEND_API zend_class_entry *lsentity_filter_rule_ce_ptr;
+zend_class_entry *lsentity_filter_rule_ce_ptr;
 
 static zend_function_entry lsentity_filter_class_method[] = {
       ZEND_ABSTRACT_ME(lsentity_filter_rule_class,filter,lsentity_filter_rule_filter_arginfo)
