@@ -18,4 +18,6 @@ phpize && ./configure
 make && sudo make install
 ```
 
+3. windows 版的dll请在 https://github.com/php-lsys/entity/releases 下载
+
 > 默认请使用composer 方式安装,当编译有扩展时,会优先使用扩展的实现,否则会用php源码版本.
