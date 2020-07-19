@@ -213,10 +213,7 @@ if (!class_exists(Entity::class)){
         public function __set($column,$value){
             $columns=$this->columns(true);
             if (!$columns->offsetExists($column)){
-                $msg=strtr("The :column property does not exist in the :entity entity",array(
-                    ":column"=>$column,":entity"=>get_class($this)
-                ));
-                throw new Exception($msg);
+                return $this->setNotExist($column, $value);
             }
             $filter = $this->filter();
             if($filter)$value=$filter->runFilter($column,$value);
@@ -273,6 +270,33 @@ if (!class_exists(Entity::class)){
             $this->_data[$column]=$value;
         }
         /**
+         * 获取数据不存在时调用
+         * @param string $column
+         * @throws Exception
+         */
+        protected function getNotExist($column){
+            $this->columnNotExist($column);
+        }
+        /**
+         * 设置数据不存在时调用
+         * @param string $column
+         * @throws Exception
+         */
+        protected function setNotExist($column,$value){
+            $this->columnNotExist($column);
+        }
+        /**
+         * 字段不存在抛异常统一方法
+         * @param string $column
+         * @throws Exception
+         */
+        private function columnNotExist($column) {
+            $msg=strtr("The :column property does not exist in the :entity entity",array(
+                ":column"=>$column,":entity"=>get_class($this)
+            ));
+            throw new Exception($msg);
+        }
+        /**
          * 获取指定字段数据
          * @param string $column
          * @throws Exception
@@ -287,10 +311,7 @@ if (!class_exists(Entity::class)){
                 $columnobj=$columns->offsetGet($column);
                 return $columnobj->getDefault();
             }
-            $msg=strtr("The :column property does not exist in the :entity entity",array(
-                ":column"=>$column,":entity"=>get_class($this)
-            ));
-            throw new Exception($msg);
+            return $this->getNotExist($column);
         }
         /**
          * 返回当前实体主键

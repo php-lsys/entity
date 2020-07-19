@@ -10,90 +10,90 @@ use LSYS\Entity\Column;
 use LSYS\Entity\Database\SQLRuner;
 class LSYSEntity extends TestCase
 {
-   public function testColumn(){
-        $c=new Column("a");
-        $c->setAllowNull(true);
-        $this->assertTrue($c->isAllowNull());
-        $c->setComment("aa");
-        $this->assertEquals("aa", $c->comment());
-        $c->setAllowNull(false);
-        $this->assertEquals($c->getDefault(), '');
-        $c->setDefault(1);
-        $this->assertEquals($c->getDefault(), 1);
-        $c->setType("int");
-        $this->assertEquals($c->getType(), 'int');
-        $this->assertEquals(strval($c),"a");
-        $b=new Column("b");
-        $b->copy($c);
-        $this->assertEquals($b->getType(),"int");
-        $this->assertEquals($b->getDefault(), 1);
-    }
-    public function testEntity()
-    {
-        $model1=new DomeModelTest();
-        $e=new Entity($model1);
-        $this->assertEquals("id", $e->columns(true)->offsetGet("id")->asArray()['name']);
-        $this->assertEquals("name", $e->columns(true)->offsetGet("name")->asArray()['name']);
-        $this->assertEquals("code", $e->columns(true)->offsetGet("code")->asArray()['name']);
-        $this->assertTrue(is_array($e->labels()));
-        $this->assertNull($e->filter());
-        $this->assertNull($e->validation());
-        $e->id=1;
-        $this->assertEquals($e->pk(), 1);
-       $data=["id"=>10,"name"=>"ttt","unkown"=>"temp"];
-        $e->loadData($data,null,true);
-        $this->assertEquals($e->name, "ttt");
-        $this->assertTrue($e->loaded());
-        unset($data['unkown']);
-        $this->assertEquals($data, $e->exportData());
-        $e->name="ttt";
-        $this->assertArrayNotHasKey("name", $e->changed());
-        $e->name="bbb";
-        $this->assertArrayHasKey("name", $e->changed());
-        $this->assertTrue(isset($e->id));
-        $this->assertFalse($e->saved());
-        $e->clear();
-        $this->assertFalse($e->loaded());
-        $e->name="fff";
-        $this->assertTrue((new EntityColumnSet())->notCustom());
-       $ecs=new EntityColumnSet(["id","name"]);
-       $this->assertFalse($ecs->notCustom());
-       $e->loadData($data,$ecs,true);
-        $this->assertNotEmpty(json_encode($e));
-        unset($e->id);
-       $this->assertFalse($e->loaded());
-        $e->values(array(
-            "id"=>"11",
-            "name"=>"temp"
-        ));
-        $this->assertArrayHasKey("name", $e->asArray());
-        $this->assertFalse($e->loaded());
-       $this->assertEquals($e,$e->check());
-        $this->assertEquals($e->pk(),strval($e));
-        $e->clear();
-        $e->loadData($data,null,true);
-        $e->id=11;
-        $this->assertFalse($e->loaded());
-        $e->id=10;
-        $this->assertTrue($e->loaded());
-    }
-    public function testEx()
-    {
-       $this->expectException(\LSYS\Entity\Exception::class);
-       $sql="select sleep(1)";
-       $err=array("error1","error2");
-       try{
-           throw (new \LSYS\Entity\Exception(""))
-            ->setErrorSql($sql)
-           ->setValidationError($err)
-            ;
-       }catch(\LSYS\Entity\Exception $e){
-            $this->assertEquals($sql, $e->getErrorSql());
-           $this->assertEquals($err, $e->getValidationError());
-           $this->assertNotEmpty($e->getMessage());
-           throw $e;
-       }
-    }
+//    public function testColumn(){
+//         $c=new Column("a");
+//         $c->setAllowNull(true);
+//         $this->assertTrue($c->isAllowNull());
+//         $c->setComment("aa");
+//         $this->assertEquals("aa", $c->comment());
+//         $c->setAllowNull(false);
+//         $this->assertEquals($c->getDefault(), '');
+//         $c->setDefault(1);
+//         $this->assertEquals($c->getDefault(), 1);
+//         $c->setType("int");
+//         $this->assertEquals($c->getType(), 'int');
+//         $this->assertEquals(strval($c),"a");
+//         $b=new Column("b");
+//         $b->copy($c);
+//         $this->assertEquals($b->getType(),"int");
+//         $this->assertEquals($b->getDefault(), 1);
+//     }
+//     public function testEntity()
+//     {
+//         $model1=new DomeModelTest();
+//         $e=new Entity($model1);
+//         $this->assertEquals("id", $e->columns(true)->offsetGet("id")->asArray()['name']);
+//         $this->assertEquals("name", $e->columns(true)->offsetGet("name")->asArray()['name']);
+//         $this->assertEquals("code", $e->columns(true)->offsetGet("code")->asArray()['name']);
+//         $this->assertTrue(is_array($e->labels()));
+//         $this->assertNull($e->filter());
+//         $this->assertNull($e->validation());
+//         $e->id=1;
+//         $this->assertEquals($e->pk(), 1);
+//        $data=["id"=>10,"name"=>"ttt","unkown"=>"temp"];
+//         $e->loadData($data,null,true);
+//         $this->assertEquals($e->name, "ttt");
+//         $this->assertTrue($e->loaded());
+//         unset($data['unkown']);
+//         $this->assertEquals($data, $e->exportData());
+//         $e->name="ttt";
+//         $this->assertArrayNotHasKey("name", $e->changed());
+//         $e->name="bbb";
+//         $this->assertArrayHasKey("name", $e->changed());
+//         $this->assertTrue(isset($e->id));
+//         $this->assertFalse($e->saved());
+//         $e->clear();
+//         $this->assertFalse($e->loaded());
+//         $e->name="fff";
+//         $this->assertTrue((new EntityColumnSet())->notCustom());
+//        $ecs=new EntityColumnSet(["id","name"]);
+//        $this->assertFalse($ecs->notCustom());
+//        $e->loadData($data,$ecs,true);
+//         $this->assertNotEmpty(json_encode($e));
+//         unset($e->id);
+//        $this->assertFalse($e->loaded());
+//         $e->values(array(
+//             "id"=>"11",
+//             "name"=>"temp"
+//         ));
+//         $this->assertArrayHasKey("name", $e->asArray());
+//         $this->assertFalse($e->loaded());
+//        $this->assertEquals($e,$e->check());
+//         $this->assertEquals($e->pk(),strval($e));
+//         $e->clear();
+//         $e->loadData($data,null,true);
+//         $e->id=11;
+//         $this->assertFalse($e->loaded());
+//         $e->id=10;
+//         $this->assertTrue($e->loaded());
+//     }
+//     public function testEx()
+//     {
+//        $this->expectException(\LSYS\Entity\Exception::class);
+//        $sql="select sleep(1)";
+//        $err=array("error1","error2");
+//        try{
+//            throw (new \LSYS\Entity\Exception(""))
+//             ->setErrorSql($sql)
+//            ->setValidationError($err)
+//             ;
+//        }catch(\LSYS\Entity\Exception $e){
+//             $this->assertEquals($sql, $e->getErrorSql());
+//            $this->assertEquals($err, $e->getValidationError());
+//            $this->assertNotEmpty($e->getMessage());
+//            throw $e;
+//        }
+//     }
     public function testEntitySetEx1()
     {
         $model1=new DomeModelTest();

@@ -33,7 +33,16 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_set_arginfo, 0, 0, 2)
     ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_set_not_exist_arginfo, 0, 0, 2)
+    ZEND_ARG_INFO(0, name)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_get_arginfo, 0, 0, 1)
+    ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_get_not_exist_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
@@ -200,6 +209,19 @@ ZEND_METHOD(lsentity_entity_class, __unset){
     zval_ptr_dtor(&table);
     zval_ptr_dtor(&zcolumn);
 }
+
+
+
+ZEND_METHOD(lsentity_entity_class, setNotExist){
+	zend_string *column;
+    zval *set_value;
+    ZEND_PARSE_PARAMETERS_START(2, 2)
+        Z_PARAM_STR(column)
+        Z_PARAM_ZVAL(set_value)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+    zval *object=getThis();
+	zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "The %s property does not exist in the %s entity", ZSTR_VAL(column),ZSTR_VAL(Z_OBJCE_P(object)->name));
+}
 ZEND_METHOD(lsentity_entity_class, __set){
     zend_string *column;
     zval *set_value;
@@ -218,9 +240,12 @@ ZEND_METHOD(lsentity_entity_class, __set){
     if(!get_columns(object,&columns,1)) RETURN_NULL();
     zval zval_column;
     ZVAL_STR_COPY(&zval_column,column);
+    
     if(!lsentity_check_bool_with_1_params(&columns,"offsetexists",&zval_column)){
-        zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "the %s property does not exist", ZSTR_VAL(column));
-        zval_ptr_dtor(value);
+    	zend_call_method_with_2_params(object,Z_OBJCE_P(object), NULL, "setnotexist",NULL,&zval_column,set_value);
+    	zval_ptr_dtor(&columns);
+    	zval_ptr_dtor(&zval_column);
+    	zval_ptr_dtor(&valuecopy);
         RETURN_NULL();
     }
 
@@ -228,7 +253,7 @@ ZEND_METHOD(lsentity_entity_class, __set){
     if(get_filter(object,&filter)){
         zend_call_method_with_2_params(&filter,Z_OBJCE(filter), NULL, "runfilter",&filterval,&zval_column,value);
         zval_ptr_dtor(&filter);
-       zval_ptr_dtor(&valuecopy);
+        zval_ptr_dtor(&valuecopy);
         value=&filterval;
     }
 
@@ -399,6 +424,15 @@ ZEND_METHOD(lsentity_entity_class, __set){
     RETURN_NULL();
 
 }
+
+ZEND_METHOD(lsentity_entity_class, getNotExist){
+	zend_string *column;
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+        Z_PARAM_STR(column)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+    zval *object=getThis();
+    zend_throw_exception_ex(lsentity_exception_ce_ptr, 1, "The %s property does not exist in the %s entity", ZSTR_VAL(column),ZSTR_VAL(Z_OBJCE_P(object)->name));
+}
 ZEND_METHOD(lsentity_entity_class, __get){
     zend_string *column;
     ZEND_PARSE_PARAMETERS_START(1, 1)
@@ -424,7 +458,11 @@ ZEND_METHOD(lsentity_entity_class, __get){
         RETURN_ZVAL(&valobj, 1, 1);
     }
     zval_ptr_dtor(&columns);
-    zend_throw_exception_ex(lsentity_exception_ce_ptr, -1, "The %s property does not exist in the %s entity", ZSTR_VAL(column),ZSTR_VAL(Z_OBJCE_P(object)->name));
+    
+    zval zval_column;
+    ZVAL_STR_COPY(&zval_column,column);
+    zend_call_method_with_1_params(object,Z_OBJCE_P(object), NULL, "getnotexist",return_value,&zval_column);
+    zval_ptr_dtor(&zval_column);
 }
 ZEND_METHOD(lsentity_entity_class, __toString){
     zval *object=getThis();
@@ -1430,6 +1468,10 @@ static zend_function_entry lsentity_entity_class_method[] = {
     ZEND_ME(lsentity_entity_class,__unset, lsentity_entity_unset_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,__set, lsentity_entity_set_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_class,__get, lsentity_entity_get_arginfo, ZEND_ACC_PUBLIC)
+    
+    ZEND_ME(lsentity_entity_class,setNotExist, lsentity_entity_set_not_exist_arginfo, ZEND_ACC_PROTECTED)
+    ZEND_ME(lsentity_entity_class,getNotExist, lsentity_entity_get_not_exist_arginfo, ZEND_ACC_PROTECTED)
+    
     ZEND_ME(lsentity_entity_class,__toString, NULL, ZEND_ACC_PUBLIC)
 
     ZEND_ME(lsentity_entity_class,labels, NULL, ZEND_ACC_PUBLIC)

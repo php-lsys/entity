@@ -19,6 +19,8 @@ ZEND_METHOD(lsentity_entity_class, clear);
 ZEND_METHOD(lsentity_entity_class, __isset);
 ZEND_METHOD(lsentity_entity_class, __set);
 ZEND_METHOD(lsentity_entity_class, __get);
+ZEND_METHOD(lsentity_entity_class, setNotExist);
+ZEND_METHOD(lsentity_entity_class, getNotExist);
 ZEND_METHOD(lsentity_entity_class, columns);
 ZEND_METHOD(lsentity_entity_class, pk);
 ZEND_METHOD(lsentity_entity_class, saved);

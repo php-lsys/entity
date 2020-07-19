@@ -4,9 +4,21 @@ use LSYS\Entity\Database\Result;
 use LSYS\Entity;
 if (!class_exists(EntitySet::class)){
     class EntitySet implements \Iterator{
+        /**
+         * @var Result
+         */
         protected $_result;
+        /**
+         * @var EntityColumnSet|NULL
+         */
         protected $_columns;
+        /**
+         * @var Table|NULL
+         */
         protected $_table;
+        /**
+         * @var string
+         */
         protected $_entity;
         public function __construct(Result $result,$entity_name,EntityColumnSet $columns=null,Table $table=null)
         {
@@ -84,7 +96,14 @@ if (!class_exists(EntitySet::class)){
         {
             $row=$this->_result->current();
             if (is_null($row))return null;
-            return (new \ReflectionClass($this->_entity))->newInstance($this->_table)->loadData($row,$this->_columns,true);
+            /**
+             * @var Entity $entity
+             */
+            $entity=(new \ReflectionClass($this->_entity))->newInstance($this->_table);
+            if (is_null($this->_table)) {
+                $this->_table=$entity->table();
+            }
+            return $entity->loadData($row,$this->_columns,true);
         }
     }
 }

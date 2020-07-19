@@ -1,13 +1,7 @@
 <?php
 use LSYS\Entity;
-use TestLSYSEntityLib\DomeModelTestPkArr;
+use TestLSYSEntityLib\DomeModelTest;
 include __DIR__.'/autoload.php';
-$model1=new DomeModelTestPkArr();
+$model1=new DomeModelTest();
 $e=new Entity($model1);
-$e->id=rand(300,5000);
-$e->code=uniqid("code_");
-$e->name="ddddddddddddddd";
-$e->enname="ddddddddddddddd";
-$e->save();
-$e->enname="dddddddddd";
-$e->save();
+$e->id_bad_columns=1;

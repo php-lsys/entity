@@ -107,7 +107,7 @@ $new->rule(new DomeFilterCallback(function($value){
     return strip_tags($value);
 }),"id");
 var_dump($new->runFilter("id","aa<aa>sdfasbb"));
-var_dump($new->allowCache());
+// var_dump($new->allowCache());
 
 ?>
 

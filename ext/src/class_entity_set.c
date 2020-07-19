@@ -230,8 +230,14 @@ ZEND_METHOD(lsentity_entity_set_class, current){
         *table
     };
     lsentity_new_class(ce,return_value,param,1);
-
-
+	
+	if(Z_TYPE_P(result)!=IS_OBJECT&&Z_TYPE_P(return_value)==IS_OBJECT){
+		zval outtable;
+		zend_call_method_with_0_params(return_value,Z_OBJCE_P(return_value),NULL,"table",&outtable);
+		zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_table"),&outtable);
+		zval_ptr_dtor(&outtable);
+	}
+	
 
 
     zval *columns=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),0,NULL);
