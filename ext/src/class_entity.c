@@ -863,11 +863,23 @@ ZEND_METHOD(lsentity_entity_class, columns){
                     }
                     zval_ptr_dtor(&merge_table_columns);
                 }else{
+
+                    zval tmp_columns;
+                    ZVAL_OBJ(&tmp_columns,zend_objects_clone_obj(&table_columns));
+
+                    SEPARATE_ARRAY(zend_read_property(Z_OBJCE(tmp_columns),&tmp_columns,ZEND_STRL("_columns"),1,NULL));
+
                     if(patch){
-                        zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_patch_columns"),&table_columns);
+                        zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_patch_columns"),&tmp_columns);
                     }else{
-                        zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),&table_columns);
+                        zend_update_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),&tmp_columns);
                     }
+
+
+
+                    zval_ptr_dtor(&tmp_columns);
+
+
 
                 }
                 zval_ptr_dtor(&table_columns);
@@ -876,11 +888,15 @@ ZEND_METHOD(lsentity_entity_class, columns){
         }
     }
 
+
     if(patch){
         columns=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_patch_columns"),1,NULL);
     }else{
         columns=zend_read_property(Z_OBJCE_P(object),object,ZEND_STRL("_columns"),1,NULL);
     }
+
+   // zend_hash_internal_pointer_reset(Z_ARR_P(zend_read_property(Z_OBJCE_P(columns),columns,ZEND_STRL("_columns"),1,NULL)));
+
     RETURN_ZVAL(columns,1,0);
 }
 

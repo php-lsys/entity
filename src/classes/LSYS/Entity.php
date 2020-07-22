@@ -196,7 +196,7 @@ if (!class_exists(Entity::class)){
                 if ($this->_query_column_set instanceof EntityColumnSet) {
                     $columns=$this->_query_column_set->asColumnSet($table_columns,$patch);
                 }else{
-                    $columns=$table_columns;
+                    $columns=clone $table_columns;
                 }
                 $patch?($this->_patch_columns=$columns):($this->_columns=$columns);
             }

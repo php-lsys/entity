@@ -76,7 +76,28 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
 
     zval *mzval,*pzval;
     mzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_columns"),0,NULL);
-    if(Z_TYPE_P(mzval)!=IS_ARRAY)RETURN_ZVAL(column,1,0);
+    if(Z_TYPE_P(mzval)!=IS_ARRAY){
+
+        zval tmp_columns;
+        ZVAL_OBJ(&tmp_columns,zend_objects_clone_obj(column));
+
+
+        SEPARATE_ARRAY(zend_read_property(Z_OBJCE(tmp_columns),&tmp_columns,ZEND_STRL("_columns"),1,NULL));
+
+        if(patch){
+            zval *tmpp;
+            pzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_patch_columns"),0,NULL);
+
+            if(Z_TYPE_P(pzval)==IS_ARRAY){
+                ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pzval), tmpp) {
+                    zend_call_method_with_1_params(&tmp_columns,Z_OBJCE(tmp_columns), NULL, "add", NULL,tmpp);
+                } ZEND_HASH_FOREACH_END();
+            }
+
+        }
+
+        RETURN_ZVAL(&tmp_columns,1,1);
+    }
 
     zval columntype;
     array_init(&columntype);
@@ -94,14 +115,18 @@ ZEND_METHOD(lsentity_entity_column_set_class, asColumnSet){
 
     } ZEND_HASH_FOREACH_END();
     if(patch){
+        zval *tmp1;
         pzval=zend_read_property(Z_OBJCE_P(getThis()),getThis(),ZEND_STRL("_patch_columns"),0,NULL);
-        ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pzval), tmp) {
-            zval param1;
-            zend_call_method_with_0_params(tmp,Z_OBJCE_P(tmp), NULL, "name", &param1);
-            Z_REFCOUNTED_P(tmp)&&Z_ADDREF_P(tmp);
-            zend_hash_add(Z_ARR(columntype),Z_STR(param1),tmp);
-            zval_ptr_dtor(&param1);
-        } ZEND_HASH_FOREACH_END();
+        if(Z_TYPE_P(pzval)==IS_ARRAY) {
+            ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pzval), tmp1)
+            {
+                zval param1;
+                zend_call_method_with_0_params(tmp1, Z_OBJCE_P(tmp1), NULL, "name", &param1);
+                Z_REFCOUNTED_P(tmp1) && Z_ADDREF_P(tmp1);
+                zend_hash_add(Z_ARR(columntype), Z_STR(param1), tmp1);
+                zval_ptr_dtor(&param1);
+            }ZEND_HASH_FOREACH_END();
+        }
 
     }
     zval param[]={

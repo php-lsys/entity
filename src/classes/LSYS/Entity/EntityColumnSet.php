@@ -40,7 +40,16 @@ if (!class_exists(EntityColumnSet::class)){
          * @return \LSYS\Entity\ColumnSet
          */
         public function asColumnSet(ColumnSet $table_columns,$patch=false) {
-            if (!is_array($this->_columns)) return $table_columns;
+            if (!is_array($this->_columns)){
+                if($patch){
+                    $tmp_colome=clone $table_columns;
+                    foreach ($this->_patch_columns as $v){
+                        $tmp_colome->add($v);
+                    }
+                    return $tmp_colome;
+                }
+                return clone $table_columns;
+            }
             $columntype=[];
             foreach ($this->_columns as $v){
                 if($table_columns->offsetExists($v))$columntype[$v]=$table_columns->offsetGet($v);
