@@ -65,6 +65,7 @@ ZEND_METHOD(lsentity_entity_set_class, fetchCount){
     zval *object;
     zend_bool iterator = 0;
     ZEND_PARSE_PARAMETERS_START(0, 1)
+    		Z_PARAM_OPTIONAL
             Z_PARAM_BOOL(iterator)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
