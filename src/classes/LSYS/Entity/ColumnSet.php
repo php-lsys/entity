@@ -59,13 +59,13 @@ if (!class_exists(ColumnSet::class)){
                     return array_keys($this->_columns);
                 case self::TYPE_DEFAULT:
                     $out=array();
-                    foreach ($this as $k=>$v){
+                    foreach ($this->_columns as $k=>$v){
                         $out[$k]=$v->getDefault();
                     }
                     return $out;
                 case self::TYPE_ARRAY:
                     $out=array();
-                    foreach ($this as $k=>$v){
+                    foreach ($this->_columns as $k=>$v){
                         $out[$k]=$v->asArray();
                     }
                     return $out;

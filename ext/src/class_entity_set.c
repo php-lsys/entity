@@ -120,9 +120,10 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
     object = getThis();
     zval result;
     array_init(&result);
+
+    zval keey_key;
+    zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"key",&keey_key);
     zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"rewind",NULL);
-
-
 
     if((!key||ZSTR_LEN(key)<=1)&&(!value||ZSTR_LEN(value)<=1)){
         while (lsentity_check_bool_with_0_params(object,"valid")){
@@ -202,6 +203,20 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
         zval_ptr_dtor(&zkey);
         zval_ptr_dtor(&zvalue);
     }
+    zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"rewind",NULL);
+    while (lsentity_check_bool_with_0_params(object,"valid")){
+        zval stkey,sres;
+        zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"key",&stkey);
+        if(is_equal_function(&sres,&stkey,&keey_key)==SUCCESS){
+            zval_ptr_dtor(&stkey);
+            zval_ptr_dtor(&sres);
+            break;
+        }
+        zval_ptr_dtor(&stkey);
+        zval_ptr_dtor(&sres);
+        zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
+    }
+    zval_ptr_dtor(&keey_key);
     RETURN_ZVAL(&result,1,1);
 }
 ZEND_METHOD(lsentity_entity_set_class, current){

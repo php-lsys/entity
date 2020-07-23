@@ -52,6 +52,8 @@ if (!class_exists(EntitySet::class)){
          }
          public function asArray( $key = NULL, $value = NULL)
          {
+            $keep_key=$this->key();
+            $this->rewind();
             $results = array();
             
             if ($key === NULL AND $value === NULL)
@@ -87,6 +89,10 @@ if (!class_exists(EntitySet::class)){
                 }
             }
             $this->rewind();
+            while (true) {
+                if(!$this->valid()||$this->key()==$keep_key)break;
+                $this->next();
+            }
             return $results;
         }
         /**
