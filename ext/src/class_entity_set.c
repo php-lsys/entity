@@ -24,11 +24,6 @@ ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_set_construct_arginfo, 0, 0, 2)
     ZEND_ARG_OBJ_INFO_ENTITYNS(0, table, Table, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_set_asarr_arginfo, 0, 0, 0)
-    ZEND_ARG_INFO(0, key)
-    ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(lsentity_entity_set_fetch_count_arginfo, 0, 0, 0)
     ZEND_ARG_INFO(0, iterator)
 ZEND_END_ARG_INFO()
@@ -111,12 +106,6 @@ ZEND_METHOD(lsentity_entity_set_class, rewind){
 }
 ZEND_METHOD(lsentity_entity_set_class, asArray){
     zval *object;
-    zend_string *key=NULL,*value=NULL;
-    ZEND_PARSE_PARAMETERS_START(0, 2)
-        Z_PARAM_OPTIONAL
-        Z_PARAM_STR(key)
-        Z_PARAM_STR(value)
-    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
     object = getThis();
     zval result;
     array_init(&result);
@@ -125,84 +114,24 @@ ZEND_METHOD(lsentity_entity_set_class, asArray){
     zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"key",&keey_key);
     zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"rewind",NULL);
 
-    if((!key||ZSTR_LEN(key)<=1)&&(!value||ZSTR_LEN(value)<=1)){
-        while (lsentity_check_bool_with_0_params(object,"valid")){
-            zval res,arr;
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
-                zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
-                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
-                zend_hash_next_index_insert(Z_ARR(result),&arr);
-                zval_ptr_dtor(&arr);
-            } else{
-                array_init(&arr);
-                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
-                zend_hash_next_index_insert(Z_ARR(result),&arr);
-                zval_ptr_dtor(&arr);
-            }
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
-            zval_ptr_dtor(&res);
+    while (lsentity_check_bool_with_0_params(object,"valid")){
+        zval res,arr;
+        zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
+        if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
+            zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
+            Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
+            zend_hash_next_index_insert(Z_ARR(result),&arr);
+            zval_ptr_dtor(&arr);
+        } else{
+            array_init(&arr);
+            Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
+            zend_hash_next_index_insert(Z_ARR(result),&arr);
+            zval_ptr_dtor(&arr);
         }
-    }else if( !key||ZSTR_LEN(key)<=1 ){
-        zval zvalue;
-        ZVAL_STR_COPY(&zvalue,value);
-        while (lsentity_check_bool_with_0_params(object,"valid")){
-            zval res,arr;
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
-                zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&arr,&zvalue);
-                zval tmp;
-                ZVAL_DUP(&tmp,&arr);
-				Z_REFCOUNTED(tmp)&&Z_ADDREF(tmp);
-                zend_hash_next_index_insert(Z_ARR(result),&tmp);
-                zval_ptr_dtor(&tmp);
-				zval_ptr_dtor(&arr);
-            } else{
-                ZVAL_NULL(&arr);
-				Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
-                zend_hash_next_index_insert(Z_ARR(result),&arr);
-				zval_ptr_dtor(&arr);
-            }
-			zval_ptr_dtor(&res);
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
-        }
-        zval_ptr_dtor(&zvalue);
-    }else if( !value||ZSTR_LEN(value)<=1  ){
-        while (lsentity_check_bool_with_0_params(object,"valid")){
-            zval res,arr;
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
-                zend_call_method_with_0_params(&res,Z_OBJCE(res),NULL,"asarray",&arr);
-                zval * val=zend_hash_find(Z_ARR(arr),key);
-                Z_REFCOUNTED(arr)&&Z_ADDREF(arr);
-                add_assoc_zval(&result,Z_STRVAL_P(val),&arr);
-                zval_ptr_dtor(&arr);
-            }
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
-            zval_ptr_dtor(&res);
-        }
-    }else{
-        zval zkey,zvalue;
-        ZVAL_STR_COPY(&zkey,key);
-        ZVAL_STR_COPY(&zvalue,value);
-        while (lsentity_check_bool_with_0_params(object,"valid")){
-            zval res,rkey,rvalue;
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"current",&res);
-            if(lsentity_obj_check(lsentity_entity_ce_ptr,&res,0,0)){
-                zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rkey,&zkey);
-                zend_call_method_with_1_params(&res,Z_OBJCE(res),NULL,"__get",&rvalue,&zvalue);
-                convert_to_string(&rkey);
-                Z_REFCOUNTED(rvalue)&&Z_ADDREF(rvalue);
-                add_assoc_zval(&result,Z_STRVAL(rkey),&rvalue);
-                zval_ptr_dtor(&rkey);
-                zval_ptr_dtor(&zvalue);
-            }
-            zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
-            zval_ptr_dtor(&res);
-        }
-        zval_ptr_dtor(&zkey);
-        zval_ptr_dtor(&zvalue);
+        zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"next",NULL);
+        zval_ptr_dtor(&res);
     }
+  
     zend_call_method_with_0_params(object,Z_OBJCE_P(object),NULL,"rewind",NULL);
     while (lsentity_check_bool_with_0_params(object,"valid")){
         zval stkey,sres;
@@ -326,7 +255,7 @@ static zend_function_entry lsentity_entity_set_class_method[] = {
     ZEND_ME(lsentity_entity_set_class,__construct, lsentity_entity_set_construct_arginfo, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_set_class,setFetchFree, NULL, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_set_class,fetchCount, lsentity_entity_set_fetch_count_arginfo, ZEND_ACC_PUBLIC)
-    ZEND_ME(lsentity_entity_set_class,asArray, lsentity_entity_set_asarr_arginfo, ZEND_ACC_PUBLIC)
+    ZEND_ME(lsentity_entity_set_class,asArray, NULL, ZEND_ACC_PUBLIC)
 
     ZEND_ME(lsentity_entity_set_class,key, NULL, ZEND_ACC_PUBLIC)
     ZEND_ME(lsentity_entity_set_class,next, NULL, ZEND_ACC_PUBLIC)

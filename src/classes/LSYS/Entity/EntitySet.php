@@ -50,43 +50,14 @@ if (!class_exists(EntitySet::class)){
          {
              return $this->_result->valid();
          }
-         public function asArray( $key = NULL, $value = NULL)
+         public function asArray()
          {
             $keep_key=$this->key();
             $this->rewind();
             $results = array();
-            
-            if ($key === NULL AND $value === NULL)
+            foreach ($this as $row)
             {
-                // Indexed rows
-                
-                foreach ($this as $row)
-                {
-                    $results[] = $row->asArray();
-                }
-            }
-            elseif ($key === NULL)
-            {
-                // Indexed columns
-                foreach ($this as $row)
-                {
-                    $results[] = $row->__get($value);
-                }
-            }
-            elseif ($value === NULL)
-            {
-                foreach ($this as $row)
-                {
-                    $row=$row->asArray();
-                    $results[$row[$key]] = $row;
-                }
-            }
-            else
-           {
-                foreach ($this as $row)
-                {
-                    $results[$row->__get($key)] = $row->__get($value);
-                }
+                $results[] = $row->asArray();
             }
             $this->rewind();
             while (true) {
